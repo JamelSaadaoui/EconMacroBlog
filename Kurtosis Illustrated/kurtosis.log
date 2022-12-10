@@ -1,0 +1,160 @@
+--------------------------------------------------------------------------------------------------
+      name:  kurtosis
+       log:  C:\Users\jamel\Documents\GitHub\EconMacroBlog\Kurtosis Illustrated\kurtosis.log
+  log type:  text
+ opened on:  10 Dec 2022, 05:47:15
+
+. 
+. // Apply the s2color scheme
+. 
+. set scheme s2color
+
+. 
+. // Generate random variables
+. 
+. set obs 10000
+Number of observations (_N) was 0, now 10,000.
+
+. 
+. // Normal variable
+. 
+. capture gen normal = rnormal()
+
+. 
+. sum normal, detail
+
+                           normal
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%    -2.311418      -4.158432
+ 5%      -1.6243      -3.984023
+10%    -1.257752      -3.888405       Obs              10,000
+25%     -.676198      -3.536664       Sum of wgt.      10,000
+
+50%    -.0101843                      Mean           .0043716
+                        Largest       Std. dev.      .9997614
+75%     .6801644       3.286517
+90%     1.282912       3.367381       Variance       .9995229
+95%      1.65187        3.58976       Skewness       .0107048
+99%     2.376653       3.726614       Kurtosis       3.057672
+
+. 
+. // Uniform variable
+. 
+. capture gen uniform = runiform(-5,5)
+
+. 
+. sum uniform, detail
+
+                           uniform
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%    -4.916896      -4.998859
+ 5%    -4.556441      -4.998273
+10%    -4.063986      -4.997198       Obs              10,000
+25%    -2.631814       -4.99703       Sum of wgt.      10,000
+
+50%    -.0963006                      Mean          -.0782752
+                        Largest       Std. dev.      2.900895
+75%     2.460568       4.995262
+90%     3.944842        4.99789       Variance       8.415189
+95%     4.465511        4.99814       Skewness       .0247032
+99%     4.890703       4.998709       Kurtosis       1.788222
+
+. 
+. // Laplace variable
+. 
+. capture gen laplace = rlaplace(0,1)
+
+. 
+. sum laplace, detail
+
+                           laplace
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%     -4.01025      -9.509061
+ 5%    -2.326505      -8.103121
+10%    -1.648352       -7.32171       Obs              10,000
+25%    -.7010381      -7.098841       Sum of wgt.      10,000
+
+50%    -.0022668                      Mean           .0023292
+                        Largest       Std. dev.      1.422544
+75%     .7052766       7.433238
+90%      1.62729         7.6096       Variance       2.023632
+95%      2.31462       7.643453       Skewness       .0520226
+99%     4.004081       8.196737       Kurtosis       5.787606
+
+. 
+. /* histogram normal, frequency title("Normal, K=3") ///
+> subtitle(mesokurtic) kdensity
+>  */
+. 
+. histogram normal, title("Normal, K=3") ///
+> subtitle(mesokurtic) kdensity
+(bin=40, start=-4.1584325, width=.19712617)
+
+. 
+. capture graph rename normal, replace
+
+. capture graph export figures\normal.png, replace
+
+. 
+. /* histogram uniform, frequency title("Uniform, K=1.8") ///
+> subtitle(platykurtic) kdensity
+>  */
+. 
+. histogram uniform, title("Uniform, K=1.8") ///
+> subtitle(platykurtic) kdensity
+(bin=40, start=-4.9988594, width=.2499392)
+
+. 
+. capture graph rename uniform, replace
+
+. capture graph export figures\uniform.png, replace
+
+. 
+. /* histogram laplace, frequency title("Uniform, K=6") ///
+> subtitle(platikurtic) kdensity
+>  */
+.  
+. histogram laplace, title("Laplace, K=6") ///
+> subtitle(leptokurtic) kdensity
+(bin=40, start=-9.5090609, width=.44264495)
+
+. 
+. capture graph rename laplace, replace
+
+. capture graph export figures\laplace.png, replace
+
+. 
+. graph combine normal uniform laplace, ycommon xcommon imargin(zero) ///
+> title(Kurtosis) ///
+> subtitle("Ilustration with Normal, Uniform and Laplace distribution")
+
+. 
+. capture graph rename kurtosis, replace
+
+. capture graph export figures\kurtosis.png, replace
+
+. 
+. twoway (kdensity normal) (kdensity uniform) (kdensity laplace), ///
+> title(Kurtosis) ///
+> subtitle("Ilustration with Normal, Uniform and Laplace distr.")
+
+. 
+. capture graph rename kurtosis_gathered, replace
+
+. capture graph export figures\kurtosis_gathered.png, replace
+
+. 
+. // Save the data
+. save data\kurtosis.dta, replace
+file data\kurtosis.dta saved
+
+. 
+. log close kurtosis
+      name:  kurtosis
+       log:  C:\Users\jamel\Documents\GitHub\EconMacroBlog\Kurtosis Illustrated\kurtosis.log
+  log type:  text
+ closed on:  10 Dec 2022, 05:47:22
+--------------------------------------------------------------------------------------------------
