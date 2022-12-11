@@ -1,0 +1,394 @@
+--------------------------------------------------------------------------------------------------
+      name:  covid
+       log:  C:\Users\jamel\Documents\GitHub\EconMacroBlog\Does testing more lead to finding more 
+> cases\covid.log
+  log type:  text
+ opened on:  11 Dec 2022, 10:57:05
+
+. 
+. // Apply the s2color scheme
+. 
+. set scheme s2color
+
+. 
+. // Importation of the data
+. 
+. import excel covid-testing-under-1M.xlsx, ///
+> sheet("Feuil1") cellrange(G1:I74) firstrow
+(3 vars, 73 obs)
+
+. 
+. encode G, generate(ISO3)
+
+. 
+. label variable ISO3 "country"
+
+. label variable pcr "Total tests per million people (PCR)"
+
+. label variable cases ///
+> "Total cases per million as of July 15, 2020"
+
+. 
+. order ISO3, first
+
+. 
+end of do-file
+
+. do "C:\Users\jamel\AppData\Local\Temp\STD21c8_000000.tmp"
+
+. rename G countrycode
+
+. order ISO3, first
+
+. 
+end of do-file
+
+. do "C:\Users\jamel\AppData\Local\Temp\STD21c8_000000.tmp"
+
+. // All the countries
+. 
+. pwcorr pcr cases, sig star(.05) obs
+
+             |      pcr    cases
+-------------+------------------
+         pcr |   1.0000 
+             |
+             |       73
+             |
+       cases |   0.4730*  1.0000 
+             |   0.0000
+             |       73       73
+             |
+
+. 
+. gen lpcr = log(pcr)
+
+. gen lcases = log(cases)
+
+. 
+. pwcorr lpcr lcases, sig star(.05) obs
+
+             |     lpcr   lcases
+-------------+------------------
+        lpcr |   1.0000 
+             |
+             |       73
+             |
+      lcases |   0.6677*  1.0000 
+             |   0.0000
+             |       73       73
+             |
+
+. 
+end of do-file
+
+. do "C:\Users\jamel\AppData\Local\Temp\STD21c8_000000.tmp"
+
+. tw (scatter pcr cases, title(Linear scale) xtitle(Cases per million)) ///
+> (lfit pcr cases, legend(label(1 "PCR tests") ///
+> label(2 "Linear fit") order(1 2)) ///
+> text(420000 30000 "{bf:Pearson's corr. = 0.4290*}" "{it:N=73}") ), ///
+> name(covid_testing, replace)
+
+. 
+. capture graph export figures\covid_testing.png, replace
+
+. 
+end of do-file
+
+. do "C:\Users\jamel\AppData\Local\Temp\STD21c8_000000.tmp"
+
+. tw (scatter pcr cases, title(Linear scale) xtitle(Cases per million)) ///
+> (lfit pcr cases, legend(label(1 "PCR tests") ///
+> label(2 "Linear fit") order(1 2)) ///
+> text(420000 30000 "{bf:Pearson's corr. = 0.4290*}" "{it:N=73}") ), ///
+> name(covid_testing, replace) ysize(6)
+
+. 
+end of do-file
+
+. do "C:\Users\jamel\AppData\Local\Temp\STD21c8_000000.tmp"
+
+. tw (scatter pcr cases, title(Linear scale) xtitle(Cases per million)) ///
+> (lfit pcr cases, legend(label(1 "PCR tests") ///
+> label(2 "Linear fit") order(1 2)) ///
+> text(420000 30000 "{bf:Pearson's corr. = 0.4290*}" "{it:N=73}") ), ///
+> name(covid_testing, replace) ysize(7)
+
+. 
+end of do-file
+
+. do "C:\Users\jamel\AppData\Local\Temp\STD21c8_000000.tmp"
+
+. tw (scatter pcr cases, title(Linear scale) xtitle(Cases per million)) ///
+> (lfit pcr cases, legend(label(1 "PCR tests") ///
+> label(2 "Linear fit") order(1 2)) ///
+> text(420000 30000 "{bf:Pearson's corr. = 0.4290*}" "{it:N=73}") ), ///
+> name(covid_testing, replace) ysize(6)
+
+. 
+end of do-file
+
+. do "C:\Users\jamel\AppData\Local\Temp\STD21c8_000000.tmp"
+
+. tw (scatter pcr cases, title(Linear scale) xtitle(Cases per million)) ///
+> (lfit pcr cases, legend(label(1 "PCR tests") ///
+> label(2 "Linear fit") order(1 2)) ///
+> text(420000 30000 "{bf:Pearson's corr. = 0.4290*}" "{it:N=73}") ), ///
+> name(covid_testing, replace) ysize(8)
+
+. 
+end of do-file
+
+. do "C:\Users\jamel\AppData\Local\Temp\STD21c8_000000.tmp"
+
+. capture graph export figures\covid_testing.png, replace
+
+. 
+end of do-file
+
+. do "C:\Users\jamel\AppData\Local\Temp\STD21c8_000000.tmp"
+
+. label variable lcases "Cases in log"
+
+. 
+end of do-file
+
+. do "C:\Users\jamel\AppData\Local\Temp\STD21c8_000000.tmp"
+
+. tw (scatter lpcr lcases, title(Logarithmic scale)) ///
+> (lfit lpcr lcases, legend(label(1 "PCR tests in log") /// 
+> label(2 "Linear fit") order(1 2)) ///
+> text(13.75 8 "{bf:Pearson's corr. = 0.6749*}" "{it:N=73}") ), ///
+> name(covid_testing_log, replace) ysize(8)
+
+. 
+. capture graph export figures\covid_testing_log.png, replace
+
+. 
+end of do-file
+
+. do "C:\Users\jamel\AppData\Local\Temp\STD21c8_000000.tmp"
+
+. graph combine covid_testing covid_testing_log, ///
+> title(Testing more do lead to discover more cases) ///
+> subtitle(Source: ourworldindata.org) /// 
+> note(As of July 15 2020 - countries with less 1M inhabitants removed) ///
+> altshrink ///
+> name(covid_testing_gathered, replace)
+
+. 
+. capture graph export figures\covid_testing_gathered.png, replace
+
+. 
+end of do-file
+
+. do "C:\Users\jamel\AppData\Local\Temp\STD21c8_000000.tmp"
+
+. regress cases pcr
+
+      Source |       SS           df       MS      Number of obs   =        73
+-------------+----------------------------------   F(1, 71)        =     20.47
+       Model |   485150241         1   485150241   Prob > F        =    0.0000
+    Residual |  1.6829e+09        71  23703053.7   R-squared       =    0.2238
+-------------+----------------------------------   Adj R-squared   =    0.2128
+       Total |  2.1681e+09        72  30112042.4   Root MSE        =    4868.6
+
+------------------------------------------------------------------------------
+       cases | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         pcr |   .0333556   .0073728     4.52   0.000     .0186546    .0480565
+       _cons |   1330.833    719.017     1.85   0.068    -102.8462    2764.512
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\jamel\AppData\Local\Temp\STD21c8_000000.tmp"
+
+. regress lcases lpcr
+
+      Source |       SS           df       MS      Number of obs   =        73
+-------------+----------------------------------   F(1, 71)        =     57.13
+       Model |  88.0770642         1  88.0770642   Prob > F        =    0.0000
+    Residual |  109.459894        71  1.54168865   R-squared       =    0.4459
+-------------+----------------------------------   Adj R-squared   =    0.4381
+       Total |  197.536958        72  2.74356887   Root MSE        =    1.2416
+
+------------------------------------------------------------------------------
+      lcases | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+        lpcr |   .8067956   .1067408     7.56   0.000     .5939605    1.019631
+       _cons |  -1.183496   1.101572    -1.07   0.286    -3.379968    1.012976
+------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. do "C:\Users\jamel\AppData\Local\Temp\STD21c8_000000.tmp"
+
+. regress cases pcr
+
+      Source |       SS           df       MS      Number of obs   =        73
+-------------+----------------------------------   F(1, 71)        =     20.47
+       Model |   485150241         1   485150241   Prob > F        =    0.0000
+    Residual |  1.6829e+09        71  23703053.7   R-squared       =    0.2238
+-------------+----------------------------------   Adj R-squared   =    0.2128
+       Total |  2.1681e+09        72  30112042.4   Root MSE        =    4868.6
+
+------------------------------------------------------------------------------
+       cases | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         pcr |   .0333556   .0073728     4.52   0.000     .0186546    .0480565
+       _cons |   1330.833    719.017     1.85   0.068    -102.8462    2764.512
+------------------------------------------------------------------------------
+
+. 
+. estimates store PCR_LEVEL
+
+. 
+end of do-file
+
+. do "C:\Users\jamel\AppData\Local\Temp\STD21c8_000000.tmp"
+
+. regress lcases lpcr
+
+      Source |       SS           df       MS      Number of obs   =        73
+-------------+----------------------------------   F(1, 71)        =     57.13
+       Model |  88.0770642         1  88.0770642   Prob > F        =    0.0000
+    Residual |  109.459894        71  1.54168865   R-squared       =    0.4459
+-------------+----------------------------------   Adj R-squared   =    0.4381
+       Total |  197.536958        72  2.74356887   Root MSE        =    1.2416
+
+------------------------------------------------------------------------------
+      lcases | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+        lpcr |   .8067956   .1067408     7.56   0.000     .5939605    1.019631
+       _cons |  -1.183496   1.101572    -1.07   0.286    -3.379968    1.012976
+------------------------------------------------------------------------------
+
+. 
+. estimates store PCR_LOG
+
+. 
+end of do-file
+
+. do "C:\Users\jamel\AppData\Local\Temp\STD21c8_000000.tmp"
+
+. local switches "dec(4) word se  e(rmse)"
+
+. 
+. outreg2 [FE_*] using data\covid-july2020, append `switches' replace
+replaced when both replace and append chosen
+variable _est_FE_* not found
+r(111);
+
+end of do-file
+
+r(111);
+
+. do "C:\Users\jamel\AppData\Local\Temp\STD21c8_000000.tmp"
+
+. // Regression analysis
+. 
+. regress cases pcr
+
+      Source |       SS           df       MS      Number of obs   =        73
+-------------+----------------------------------   F(1, 71)        =     20.47
+       Model |   485150241         1   485150241   Prob > F        =    0.0000
+    Residual |  1.6829e+09        71  23703053.7   R-squared       =    0.2238
+-------------+----------------------------------   Adj R-squared   =    0.2128
+       Total |  2.1681e+09        72  30112042.4   Root MSE        =    4868.6
+
+------------------------------------------------------------------------------
+       cases | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         pcr |   .0333556   .0073728     4.52   0.000     .0186546    .0480565
+       _cons |   1330.833    719.017     1.85   0.068    -102.8462    2764.512
+------------------------------------------------------------------------------
+
+. estimates store PCR_LEVEL
+
+. 
+. regress lcases lpcr
+
+      Source |       SS           df       MS      Number of obs   =        73
+-------------+----------------------------------   F(1, 71)        =     57.13
+       Model |  88.0770642         1  88.0770642   Prob > F        =    0.0000
+    Residual |  109.459894        71  1.54168865   R-squared       =    0.4459
+-------------+----------------------------------   Adj R-squared   =    0.4381
+       Total |  197.536958        72  2.74356887   Root MSE        =    1.2416
+
+------------------------------------------------------------------------------
+      lcases | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+        lpcr |   .8067956   .1067408     7.56   0.000     .5939605    1.019631
+       _cons |  -1.183496   1.101572    -1.07   0.286    -3.379968    1.012976
+------------------------------------------------------------------------------
+
+. estimates store PCR_LOG
+
+. 
+. local switches "dec(4) word se e(rmse)"
+
+. outreg2 [PCR_*] using tables\dec-2022.doc, append `switches' replace
+replaced when both replace and append chosen
+tables\dec-2022.doc
+dir : seeout
+
+. 
+end of do-file
+
+. do "C:\Users\jamel\AppData\Local\Temp\STD21c8_000000.tmp"
+
+. // Regression analysis
+. 
+. regress cases pcr
+
+      Source |       SS           df       MS      Number of obs   =        73
+-------------+----------------------------------   F(1, 71)        =     20.47
+       Model |   485150241         1   485150241   Prob > F        =    0.0000
+    Residual |  1.6829e+09        71  23703053.7   R-squared       =    0.2238
+-------------+----------------------------------   Adj R-squared   =    0.2128
+       Total |  2.1681e+09        72  30112042.4   Root MSE        =    4868.6
+
+------------------------------------------------------------------------------
+       cases | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         pcr |   .0333556   .0073728     4.52   0.000     .0186546    .0480565
+       _cons |   1330.833    719.017     1.85   0.068    -102.8462    2764.512
+------------------------------------------------------------------------------
+
+. estimates store PCR_LEVEL
+
+. 
+. regress lcases lpcr
+
+      Source |       SS           df       MS      Number of obs   =        73
+-------------+----------------------------------   F(1, 71)        =     57.13
+       Model |  88.0770642         1  88.0770642   Prob > F        =    0.0000
+    Residual |  109.459894        71  1.54168865   R-squared       =    0.4459
+-------------+----------------------------------   Adj R-squared   =    0.4381
+       Total |  197.536958        72  2.74356887   Root MSE        =    1.2416
+
+------------------------------------------------------------------------------
+      lcases | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+        lpcr |   .8067956   .1067408     7.56   0.000     .5939605    1.019631
+       _cons |  -1.183496   1.101572    -1.07   0.286    -3.379968    1.012976
+------------------------------------------------------------------------------
+
+. estimates store PCR_LOG
+
+. 
+. local switches "dec(4) word se e(rmse)"
+
+. outreg2 [PCR_*] using tables\covid-july-2020.doc, ///
+> append `switches' replace
+replaced when both replace and append chosen
+tables\covid-july-2020.doc
+dir : seeout
+
+. 
+end of do-file
+

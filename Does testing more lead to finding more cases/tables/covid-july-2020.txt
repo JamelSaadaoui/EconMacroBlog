@@ -1,0 +1,16 @@
+	(1)	(2)
+	PCR_LEVEL	PCR_LOG
+VARIABLES	cases	lcases
+		
+pcr	0.0334***	
+	(0.0074)	
+lpcr		0.8068***
+		(0.1067)
+Constant	1,330.8329*	-1.1835
+	(719.0170)	(1.1016)
+		
+Observations	73	73
+R-squared	0.2238	0.4459
+rmse	4869	1.242
+Standard errors in parentheses		
+*** p<0.01, ** p<0.05, * p<0.1		

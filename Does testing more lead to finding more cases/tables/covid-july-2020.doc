@@ -1,0 +1,25 @@
+{\rtf1\fs24
+\trowd\trgaph75\trleft-75\intbl\trqc\clbrdrt\brdrs\cellx1872\clbrdrt\brdrs\cellx3600\clbrdrt\brdrs\cellx5040
+\ql \cell\qc (1)\cell\qc (2)\cell\row
+\trowd\trgaph75\trleft-75\trqc\cellx1872\cellx3600\cellx5040
+\ql \cell\qc PCR_LEVEL\cell\qc PCR_LOG\cell\row
+\trowd\trgaph75\trleft-75\trqc\cellx1872\cellx3600\cellx5040
+\trowd\trgaph75\trleft-75\trqc\clbrdrb\brdrs\cellx1872\clbrdrb\brdrs\cellx3600\clbrdrb\brdrs\cellx5040
+\ql VARIABLES\cell\qc cases\cell\qc lcases\cell\row
+\trowd\trgaph75\trleft-75\trqc\cellx1872\cellx3600\cellx5040
+\ql \cell\qc \cell\qc \cell\row
+\ql pcr\cell\qc 0.0334***\cell\qc \cell\row
+\ql \cell\qc (0.0074)\cell\qc \cell\row
+\ql lpcr\cell\qc \cell\qc 0.8068***\cell\row
+\ql \cell\qc \cell\qc (0.1067)\cell\row
+\ql Constant\cell\qc 1,330.8329*\cell\qc -1.1835\cell\row
+\ql \cell\qc (719.0170)\cell\qc (1.1016)\cell\row
+\ql \cell\qc \cell\qc \cell\row
+\ql Observations\cell\qc 73\cell\qc 73\cell\row
+\ql R-squared\cell\qc 0.2238\cell\qc 0.4459\cell\row
+\trowd\trgaph75\trleft-75\trqc\trbrdrb\brdrs\clbrdrb\brdrs\cellx1872\clbrdrb\brdrs\cellx3600\clbrdrb\brdrs\cellx5040
+\ql rmse\cell\qc 4869\cell\qc 1.242\cell\row
+\pard\qc
+Standard errors in parentheses\par
+*** p<0.01, ** p<0.05, * p<0.1\par
+}
