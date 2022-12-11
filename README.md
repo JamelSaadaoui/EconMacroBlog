@@ -6,7 +6,7 @@ This repository houses the code and data to accompany the [Jamel Saadaoui's **Ec
 
 |Topic|Codes and Data|Date|
 |:----|:----|:----|
-|[Burgernomics: R codes and datasets](https://www.jamelsaadaoui.com/burgernomics-r-codes-and-datasets/)|["Global imbalances: Should we use fundamental equilibrium exchange rates?"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Burgernomics%20R%20codes%20and%20datasets)|July 20, 2020|
+|[Exchange rates](https://www.jamelsaadaoui.com/burgernomics-r-codes-and-datasets/)|["Burgernomics: R codes and datasets"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Burgernomics%20R%20codes%20and%20datasets)|July 20, 2020|
 
 <!-- Please don't remove this: Grab your social icons from https://github.com/carlsednaoui/gitsocial -->
 
