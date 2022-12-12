@@ -1,0 +1,607 @@
+--------------------------------------------------------------------------------------------------
+      name:  bw
+       log:  C:\Users\jamel\Documents\GitHub\EconMacroBlog\The Bretton Woods era through the excha
+> nge rate lens\bw.log
+  log type:  text
+ opened on:  12 Dec 2022, 17:46:37
+
+. 
+. // Apply the s2color scheme
+. 
+. set scheme s2color
+
+. 
+. // Importation of the data from fred
+. 
+. set fredkey ce2e515a7aeee4ac49e688f09efe4c69, permanently
+(set fredkey preference recorded)
+
+. // The key is obtained on the website of FRED
+. 
+. fredsearch Exchange Rate (market+estimated)
+--------------------------------------------------------------------------------------------------
+Series ID          Title                  Data range                Frequency
+--------------------------------------------------------------------------------------------------
+XRNCUSLAA618NRUG   Exchange Rate (mar...  1970-01-01 to 2019-01-01  Annual
+XRNCUSPHA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSEGA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSIQA618NRUG   Exchange Rate (mar...  1970-01-01 to 2019-01-01  Annual
+XRNCUSMZA618NRUG   Exchange Rate (mar...  1960-01-01 to 2019-01-01  Annual
+XRNCUSCAA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSZWA618NRUG   Exchange Rate (mar...  1954-01-01 to 2019-01-01  Annual
+XRNCUSLBA618NRUG   Exchange Rate (mar...  1970-01-01 to 2019-01-01  Annual
+XRNCUSVNA618NRUG   Exchange Rate (mar...  1970-01-01 to 2019-01-01  Annual
+XRNCUSHNA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSPKA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSNGA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSFJA618NRUG   Exchange Rate (mar...  1960-01-01 to 2019-01-01  Annual
+XRNCUSPLA618NRUG   Exchange Rate (mar...  1970-01-01 to 2019-01-01  Annual
+XRNCUSPEA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSJOA618NRUG   Exchange Rate (mar...  1954-01-01 to 2019-01-01  Annual
+XRNCUSKEA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSIRA618NRUG   Exchange Rate (mar...  1955-01-01 to 2019-01-01  Annual
+XRNCUSMAA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSECA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSARA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSBRA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSMYA618NRUG   Exchange Rate (mar...  1955-01-01 to 2019-01-01  Annual
+XRNCUSTNA618NRUG   Exchange Rate (mar...  1960-01-01 to 2019-01-01  Annual
+XRNCUSAZA618NRUG   Exchange Rate (mar...  1990-01-01 to 2019-01-01  Annual
+XRNCUSGTA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSGHA618NRUG   Exchange Rate (mar...  1955-01-01 to 2019-01-01  Annual
+XRNCUSUAA618NRUG   Exchange Rate (mar...  1990-01-01 to 2019-01-01  Annual
+XRNCUSHUA618NRUG   Exchange Rate (mar...  1970-01-01 to 2019-01-01  Annual
+XRNCUSINA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSTZA618NRUG   Exchange Rate (mar...  1960-01-01 to 2019-01-01  Annual
+XRNCUSSYA618NRUG   Exchange Rate (mar...  1960-01-01 to 2019-01-01  Annual
+XRNCUSETA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSRUA618NRUG   Exchange Rate (mar...  1990-01-01 to 2019-01-01  Annual
+XRNCUSBDA618NRUG   Exchange Rate (mar...  1959-01-01 to 2019-01-01  Annual
+XRNCUSQAA618NRUG   Exchange Rate (mar...  1970-01-01 to 2019-01-01  Annual
+XRNCUSKHA618NRUG   Exchange Rate (mar...  1970-01-01 to 2019-01-01  Annual
+XRNCUSCNA618NRUG   Exchange Rate (mar...  1952-01-01 to 2019-01-01  Annual
+XRNCUSDEA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSGBA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSVEA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSUZA618NRUG   Exchange Rate (mar...  1990-01-01 to 2019-01-01  Annual
+XRNCUSSLA618NRUG   Exchange Rate (mar...  1961-01-01 to 2019-01-01  Annual
+XRNCUSAUA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSZAA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSTMA618NRUG   Exchange Rate (mar...  1990-01-01 to 2019-01-01  Annual
+XRNCUSJMA618NRUG   Exchange Rate (mar...  1953-01-01 to 2019-01-01  Annual
+XRNCUSISA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSOMA618NRUG   Exchange Rate (mar...  1970-01-01 to 2019-01-01  Annual
+XRNCUSALA618NRUG   Exchange Rate (mar...  1970-01-01 to 2019-01-01  Annual
+XRNCUSGRA618NRUG   Exchange Rate (mar...  1951-01-01 to 2019-01-01  Annual
+XRNCUSKZA618NRUG   Exchange Rate (mar...  1990-01-01 to 2019-01-01  Annual
+XRNCUSSNA618NRUG   Exchange Rate (mar...  1960-01-01 to 2019-01-01  Annual
+XRNCUSPAA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSTWA618NRUG   Exchange Rate (mar...  1951-01-01 to 2019-01-01  Annual
+XRNCUSKWA618NRUG   Exchange Rate (mar...  1970-01-01 to 2019-01-01  Annual
+XRNCUSCLA618NRUG   Exchange Rate (mar...  1951-01-01 to 2019-01-01  Annual
+XRNCUSDOA618NRUG   Exchange Rate (mar...  1951-01-01 to 2019-01-01  Annual
+XRNCUSLTA618NRUG   Exchange Rate (mar...  1990-01-01 to 2019-01-01  Annual
+XRNCUSUYA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSPYA618NRUG   Exchange Rate (mar...  1951-01-01 to 2019-01-01  Annual
+XRNCUSTRA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSTDA618NRUG   Exchange Rate (mar...  1960-01-01 to 2019-01-01  Annual
+XRNCUSTGA618NRUG   Exchange Rate (mar...  1960-01-01 to 2019-01-01  Annual
+XRNCUSBOA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSMVA618NRUG   Exchange Rate (mar...  1970-01-01 to 2019-01-01  Annual
+XRNCUSBGA618NRUG   Exchange Rate (mar...  1970-01-01 to 2019-01-01  Annual
+XRNCUSCZA618NRUG   Exchange Rate (mar...  1990-01-01 to 2019-01-01  Annual
+XRNCUSJPA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSCRA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSNLA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSFRA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSKRA618NRUG   Exchange Rate (mar...  1953-01-01 to 2019-01-01  Annual
+XRNCUSHRA618NRUG   Exchange Rate (mar...  1990-01-01 to 2019-01-01  Annual
+XRNCUSSAA618NRUG   Exchange Rate (mar...  1970-01-01 to 2019-01-01  Annual
+M11018GB00LONM3~R  Security Price Ind...  1887-04-01 to 1935-03-01  Monthly
+XRNCUSDKA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSROA618NRUG   Exchange Rate (mar...  1960-01-01 to 2019-01-01  Annual
+XRNCUSMXA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSSGA618NRUG   Exchange Rate (mar...  1960-01-01 to 2019-01-01  Annual
+XRNCUSNPA618NRUG   Exchange Rate (mar...  1960-01-01 to 2019-01-01  Annual
+XRNCUSLKA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSMKA618NRUG   Exchange Rate (mar...  1990-01-01 to 2019-01-01  Annual
+XRNCUSLVA618NRUG   Exchange Rate (mar...  1990-01-01 to 2019-01-01  Annual
+XRNCUSBHA618NRUG   Exchange Rate (mar...  1970-01-01 to 2019-01-01  Annual
+XRNCUSTHA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSCOA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSILA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSPTA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSBSA618NRUG   Exchange Rate (mar...  1970-01-01 to 2019-01-01  Annual
+XRNCUSSKA618NRUG   Exchange Rate (mar...  1990-01-01 to 2019-01-01  Annual
+XRNCUSSEA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSIDA618NRUG   Exchange Rate (mar...  1960-01-01 to 2019-01-01  Annual
+XRNCUSBNA618NRUG   Exchange Rate (mar...  1970-01-01 to 2019-01-01  Annual
+XRNCUSKNA618NRUG   Exchange Rate (mar...  1970-01-01 to 2019-01-01  Annual
+XRNCUSATA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSBYA618NRUG   Exchange Rate (mar...  1990-01-01 to 2019-01-01  Annual
+XRNCUSSDA618NRUG   Exchange Rate (mar...  1970-01-01 to 2019-01-01  Annual
+XRNCUSBIA618NRUG   Exchange Rate (mar...  1960-01-01 to 2019-01-01  Annual
+XRNCUSGEA618NRUG   Exchange Rate (mar...  1990-01-01 to 2019-01-01  Annual
+XRNCUSZMA618NRUG   Exchange Rate (mar...  1955-01-01 to 2019-01-01  Annual
+XRNCUSLRA618NRUG   Exchange Rate (mar...  1964-01-01 to 2019-01-01  Annual
+XRNCUSMLA618NRUG   Exchange Rate (mar...  1960-01-01 to 2019-01-01  Annual
+XRNCUSSVA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSDJA618NRUG   Exchange Rate (mar...  1970-01-01 to 2019-01-01  Annual
+XRNCUSHKA618NRUG   Exchange Rate (mar...  1960-01-01 to 2019-01-01  Annual
+XRNCUSNZA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSMRA618NRUG   Exchange Rate (mar...  1960-01-01 to 2019-01-01  Annual
+XRNCUSSIA618NRUG   Exchange Rate (mar...  1990-01-01 to 2019-01-01  Annual
+XRNCUSITA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSSRA618NRUG   Exchange Rate (mar...  1970-01-01 to 2019-01-01  Annual
+XRNCUSMTA618NRUG   Exchange Rate (mar...  1954-01-01 to 2019-01-01  Annual
+XRNCUSBZA618NRUG   Exchange Rate (mar...  1970-01-01 to 2019-01-01  Annual
+XRNCUSBWA618NRUG   Exchange Rate (mar...  1960-01-01 to 2019-01-01  Annual
+XRNCUSMWA618NRUG   Exchange Rate (mar...  1954-01-01 to 2019-01-01  Annual
+XRNCUSKGA618NRUG   Exchange Rate (mar...  1990-01-01 to 2019-01-01  Annual
+XRNCUSMUA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSESA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSYEA618NRUG   Exchange Rate (mar...  1989-01-01 to 2019-01-01  Annual
+XRNCUSRSA618NRUG   Exchange Rate (mar...  1990-01-01 to 2019-01-01  Annual
+XRNCUSCVA618NRUG   Exchange Rate (mar...  1960-01-01 to 2019-01-01  Annual
+XRNCUSMNA618NRUG   Exchange Rate (mar...  1970-01-01 to 2019-01-01  Annual
+XRNCUSCYA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSCMA618NRUG   Exchange Rate (mar...  1960-01-01 to 2019-01-01  Annual
+XRNCUSNOA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSAMA618NRUG   Exchange Rate (mar...  1990-01-01 to 2019-01-01  Annual
+XRNCUSCDA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSDMA618NRUG   Exchange Rate (mar...  1970-01-01 to 2019-01-01  Annual
+XRNCUSBEA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSRWA618NRUG   Exchange Rate (mar...  1960-01-01 to 2019-01-01  Annual
+XRNCUSCHA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSUSA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSFIA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSIEA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSNAA618NRUG   Exchange Rate (mar...  1960-01-01 to 2019-01-01  Annual
+XRNCUSMGA618NRUG   Exchange Rate (mar...  1960-01-01 to 2019-01-01  Annual
+XRNCUSCGA618NRUG   Exchange Rate (mar...  1960-01-01 to 2019-01-01  Annual
+XRNCUSGDA618NRUG   Exchange Rate (mar...  1970-01-01 to 2019-01-01  Annual
+XRNCUSUGA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSMDA618NRUG   Exchange Rate (mar...  1990-01-01 to 2019-01-01  Annual
+XRNCUSBBA618NRUG   Exchange Rate (mar...  1960-01-01 to 2019-01-01  Annual
+XRNCUSBAA618NRUG   Exchange Rate (mar...  1990-01-01 to 2019-01-01  Annual
+XRNCUSBTA618NRUG   Exchange Rate (mar...  1970-01-01 to 2019-01-01  Annual
+XRNCUSBFA618NRUG   Exchange Rate (mar...  1959-01-01 to 2019-01-01  Annual
+XRNCUSKMA618NRUG   Exchange Rate (mar...  1960-01-01 to 2019-01-01  Annual
+XRNCUSAOA618NRUG   Exchange Rate (mar...  1970-01-01 to 2019-01-01  Annual
+XRNCUSGAA618NRUG   Exchange Rate (mar...  1960-01-01 to 2019-01-01  Annual
+XRNCUSSTA618NRUG   Exchange Rate (mar...  1970-01-01 to 2019-01-01  Annual
+XRNCUSTJA618NRUG   Exchange Rate (mar...  1990-01-01 to 2019-01-01  Annual
+XRNCUSCIA618NRUG   Exchange Rate (mar...  1960-01-01 to 2019-01-01  Annual
+XRNCUSGQA618NRUG   Exchange Rate (mar...  1960-01-01 to 2019-01-01  Annual
+XRNCUSEEA618NRUG   Exchange Rate (mar...  1990-01-01 to 2019-01-01  Annual
+XRNCUSAGA618NRUG   Exchange Rate (mar...  1970-01-01 to 2019-01-01  Annual
+XRNCUSLCA618NRUG   Exchange Rate (mar...  1970-01-01 to 2019-01-01  Annual
+XRNCUSBJA618NRUG   Exchange Rate (mar...  1959-01-01 to 2019-01-01  Annual
+XRNCUSMOA618NRUG   Exchange Rate (mar...  1970-01-01 to 2019-01-01  Annual
+XRNCUSNEA618NRUG   Exchange Rate (mar...  1960-01-01 to 2019-01-01  Annual
+XRNCUSGNA618NRUG   Exchange Rate (mar...  1959-01-01 to 2019-01-01  Annual
+XRNCUSSZA618NRUG   Exchange Rate (mar...  1970-01-01 to 2019-01-01  Annual
+XRNCUSGMA618NRUG   Exchange Rate (mar...  1960-01-01 to 2019-01-01  Annual
+XRNCUSLUA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSCFA618NRUG   Exchange Rate (mar...  1960-01-01 to 2019-01-01  Annual
+XRNCUSTTA618NRUG   Exchange Rate (mar...  1950-01-01 to 2019-01-01  Annual
+XRNCUSLSA618NRUG   Exchange Rate (mar...  1960-01-01 to 2019-01-01  Annual
+XRNCUSGWA618NRUG   Exchange Rate (mar...  1960-01-01 to 2019-01-01  Annual
+XRNCUSVCA618NRUG   Exchange Rate (mar...  1970-01-01 to 2019-01-01  Annual
+XRNCUSBMA618NRUG   Exchange Rate (mar...  1970-01-01 to 2019-01-01  Annual
+XRNCUSMEA618NRUG   Exchange Rate (mar...  1990-01-01 to 2019-01-01  Annual
+--------------------------------------------------------------------------------------------------
+Total: 168
+
+. 
+. *import fred XRNCUSATA618NRUG, clear 
+. 
+. foreach iso in AT BE CY FR FI EE DE GR IE IT LV LT LU NL PT SK SI ///
+>                ES MT {
+  2.                                         import fred XRNCUS`iso'A618NRUG, clear
+  3.                                         save data\XRNCUS`iso'A618NRUG, replace
+  4. }
+
+Summary
+--------------------------------------------------------------------------------------------------
+Series ID                    Nobs    Date range                Frequency
+--------------------------------------------------------------------------------------------------
+XRNCUSATA618NRUG             70      1950-01-01 to 2019-01-01  Annual
+--------------------------------------------------------------------------------------------------
+# of series imported: 1
+   highest frequency: Annual
+    lowest frequency: Annual
+file data\XRNCUSATA618NRUG.dta saved
+
+Summary
+--------------------------------------------------------------------------------------------------
+Series ID                    Nobs    Date range                Frequency
+--------------------------------------------------------------------------------------------------
+XRNCUSBEA618NRUG             70      1950-01-01 to 2019-01-01  Annual
+--------------------------------------------------------------------------------------------------
+# of series imported: 1
+   highest frequency: Annual
+    lowest frequency: Annual
+file data\XRNCUSBEA618NRUG.dta saved
+
+Summary
+--------------------------------------------------------------------------------------------------
+Series ID                    Nobs    Date range                Frequency
+--------------------------------------------------------------------------------------------------
+XRNCUSCYA618NRUG             70      1950-01-01 to 2019-01-01  Annual
+--------------------------------------------------------------------------------------------------
+# of series imported: 1
+   highest frequency: Annual
+    lowest frequency: Annual
+file data\XRNCUSCYA618NRUG.dta saved
+Too many requests reported by FRED server; please wait...............
+
+Summary
+--------------------------------------------------------------------------------------------------
+Series ID                    Nobs    Date range                Frequency
+--------------------------------------------------------------------------------------------------
+XRNCUSFRA618NRUG             70      1950-01-01 to 2019-01-01  Annual
+--------------------------------------------------------------------------------------------------
+# of series imported: 1
+   highest frequency: Annual
+    lowest frequency: Annual
+file data\XRNCUSFRA618NRUG.dta saved
+
+Summary
+--------------------------------------------------------------------------------------------------
+Series ID                    Nobs    Date range                Frequency
+--------------------------------------------------------------------------------------------------
+XRNCUSFIA618NRUG             70      1950-01-01 to 2019-01-01  Annual
+--------------------------------------------------------------------------------------------------
+# of series imported: 1
+   highest frequency: Annual
+    lowest frequency: Annual
+file data\XRNCUSFIA618NRUG.dta saved
+
+Summary
+--------------------------------------------------------------------------------------------------
+Series ID                    Nobs    Date range                Frequency
+--------------------------------------------------------------------------------------------------
+XRNCUSEEA618NRUG             30      1990-01-01 to 2019-01-01  Annual
+--------------------------------------------------------------------------------------------------
+# of series imported: 1
+   highest frequency: Annual
+    lowest frequency: Annual
+file data\XRNCUSEEA618NRUG.dta saved
+
+Summary
+--------------------------------------------------------------------------------------------------
+Series ID                    Nobs    Date range                Frequency
+--------------------------------------------------------------------------------------------------
+XRNCUSDEA618NRUG             70      1950-01-01 to 2019-01-01  Annual
+--------------------------------------------------------------------------------------------------
+# of series imported: 1
+   highest frequency: Annual
+    lowest frequency: Annual
+file data\XRNCUSDEA618NRUG.dta saved
+
+Summary
+--------------------------------------------------------------------------------------------------
+Series ID                    Nobs    Date range                Frequency
+--------------------------------------------------------------------------------------------------
+XRNCUSGRA618NRUG             69      1951-01-01 to 2019-01-01  Annual
+--------------------------------------------------------------------------------------------------
+# of series imported: 1
+   highest frequency: Annual
+    lowest frequency: Annual
+file data\XRNCUSGRA618NRUG.dta saved
+
+Summary
+--------------------------------------------------------------------------------------------------
+Series ID                    Nobs    Date range                Frequency
+--------------------------------------------------------------------------------------------------
+XRNCUSIEA618NRUG             70      1950-01-01 to 2019-01-01  Annual
+--------------------------------------------------------------------------------------------------
+# of series imported: 1
+   highest frequency: Annual
+    lowest frequency: Annual
+file data\XRNCUSIEA618NRUG.dta saved
+
+Summary
+--------------------------------------------------------------------------------------------------
+Series ID                    Nobs    Date range                Frequency
+--------------------------------------------------------------------------------------------------
+XRNCUSITA618NRUG             70      1950-01-01 to 2019-01-01  Annual
+--------------------------------------------------------------------------------------------------
+# of series imported: 1
+   highest frequency: Annual
+    lowest frequency: Annual
+file data\XRNCUSITA618NRUG.dta saved
+
+Summary
+--------------------------------------------------------------------------------------------------
+Series ID                    Nobs    Date range                Frequency
+--------------------------------------------------------------------------------------------------
+XRNCUSLVA618NRUG             30      1990-01-01 to 2019-01-01  Annual
+--------------------------------------------------------------------------------------------------
+# of series imported: 1
+   highest frequency: Annual
+    lowest frequency: Annual
+file data\XRNCUSLVA618NRUG.dta saved
+
+Summary
+--------------------------------------------------------------------------------------------------
+Series ID                    Nobs    Date range                Frequency
+--------------------------------------------------------------------------------------------------
+XRNCUSLTA618NRUG             30      1990-01-01 to 2019-01-01  Annual
+--------------------------------------------------------------------------------------------------
+# of series imported: 1
+   highest frequency: Annual
+    lowest frequency: Annual
+file data\XRNCUSLTA618NRUG.dta saved
+
+Summary
+--------------------------------------------------------------------------------------------------
+Series ID                    Nobs    Date range                Frequency
+--------------------------------------------------------------------------------------------------
+XRNCUSLUA618NRUG             70      1950-01-01 to 2019-01-01  Annual
+--------------------------------------------------------------------------------------------------
+# of series imported: 1
+   highest frequency: Annual
+    lowest frequency: Annual
+file data\XRNCUSLUA618NRUG.dta saved
+
+Summary
+--------------------------------------------------------------------------------------------------
+Series ID                    Nobs    Date range                Frequency
+--------------------------------------------------------------------------------------------------
+XRNCUSNLA618NRUG             70      1950-01-01 to 2019-01-01  Annual
+--------------------------------------------------------------------------------------------------
+# of series imported: 1
+   highest frequency: Annual
+    lowest frequency: Annual
+file data\XRNCUSNLA618NRUG.dta saved
+
+Summary
+--------------------------------------------------------------------------------------------------
+Series ID                    Nobs    Date range                Frequency
+--------------------------------------------------------------------------------------------------
+XRNCUSPTA618NRUG             70      1950-01-01 to 2019-01-01  Annual
+--------------------------------------------------------------------------------------------------
+# of series imported: 1
+   highest frequency: Annual
+    lowest frequency: Annual
+file data\XRNCUSPTA618NRUG.dta saved
+
+Summary
+--------------------------------------------------------------------------------------------------
+Series ID                    Nobs    Date range                Frequency
+--------------------------------------------------------------------------------------------------
+XRNCUSSKA618NRUG             30      1990-01-01 to 2019-01-01  Annual
+--------------------------------------------------------------------------------------------------
+# of series imported: 1
+   highest frequency: Annual
+    lowest frequency: Annual
+file data\XRNCUSSKA618NRUG.dta saved
+
+Summary
+--------------------------------------------------------------------------------------------------
+Series ID                    Nobs    Date range                Frequency
+--------------------------------------------------------------------------------------------------
+XRNCUSSIA618NRUG             30      1990-01-01 to 2019-01-01  Annual
+--------------------------------------------------------------------------------------------------
+# of series imported: 1
+   highest frequency: Annual
+    lowest frequency: Annual
+file data\XRNCUSSIA618NRUG.dta saved
+
+Summary
+--------------------------------------------------------------------------------------------------
+Series ID                    Nobs    Date range                Frequency
+--------------------------------------------------------------------------------------------------
+XRNCUSESA618NRUG             70      1950-01-01 to 2019-01-01  Annual
+--------------------------------------------------------------------------------------------------
+# of series imported: 1
+   highest frequency: Annual
+    lowest frequency: Annual
+file data\XRNCUSESA618NRUG.dta saved
+
+Summary
+--------------------------------------------------------------------------------------------------
+Series ID                    Nobs    Date range                Frequency
+--------------------------------------------------------------------------------------------------
+XRNCUSMTA618NRUG             66      1954-01-01 to 2019-01-01  Annual
+--------------------------------------------------------------------------------------------------
+# of series imported: 1
+   highest frequency: Annual
+    lowest frequency: Annual
+file data\XRNCUSMTA618NRUG.dta saved
+
+. 
+. use data\XRNCUSATA618NRUG, clear
+
+. 
+. foreach iso in BE CY FR FI EE DE GR IE IT LV LT LU NL PT SK SI ///
+>                ES MT {
+  2.                      merge 1:1 daten using data\XRNCUS`iso'A618NRUG.dta, nogen
+  3. } 
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                             0
+    Matched                                70  
+    -----------------------------------------
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                             0
+    Matched                                70  
+    -----------------------------------------
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                             0
+    Matched                                70  
+    -----------------------------------------
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                             0
+    Matched                                70  
+    -----------------------------------------
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                            40
+        from master                        40  
+        from using                          0  
+
+    Matched                                30  
+    -----------------------------------------
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                             0
+    Matched                                70  
+    -----------------------------------------
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                             1
+        from master                         1  
+        from using                          0  
+
+    Matched                                69  
+    -----------------------------------------
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                             0
+    Matched                                70  
+    -----------------------------------------
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                             0
+    Matched                                70  
+    -----------------------------------------
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                            40
+        from master                        40  
+        from using                          0  
+
+    Matched                                30  
+    -----------------------------------------
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                            40
+        from master                        40  
+        from using                          0  
+
+    Matched                                30  
+    -----------------------------------------
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                             0
+    Matched                                70  
+    -----------------------------------------
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                             0
+    Matched                                70  
+    -----------------------------------------
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                             0
+    Matched                                70  
+    -----------------------------------------
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                            30
+        from master                        30  
+        from using                          0  
+
+    Matched                                40  
+    -----------------------------------------
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                            40
+        from master                        40  
+        from using                          0  
+
+    Matched                                30  
+    -----------------------------------------
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                             0
+    Matched                                70  
+    -----------------------------------------
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                             4
+        from master                         4  
+        from using                          0  
+
+    Matched                                66  
+    -----------------------------------------
+
+. 
+. gen datayear = yofd(daten)
+
+. 
+. tsset datayear
+
+Time variable: datayear, 1950 to 2019
+        Delta: 1 unit
+
+. 
+. foreach iso in AT BE CY FR FI EE DE GR IE IT LV LT LU NL PT SK SI ///
+>                ES MT {
+  2. label variable XRNCUS`iso'A618NRUG `iso'
+  3. }
+
+. 
+. 
+. global countrylist ///
+> XRNCUSSKA618NRUG XRNCUSSIA618NRUG XRNCUSPTA618NRUG ///
+> XRNCUSNLA618NRUG XRNCUSMTA618NRUG XRNCUSLVA618NRUG ///
+> XRNCUSLUA618NRUG XRNCUSLTA618NRUG XRNCUSITA618NRUG ///
+> XRNCUSIEA618NRUG XRNCUSGRA618NRUG XRNCUSFRA618NRUG ///
+> XRNCUSFIA618NRUG XRNCUSESA618NRUG XRNCUSEEA618NRUG ///
+> XRNCUSDEA618NRUG XRNCUSCYA618NRUG XRNCUSBEA618NRUG ///
+> XRNCUSATA618NRUG
+
+. 
+. tsline $countrylist, legend(on pos(3) col(1) size(small) ) ///
+> ylabel(, angle(horizontal)) ylabel(, labsize(small)) ///
+> tlabel(, grid) tlabel(, labsize(small)) ///
+> xlabel(1950(10)2020, labsize(small)) ///
+> title("National Currency Units per US Dollar, NSA") ///
+> xtitle("") ytitle("") note("") // recast(connected) msymbol(O)
+
+. graph rename brettonwoods, replace
+
+. graph export figures\brettonwoods.png, replace
+file figures\brettonwoods.png saved as PNG format
+
+. graph export figures\brettonwoods.pdf, replace
+file figures\brettonwoods.pdf saved as PDF format
+
+. 
+. // Save the data
+. save data\brettonwoods.dta, replace
+file data\brettonwoods.dta saved
+
+. 
+. log close bw
+      name:  bw
+       log:  C:\Users\jamel\Documents\GitHub\EconMacroBlog\The Bretton Woods era through the excha
+> nge rate lens\bw.log
+  log type:  text
+ closed on:  12 Dec 2022, 17:47:25
+--------------------------------------------------------------------------------------------------
