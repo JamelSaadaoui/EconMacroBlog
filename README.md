@@ -11,6 +11,8 @@ This repository houses the code and data to accompany the [Jamel Saadaoui's **Ec
 |[Kurtosis](https://www.jamelsaadaoui.com/kurtosis-illustrated/)|["Kurtosis Illustrated"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Kurtosis%20Illustrated)|July 22, 2020|
 |[COVID19](https://www.jamelsaadaoui.com/does-testing-more-lead-to-finding-more-cases/)|["Does testing more lead to finding more cases?"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Does%20testing%20more%20lead%20to%20finding%20more%20cases)|August 6, 2020|
 |[Exchange rates](https://www.jamelsaadaoui.com/the-bretton-woods-era-through-the-exchange-rate-lens/)|["The Bretton Woods era through the exchange rate lens"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/The%20Bretton%20Woods%20era%20through%20the%20exchange%20rate%20lens)|March 10, 2021|
+|[Moments](https://www.jamelsaadaoui.com/moments-of-a-discrete-distribution-with-mathematica/)|["Moments of a discrete distribution with Mathematica
+"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Moments%20of%20a%20discrete%20distribution%20with%20Mathematica)|April 4, 2021|
 
 <!-- Please don't remove this: Grab your social icons from https://github.com/carlsednaoui/gitsocial -->
 
