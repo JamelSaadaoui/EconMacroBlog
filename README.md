@@ -4,7 +4,7 @@
 # EconMacroBlog
 This repository houses the code and data to accompany the [Jamel Saadaoui's **EconMacro** blogs](https://www.jamelsaadaoui.com/).  The blogs cover a variety of topics including programming, best practices, time series, econometrics, graphics, and more.
 
-|Topic|Codes and Data|Date|
+|Blog Topic (EconMacro link) |Codes and Data (Github Repository)|Date|
 |:----|:----|:----|
 |[Logistic Growth](https://www.jamelsaadaoui.com/logistic-growth-clearly-explained/)|["Logistic growth: clearly explained!"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Logistic%20growth%20clearly%20explained)|April 11, 2020|
 |[Exchange rates](https://www.jamelsaadaoui.com/burgernomics-r-codes-and-datasets/)|["Burgernomics: R codes and datasets"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Burgernomics%20R%20codes%20and%20datasets)|July 20, 2020|
