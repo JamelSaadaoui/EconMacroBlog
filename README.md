@@ -6,6 +6,7 @@ This repository houses the code and data to accompany the [Jamel Saadaoui's **Ec
 
 |Blog Topic (EconMacro link) |Codes and Data (Github Repository)|Date|
 |:----|:----|:----|
+|[Monetary Union](https://www.jamelsaadaoui.com/the-fragility-of-an-incomplete-monetary-union/)|["The fragility of an incomplete monetary union with Mathematica"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/The%20fragility%20of%20an%20incomplete%20monetary%20union%20with%20Mathematica)|March 04, 2023|
 |[Logistic Growth](https://www.jamelsaadaoui.com/logistic-growth-clearly-explained/)|["Logistic growth: clearly explained!"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Logistic%20growth%20clearly%20explained)|April 11, 2020|
 |[Exchange rates](https://www.jamelsaadaoui.com/burgernomics-r-codes-and-datasets/)|["Burgernomics: R codes and datasets"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Burgernomics%20R%20codes%20and%20datasets)|July 20, 2020|
 |[Kurtosis](https://www.jamelsaadaoui.com/kurtosis-illustrated/)|["Kurtosis Illustrated"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Kurtosis%20Illustrated)|July 22, 2020|
