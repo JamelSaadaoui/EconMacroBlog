@@ -6,6 +6,7 @@ This repository houses the code and data to accompany the [Jamel Saadaoui's **Ec
 
 |Blog Topic (EconMacro link) |Codes and Data (Github Repository)|Date|
 |:----|:----|:----|
+|[Power](https://www.jamelsaadaoui.com/size-and-power-using-stata-a-simple-example/)|["Size and Power using Stata: a Simple Example"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Producing%20a%20Stata%20code%20for%20a%20simple%20Monte%20Carlo%20simulation%20with%20an%20AI%20programming%20assistant) | May 09, 2023|
 |[AI Assistant](https://www.jamelsaadaoui.com/illustrating-the-sample-variance-bias-with-r-and-mathematica/)|["Illustrating the sample variance bias with R and Mathematica"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Illustrating%20the%20sample%20variance%20bias%20with%20R%20and%20Mathematica) | May 04, 2023|
 |[AI Assistant](https://www.jamelsaadaoui.com/producing-a-stata-code-for-a-simple-monte-carlo-simulation-with-an-ai-programming-assistant/)|["Producing a Stata code for a simple Monte Carlo simulation with an AI programming assistant"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Producing%20a%20Stata%20code%20for%20a%20simple%20Monte%20Carlo%20simulation%20with%20an%20AI%20programming%20assistant) | April 23, 2023|
 |[Monetary Union](https://www.jamelsaadaoui.com/the-fragility-of-an-incomplete-monetary-union/)|["The fragility of an incomplete monetary union with Mathematica"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/The%20fragility%20of%20an%20incomplete%20monetary%20union%20with%20Mathematica) | March 04, 2023|
