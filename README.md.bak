@@ -6,6 +6,7 @@ This repository houses the code and data to accompany the [Jamel Saadaoui's **Ec
 
 |Blog Topic (EconMacro link) |Codes and Data (Github Repository)|Date|
 |:----|:----|:----|
+|[Wolfram Language](https://www.jamelsaadaoui.com/how-to-use-the-wolfram-language-in-a-jupyter-notebook-100th-blog/)|["How to use the Wolfram Language in a Jupyter Notebook (100th blog)"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Illustrating%20the%20new%20LPIRF%20Stata%2018s%20command) | August 19, 2023|
 |[Local Projections](https://www.jamelsaadaoui.com/illustrating-the-new-lpirf-stata-18s-command/)|["Illustrating the new LPIRF Stata 18’s command"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Illustrating%20the%20new%20LPIRF%20Stata%2018s%20command) | May 10, 2023|
 |[Power](https://www.jamelsaadaoui.com/size-and-power-using-stata-a-simple-example/)|["Size and Power using Stata: a Simple Example"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Size%20and%20Power%20using%20Stata%20a%20Simple%20Example) | May 09, 2023|
 |[AI Assistant](https://www.jamelsaadaoui.com/illustrating-the-sample-variance-bias-with-r-and-mathematica/)|["Illustrating the sample variance bias with R and Mathematica"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Illustrating%20the%20sample%20variance%20bias%20with%20R%20and%20Mathematica) | May 04, 2023|
