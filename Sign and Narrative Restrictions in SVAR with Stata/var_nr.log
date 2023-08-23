@@ -1,0 +1,619 @@
+----------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\jamel\Dropbox\stata\var_nr\var_nr.log
+  log type:  text
+ opened on:  23 Aug 2023, 14:11:30
+
+. 
+. // Open the help file of the package
+. 
+. help var_nr
+
+. 
+. /*
+> Keep in mind that
+> ident specifies the method for identifying the VAR. 
+> This option will accept one of three strings: 
+> "oir", "bq", or "sr". "oir" specifies zero short-run restrictions; 
+> "bq" specifies zero long-run restrictions; 
+> and "sr" specifies [narrative] sign restrictions.
+> */
+. 
+. 
+. **# /* Long-run Zero Restrictions */
+. 
+. clear *
+
+. use data_longrun
+
+. tsset date
+
+Time variable: date, 1948q2 to 1987q4
+        Delta: 1 quarter
+
+. 
+. // estimate var
+. var GDPGrowth Unemployment, lags(1/4)
+
+Vector autoregression
+
+Sample: 1949q2 thru 1987q4                      Number of obs     =        155
+Log likelihood =  -201.7827                     AIC               =   2.835905
+FPE            =   .0584498                     HQIC              =   2.979461
+Det(Sigma_ml)  =   .0463235                     SBIC              =   3.189335
+
+Equation           Parms      RMSE     R-sq      chi2     P>chi2
+----------------------------------------------------------------
+GDPGrowth             9     .952248   0.2948   64.80716   0.0000
+Unemployment          9      .31075   0.9484   2851.215   0.0000
+----------------------------------------------------------------
+
+------------------------------------------------------------------------------
+             | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+GDPGrowth    |
+   GDPGrowth |
+         L1. |   .0745383   .1039961     0.72   0.474    -.1292904     .278367
+         L2. |   .1792844   .1090795     1.64   0.100    -.0345074    .3930762
+         L3. |  -.0040272   .1106152    -0.04   0.971     -.220829    .2127745
+         L4. |  -.0104174   .0878914    -0.12   0.906    -.1826813    .1618465
+             |
+Unemployment |
+         L1. |  -.7971431   .3127928    -2.55   0.011    -1.410206   -.1840804
+         L2. |   1.608883   .4994372     3.22   0.001      .630004    2.587762
+         L3. |  -.5792535   .5081605    -1.14   0.254     -1.57523    .4167228
+         L4. |   .0002503    .323545     0.00   0.999    -.6338862    .6343869
+             |
+       _cons |   .0028678    .074595     0.04   0.969    -.1433357    .1490713
+-------------+----------------------------------------------------------------
+Unemployment |
+   GDPGrowth |
+         L1. |  -.1191227   .0339374    -3.51   0.000    -.1856388   -.0526066
+         L2. |  -.0916161   .0355963    -2.57   0.010    -.1613835   -.0218487
+         L3. |  -.0380656   .0360974    -1.05   0.292    -.1088152    .0326841
+         L4. |   .0202464   .0286819     0.71   0.480    -.0359691    .0764618
+             |
+Unemployment |
+         L1. |   1.390632   .1020747    13.62   0.000      1.19057    1.590695
+         L2. |  -.6799665    .162983    -4.17   0.000    -.9994072   -.3605257
+         L3. |   .1518597   .1658297     0.92   0.360    -.1731605    .4768799
+         L4. |   .0839533   .1055835     0.80   0.427    -.1229866    .2908931
+             |
+       _cons |  -.0163441   .0243428    -0.67   0.502    -.0640552    .0313669
+------------------------------------------------------------------------------
+
+. var_nr bq, var("VAR") opt("opts")
+
+. var_nr_options_display , optname("opts") all
+Identification option (ident): bq
+IRF maximum horizon (nsteps): 40
+IRF impact: one std deviation (0) or unitary (1) (impact): 0
+IRF set to zero one row of companion matrix (shut): 0
+IRF error bands percentile (pctg): 95
+IRF re-sampling method, bootstrap (bs) or wild-bootsrap (wild) (method): bs
+Plot file format (save_fmt): none
+Which variable(s) to plot (shck_plt): all
+Number of desired draws using [narrative] sign restrictions (ndraws): 100
+Maximum failed [narrative] sign restriction draws allowed (err_limit): 4000
+Display progress on [narrative] sign restriction loops (upt): no
+[Narrative] sign restricts updates progress per (updt_frqcy) draws: 10000
+
+. 
+. // Change options
+. 
+. var_nr_options , optname("opts") savefmt("png") pctg(68)
+
+. var_nr_options_display , optname("opts") all
+Identification option (ident): bq
+IRF maximum horizon (nsteps): 40
+IRF impact: one std deviation (0) or unitary (1) (impact): 0
+IRF set to zero one row of companion matrix (shut): 0
+IRF error bands percentile (pctg): 68
+IRF re-sampling method, bootstrap (bs) or wild-bootsrap (wild) (method): bs
+Plot file format (save_fmt): png
+Which variable(s) to plot (shck_plt): all
+Number of desired draws using [narrative] sign restrictions (ndraws): 100
+Maximum failed [narrative] sign restriction draws allowed (err_limit): 4000
+Display progress on [narrative] sign restriction loops (upt): no
+[Narrative] sign restricts updates progress per (updt_frqcy) draws: 10000
+
+. 
+. mata
+------------------------------------------------- mata (type end to exit) --------------------
+: // only plot GDP growth
+: opts.shck_plt = "GDPGrowth"
+
+: 
+: // compute IRF, bands, plot
+: IRF = irf_funct(VAR,opts)
+
+: IRFB = irf_bands_funct(VAR,opts)
+
+: irf_plot(IRF,IRFB,VAR,opts)
+file IRF_GDPGrowth.png saved as PNG format
+
+: 
+: // compute FEVD, bands, plot
+: FEVD = fevd_funct(VAR,opts)
+
+: FEVDB = fevd_bands_funct(VAR,opts)
+
+: fevd_plot(FEVD,FEVDB,VAR,opts)
+file FEVD_GDPGrowth.png saved as PNG format
+
+: 
+: // compute HD, plot
+: HD = hd_funct(VAR,opts)
+
+: hd_plot(HD,VAR,opts)
+file HD_GDPGrowth.png saved as PNG format
+
+: end
+----------------------------------------------------------------------------------------------
+
+. 
+. **# /* Narrative Sign Restrictions */
+. 
+. /*
+> Keep in mind that Code for this function is adapted 
+> from Ambrogio Cesa-Bianchi's VAR Toolbox.  
+> Code follows Kilian and Lutkepohl's notation in Structural 
+> Vector Autoregressive Analysis (2016). Also for IRF, HD and 
+> FEDV.
+> */
+. 
+. clear *
+
+. use data_narrsignrestrict
+
+. tsset date
+
+Time variable: date, 1960q1 to 2000q4
+        Delta: 1 quarter
+
+. 
+. // estimate var
+. var lninflat lnunempl lnfedfunds, lags(1/2) exog(trend)
+
+Vector autoregression
+
+Sample: 1960q3 thru 2000q4                      Number of obs     =        162
+Log likelihood =   409.4684                     AIC               =  -4.758869
+FPE            =   1.72e-06                     HQIC              =  -4.573148
+Det(Sigma_ml)  =   1.28e-06                     SBIC              =  -4.301447
+
+Equation           Parms      RMSE     R-sq      chi2     P>chi2
+----------------------------------------------------------------
+lninflat              8     .328514   0.7746   556.6116   0.0000
+lnunempl              8      .03714   0.9796   7776.376   0.0000
+lnfedfunds            8     .108063   0.9493   3032.881   0.0000
+----------------------------------------------------------------
+
+------------------------------------------------------------------------------
+             | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+lninflat     |
+    lninflat |
+         L1. |   .5654119   .0762225     7.42   0.000     .4160185    .7148054
+         L2. |   .2332319   .0776923     3.00   0.003     .0809578     .385506
+             |
+    lnunempl |
+         L1. |   -1.33539    .660501    -2.02   0.043    -2.629949   -.0408323
+         L2. |   1.282665    .640686     2.00   0.045     .0269433    2.538386
+             |
+  lnfedfunds |
+         L1. |   .3164676   .2498287     1.27   0.205    -.1731877    .8061229
+         L2. |  -.0860822   .2547933    -0.34   0.735    -.5854679    .4133035
+             |
+       trend |  -.0013053   .0006276    -2.08   0.038    -.0025354   -.0000752
+       _cons |   .0228652   .2017788     0.11   0.910    -.3726141    .4183445
+-------------+----------------------------------------------------------------
+lnunempl     |
+    lninflat |
+         L1. |    .009283   .0086173     1.08   0.281    -.0076066    .0261725
+         L2. |   -.010315   .0087834    -1.17   0.240    -.0275303    .0069002
+             |
+    lnunempl |
+         L1. |   1.543755   .0746724    20.67   0.000       1.3974    1.690111
+         L2. |  -.5794824   .0724323    -8.00   0.000     -.721447   -.4375178
+             |
+  lnfedfunds |
+         L1. |   .0205677   .0282442     0.73   0.466    -.0347899    .0759253
+         L2. |     .01134   .0288055     0.39   0.694    -.0451177    .0677977
+             |
+       trend |  -.0001007    .000071    -1.42   0.156    -.0002398    .0000383
+       _cons |   .0146942    .022812     0.64   0.519    -.0300164    .0594048
+-------------+----------------------------------------------------------------
+lnfedfunds   |
+    lninflat |
+         L1. |   .0318325    .025073     1.27   0.204    -.0173097    .0809747
+         L2. |   .0455263   .0255565     1.78   0.075    -.0045635    .0956161
+             |
+    lnunempl |
+         L1. |  -1.117132   .2172684    -5.14   0.000     -1.54297   -.6912938
+         L2. |   1.062849   .2107503     5.04   0.000     .6497863    1.475912
+             |
+  lnfedfunds |
+         L1. |   1.032995   .0821799    12.57   0.000     .8719252    1.194064
+         L2. |  -.1313752   .0838129    -1.57   0.117    -.2956456    .0328951
+             |
+       trend |   .0001897   .0002065     0.92   0.358    -.0002149    .0005944
+       _cons |   .1669643   .0663741     2.52   0.012     .0368734    .2970551
+------------------------------------------------------------------------------
+
+. var_nr sr, varname("v") opt("opts") lintrend(trend)
+
+. var_nr_options_display , optname("opts") all
+Identification option (ident): sr
+IRF maximum horizon (nsteps): 40
+IRF impact: one std deviation (0) or unitary (1) (impact): 0
+IRF set to zero one row of companion matrix (shut): 0
+IRF error bands percentile (pctg): 95
+IRF re-sampling method, bootstrap (bs) or wild-bootsrap (wild) (method): bs
+Plot file format (save_fmt): none
+Which variable(s) to plot (shck_plt): all
+Number of desired draws using [narrative] sign restrictions (ndraws): 100
+Maximum failed [narrative] sign restriction draws allowed (err_limit): 4000
+Display progress on [narrative] sign restriction loops (upt): no
+[Narrative] sign restricts updates progress per (updt_frqcy) draws: 10000
+
+. 
+. // narrative restriction: positive Oct 79 (q4 '79)
+. loc Volcker_disinfl_pf = yq(1979,4)
+
+. 
+. mata
+------------------------------------------------- mata (type end to exit) --------------------
+: ns = nr_create(v)
+
+: nr_set(yq(1979,4),yq(1979,4),"+","Monetary Policy Shock","",ns)
+
+: 
+: // load matrices into associative array to prep for calculations
+: s = shock_create(v)
+
+: shock_name(("Supply Shock","Demand Shock","Monetary Policy Shock"),s)
+
+: 
+: shock_set(1,1,"-","Supply Shock","lninflat",s)
+
+: shock_set(1,1,"-","Supply Shock","lnunempl",s)
+
+: shock_set(1,1,"-","Supply Shock","lnfedfunds",s)
+
+: 
+: shock_set(1,1,"+","Demand Shock","lninflat",s)
+
+: shock_set(1,1,"-","Demand Shock","lnunempl",s)
+
+: shock_set(1,1,"+","Demand Shock","lnfedfunds",s)
+
+: 
+: shock_set(1,1,"-","Monetary Policy Shock","lninflat",s)
+
+: shock_set(1,1,"+","Monetary Policy Shock","lnunempl",s)
+
+: shock_set(1,1,"+","Monetary Policy Shock","lnfedfunds",s)
+
+: 
+: // set options
+: opts = opt_set()
+
+: opts.ndraws = 1000
+
+: opts.updt = "yes"
+
+: opts.updt_frqcy = 1000
+
+: *Additional options
+invalid expression
+r(3000);
+
+: opts.save_fmt="png"
+
+: opts.pctg=68
+
+: opt_display(opts)
+Identification option (ident): sr
+IRF maximum horizon (nsteps): 40
+IRF impact: one std deviation (0) or unitary (1) (impact): 0
+IRF set to zero one row of companion matrix (shut): 0
+IRF error bands percentile (pctg): 68
+IRF re-sampling method, bootstrap (bs) or wild-bootsrap (wild) (method): bs
+Plot file format (save_fmt): png
+Which variable(s) to plot (shck_plt): all
+Number of desired draws using [narrative] sign restrictions (ndraws): 1000
+Maximum failed [narrative] sign restriction draws allowed (err_limit): 4000
+Display progress on [narrative] sign restriction loops (upt): yes
+[Narrative] sign restricts updates progress per (updt_frqcy) draws: 1000
+
+: 
+: // run narrative sign restrictions routine
+: stata("set seed 123456")
+
+: SR = narr_sign_restrict(v,s,opts,ns)
+Loop: 11 NSR+SR satisfied / 24 SR satisfied / 1000 total draws
+Loop: 19 NSR+SR satisfied / 41 SR satisfied / 2000 total draws
+Loop: 30 NSR+SR satisfied / 63 SR satisfied / 3000 total draws
+Loop: 39 NSR+SR satisfied / 84 SR satisfied / 4000 total draws
+Loop: 50 NSR+SR satisfied / 109 SR satisfied / 5000 total draws
+Loop: 67 NSR+SR satisfied / 133 SR satisfied / 6000 total draws
+Loop: 75 NSR+SR satisfied / 152 SR satisfied / 7000 total draws
+Loop: 85 NSR+SR satisfied / 171 SR satisfied / 8000 total draws
+Loop: 97 NSR+SR satisfied / 196 SR satisfied / 9000 total draws
+Loop: 110 NSR+SR satisfied / 221 SR satisfied / 10000 total draws
+Loop: 124 NSR+SR satisfied / 245 SR satisfied / 11000 total draws
+Loop: 131 NSR+SR satisfied / 258 SR satisfied / 12000 total draws
+Loop: 141 NSR+SR satisfied / 274 SR satisfied / 13000 total draws
+Loop: 150 NSR+SR satisfied / 294 SR satisfied / 14000 total draws
+Loop: 166 NSR+SR satisfied / 330 SR satisfied / 15000 total draws
+Loop: 172 NSR+SR satisfied / 349 SR satisfied / 16000 total draws
+Loop: 180 NSR+SR satisfied / 368 SR satisfied / 17000 total draws
+Loop: 199 NSR+SR satisfied / 395 SR satisfied / 18000 total draws
+Loop: 209 NSR+SR satisfied / 418 SR satisfied / 19000 total draws
+Loop: 226 NSR+SR satisfied / 443 SR satisfied / 20000 total draws
+Loop: 237 NSR+SR satisfied / 462 SR satisfied / 21000 total draws
+Loop: 249 NSR+SR satisfied / 487 SR satisfied / 22000 total draws
+Loop: 261 NSR+SR satisfied / 506 SR satisfied / 23000 total draws
+Loop: 273 NSR+SR satisfied / 536 SR satisfied / 24000 total draws
+Loop: 289 NSR+SR satisfied / 567 SR satisfied / 25000 total draws
+Loop: 299 NSR+SR satisfied / 587 SR satisfied / 26000 total draws
+Loop: 313 NSR+SR satisfied / 609 SR satisfied / 27000 total draws
+Loop: 321 NSR+SR satisfied / 631 SR satisfied / 28000 total draws
+Loop: 330 NSR+SR satisfied / 648 SR satisfied / 29000 total draws
+Loop: 341 NSR+SR satisfied / 673 SR satisfied / 30000 total draws
+Loop: 354 NSR+SR satisfied / 702 SR satisfied / 31000 total draws
+Loop: 375 NSR+SR satisfied / 734 SR satisfied / 32000 total draws
+Loop: 383 NSR+SR satisfied / 753 SR satisfied / 33000 total draws
+Loop: 395 NSR+SR satisfied / 771 SR satisfied / 34000 total draws
+Loop: 410 NSR+SR satisfied / 806 SR satisfied / 35000 total draws
+Loop: 423 NSR+SR satisfied / 827 SR satisfied / 36000 total draws
+Loop: 431 NSR+SR satisfied / 845 SR satisfied / 37000 total draws
+Loop: 447 NSR+SR satisfied / 872 SR satisfied / 38000 total draws
+Loop: 452 NSR+SR satisfied / 891 SR satisfied / 39000 total draws
+Loop: 460 NSR+SR satisfied / 911 SR satisfied / 40000 total draws
+Loop: 470 NSR+SR satisfied / 930 SR satisfied / 41000 total draws
+Loop: 485 NSR+SR satisfied / 957 SR satisfied / 42000 total draws
+Loop: 494 NSR+SR satisfied / 983 SR satisfied / 43000 total draws
+Loop: 505 NSR+SR satisfied / 1007 SR satisfied / 44000 total draws
+Loop: 518 NSR+SR satisfied / 1032 SR satisfied / 45000 total draws
+Loop: 532 NSR+SR satisfied / 1060 SR satisfied / 46000 total draws
+Loop: 544 NSR+SR satisfied / 1083 SR satisfied / 47000 total draws
+Loop: 554 NSR+SR satisfied / 1109 SR satisfied / 48000 total draws
+Loop: 561 NSR+SR satisfied / 1126 SR satisfied / 49000 total draws
+Loop: 577 NSR+SR satisfied / 1155 SR satisfied / 50000 total draws
+Loop: 588 NSR+SR satisfied / 1177 SR satisfied / 51000 total draws
+Loop: 595 NSR+SR satisfied / 1202 SR satisfied / 52000 total draws
+Loop: 611 NSR+SR satisfied / 1228 SR satisfied / 53000 total draws
+Loop: 628 NSR+SR satisfied / 1256 SR satisfied / 54000 total draws
+Loop: 643 NSR+SR satisfied / 1286 SR satisfied / 55000 total draws
+Loop: 647 NSR+SR satisfied / 1305 SR satisfied / 56000 total draws
+Loop: 662 NSR+SR satisfied / 1338 SR satisfied / 57000 total draws
+Loop: 678 NSR+SR satisfied / 1367 SR satisfied / 58000 total draws
+Loop: 690 NSR+SR satisfied / 1392 SR satisfied / 59000 total draws
+Loop: 697 NSR+SR satisfied / 1403 SR satisfied / 60000 total draws
+Loop: 711 NSR+SR satisfied / 1432 SR satisfied / 61000 total draws
+Loop: 725 NSR+SR satisfied / 1460 SR satisfied / 62000 total draws
+Loop: 745 NSR+SR satisfied / 1493 SR satisfied / 63000 total draws
+Loop: 755 NSR+SR satisfied / 1515 SR satisfied / 64000 total draws
+Loop: 763 NSR+SR satisfied / 1536 SR satisfied / 65000 total draws
+Loop: 772 NSR+SR satisfied / 1558 SR satisfied / 66000 total draws
+Loop: 785 NSR+SR satisfied / 1581 SR satisfied / 67000 total draws
+Loop: 795 NSR+SR satisfied / 1604 SR satisfied / 68000 total draws
+Loop: 807 NSR+SR satisfied / 1625 SR satisfied / 69000 total draws
+Loop: 815 NSR+SR satisfied / 1646 SR satisfied / 70000 total draws
+Loop: 823 NSR+SR satisfied / 1673 SR satisfied / 71000 total draws
+Loop: 838 NSR+SR satisfied / 1698 SR satisfied / 72000 total draws
+Loop: 844 NSR+SR satisfied / 1717 SR satisfied / 73000 total draws
+Loop: 852 NSR+SR satisfied / 1737 SR satisfied / 74000 total draws
+Loop: 865 NSR+SR satisfied / 1760 SR satisfied / 75000 total draws
+Loop: 876 NSR+SR satisfied / 1788 SR satisfied / 76000 total draws
+Loop: 888 NSR+SR satisfied / 1807 SR satisfied / 77000 total draws
+Loop: 901 NSR+SR satisfied / 1829 SR satisfied / 78000 total draws
+Loop: 912 NSR+SR satisfied / 1850 SR satisfied / 79000 total draws
+Loop: 926 NSR+SR satisfied / 1875 SR satisfied / 80000 total draws
+Loop: 939 NSR+SR satisfied / 1897 SR satisfied / 81000 total draws
+Loop: 950 NSR+SR satisfied / 1915 SR satisfied / 82000 total draws
+Loop: 958 NSR+SR satisfied / 1942 SR satisfied / 83000 total draws
+Loop: 972 NSR+SR satisfied / 1967 SR satisfied / 84000 total draws
+Loop: 985 NSR+SR satisfied / 1988 SR satisfied / 85000 total draws
+Loop: 996 NSR+SR satisfied / 2007 SR satisfied / 86000 total draws
+Success.
+1000 draws satisfied both sign and narrative sign restrictions.
+2016 draws satisfied sign restrictions.
+86451 total draws attempted.
+
+: 
+: // IRF, FEVD, HD calculations
+: IRF_set = sr_analysis_funct("irf",SR,opts)
+
+: FEVD_set = sr_analysis_funct("fevd",SR,opts)
+
+: HD_set = sr_analysis_funct("hd",SR,opts)
+
+: 
+: // plot and save
+: irf_plot(asarray(IRF_set,"median"),asarray(IRF_set,"bands"),v,opts)
+file IRF_Supply_Shock.png saved as PNG format
+file IRF_Demand_Shock.png saved as PNG format
+file IRF_Monetary_Policy_Shock.png saved as PNG format
+
+: fevd_plot(asarray(FEVD_set,"median"),asarray(FEVD_set,"bands"),v,opts)
+file FEVD_lninflat.png saved as PNG format
+file FEVD_lnunempl.png saved as PNG format
+file FEVD_lnfedfunds.png saved as PNG format
+
+: hd_plot(asarray(HD_set,"median"),v,opts)
+file HD_lninflat.png saved as PNG format
+file HD_lnunempl.png saved as PNG format
+file HD_lnfedfunds.png saved as PNG format
+
+: end
+----------------------------------------------------------------------------------------------
+
+. 
+. **# /* Short-run Zero Restrictions */
+. 
+. clear *
+
+. use data_shortrun
+
+. tsset date
+
+Time variable: date, 1960q1 to 2000q4
+        Delta: 1 quarter
+
+. 
+. // estimate var
+. var Inflat Unempl FedFunds, lags(1/2) exog(trend trendsq)
+
+Vector autoregression
+
+Sample: 1960q3 thru 2000q4                      Number of obs     =        162
+Log likelihood =  -408.0496                     AIC               =   5.370983
+FPE            =   .0431832                     HQIC              =   5.579918
+Det(Sigma_ml)  =   .0309315                     SBIC              =   5.885582
+
+Equation           Parms      RMSE     R-sq      chi2     P>chi2
+----------------------------------------------------------------
+Inflat                9     1.00518   0.8440   876.7685   0.0000
+Unempl                9     .227565   0.9786   7408.264   0.0000
+FedFunds              9     .935432   0.9182   1818.279   0.0000
+----------------------------------------------------------------
+
+------------------------------------------------------------------------------
+             | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+Inflat       |
+      Inflat |
+         L1. |   .6222922   .0774107     8.04   0.000       .47057    .7740144
+         L2. |   .1881674   .0800454     2.35   0.019     .0312813    .3450534
+             |
+      Unempl |
+         L1. |  -.4381324   .3293572    -1.33   0.183    -1.083661    .2073959
+         L2. |   .2715319   .3248673     0.84   0.403    -.3651963    .9082601
+             |
+    FedFunds |
+         L1. |   .1593551   .0930351     1.71   0.087    -.0229904    .3417006
+         L2. |  -.1366565   .0966373    -1.41   0.157    -.3260622    .0527491
+             |
+       trend |   .0313187   .0122585     2.55   0.011     .0072925    .0553449
+     trendsq |  -.0002014   .0000721    -2.79   0.005    -.0003427   -.0000601
+       _cons |   .8131175   .3473784     2.34   0.019     .1322683    1.493967
+-------------+----------------------------------------------------------------
+Unempl       |
+      Inflat |
+         L1. |   .0414447   .0175252     2.36   0.018      .007096    .0757934
+         L2. |  -.0236929   .0181216    -1.31   0.191    -.0592106    .0118248
+             |
+      Unempl |
+         L1. |   1.475906   .0745638    19.79   0.000     1.329764    1.622048
+         L2. |  -.5174881   .0735473    -7.04   0.000    -.6616382   -.3733381
+             |
+    FedFunds |
+         L1. |    .009629   .0210624     0.46   0.648    -.0316525    .0509106
+         L2. |   .0289828   .0218779     1.32   0.185     -.013897    .0718627
+             |
+       trend |  -.0058093   .0027752    -2.09   0.036    -.0112486     -.00037
+     trendsq |   .0000323   .0000163     1.98   0.048     3.14e-07    .0000643
+       _cons |   .1092108   .0786436     1.39   0.165    -.0449279    .2633494
+-------------+----------------------------------------------------------------
+FedFunds     |
+      Inflat |
+         L1. |  -.0085382   .0720391    -0.12   0.906    -.1497322    .1326559
+         L2. |   .1991643   .0744909     2.67   0.008     .0531648    .3451639
+             |
+      Unempl |
+         L1. |  -1.324056   .3065027    -4.32   0.000     -1.92479   -.7233214
+         L2. |   1.236243   .3023244     4.09   0.000     .6436978    1.828788
+             |
+    FedFunds |
+         L1. |   .9176598   .0865793    10.60   0.000     .7479674    1.087352
+         L2. |  -.0422627   .0899315    -0.47   0.638    -.2185253    .1339999
+             |
+       trend |   .0022177   .0114079     0.19   0.846    -.0201413    .0245767
+     trendsq |  -2.98e-06   .0000671    -0.04   0.965    -.0001345    .0001285
+       _cons |    .454729   .3232734     1.41   0.160    -.1788753    1.088333
+------------------------------------------------------------------------------
+
+. var_nr oir, varname("VAR") optname("A") lintr(trend) quadtr(trendsq)
+
+. var_nr_options_display , optname("A") all
+Identification option (ident): oir
+IRF maximum horizon (nsteps): 40
+IRF impact: one std deviation (0) or unitary (1) (impact): 0
+IRF set to zero one row of companion matrix (shut): 0
+IRF error bands percentile (pctg): 95
+IRF re-sampling method, bootstrap (bs) or wild-bootsrap (wild) (method): bs
+Plot file format (save_fmt): none
+Which variable(s) to plot (shck_plt): all
+Number of desired draws using [narrative] sign restrictions (ndraws): 100
+Maximum failed [narrative] sign restriction draws allowed (err_limit): 4000
+Display progress on [narrative] sign restriction loops (upt): no
+[Narrative] sign restricts updates progress per (updt_frqcy) draws: 10000
+
+. 
+. mata
+------------------------------------------------- mata (type end to exit) --------------------
+: // only plot Inflation
+: A.shck_plt = "Inflat"
+
+: *Additional options
+invalid expression
+r(3000);
+
+: A.save_fmt="png"
+
+: A.pctg=68
+
+: opt_display(A)
+Identification option (ident): oir
+IRF maximum horizon (nsteps): 40
+IRF impact: one std deviation (0) or unitary (1) (impact): 0
+IRF set to zero one row of companion matrix (shut): 0
+IRF error bands percentile (pctg): 68
+IRF re-sampling method, bootstrap (bs) or wild-bootsrap (wild) (method): bs
+Plot file format (save_fmt): png
+Which variable(s) to plot (shck_plt): Inflat
+Number of desired draws using [narrative] sign restrictions (ndraws): 100
+Maximum failed [narrative] sign restriction draws allowed (err_limit): 4000
+Display progress on [narrative] sign restriction loops (upt): no
+[Narrative] sign restricts updates progress per (updt_frqcy) draws: 10000
+
+: 
+: // IRF
+: IRF = irf_funct(VAR,A)
+
+: IRFB = irf_bands_funct(VAR,A)
+
+: 
+: // FEVD
+: FEVD = fevd_funct(VAR,A)
+
+: FEVDB = fevd_bands_funct(VAR,A)
+
+: 
+: // HD
+: HD = hd_funct(VAR,A)
+
+: 
+: // plot all of the above
+: irf_plot(IRF,IRFB,VAR,A)
+file IRF_Inflat.png saved as PNG format
+
+: fevd_plot(FEVD,FEVDB,VAR,A)
+file FEVD_Inflat.png saved as PNG format
+
+: hd_plot(HD,VAR,A)
+file HD_Inflat.png saved as PNG format
+
+: end
+----------------------------------------------------------------------------------------------
+
+. 
+. log close _all
+      name:  <unnamed>
+       log:  C:\Users\jamel\Dropbox\stata\var_nr\var_nr.log
+  log type:  text
+ closed on:  23 Aug 2023, 14:13:52
+----------------------------------------------------------------------------------------------
