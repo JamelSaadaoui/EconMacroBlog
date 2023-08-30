@@ -6,7 +6,7 @@ This repository houses the code and data to accompany the [Jamel Saadaoui's **Ec
 
 |Blog Topic (EconMacro link) |Codes and Data (Github Repository)|Date|
 |:----|:----|:----|
-|[VARS Stata](https://www.jamelsaadaoui.com/sign-and-narrative-restrictions-in-svar-with-stata/)|["Sign and Narrative Restrictions in SVAR with Stata"](https://www.jamelsaadaoui.com/sign-and-narrative-restrictions-in-svar-with-stata/) | August 23, 2023|
+|[VARS Stata](https://www.jamelsaadaoui.com/sign-and-narrative-restrictions-in-svar-with-stata/)|["Sign and Narrative Restrictions in SVAR with Stata"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Sign%20and%20Narrative%20Restrictions%20in%20SVAR%20with%20Stata) | August 23, 2023|
 |[Wolfram Language](https://www.jamelsaadaoui.com/how-to-use-the-wolfram-language-in-a-jupyter-notebook-100th-blog/)|["How to use the Wolfram Language in a Jupyter Notebook (100th blog)"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/How%20to%20use%20the%20Wolfram%20Language%20in%20a%20Jupyter%20Notebook%20(100th%20blog)) | August 19, 2023|
 |[Local Projections](https://www.jamelsaadaoui.com/illustrating-the-new-lpirf-stata-18s-command/)|["Illustrating the new LPIRF Stata 18’s command"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Illustrating%20the%20new%20LPIRF%20Stata%2018s%20command) | May 10, 2023|
 |[Power](https://www.jamelsaadaoui.com/size-and-power-using-stata-a-simple-example/)|["Size and Power using Stata: a Simple Example"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Size%20and%20Power%20using%20Stata%20a%20Simple%20Example) | May 09, 2023|
