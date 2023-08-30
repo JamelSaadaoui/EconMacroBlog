@@ -19,7 +19,7 @@ constraint 4 _b[chi] = 2
 
 // Estimate the remaining parameters
 
-dsgenl (1/c = {beta}*(1/F.c)*(1+F.r-{delta}))                ///
+dsgenl (1/c = {beta}*(1/F.c)*(1+F.r-{delta}))                            ///
 			({chi}*h = w/c)					 ///
 			(y = c + i)                                      ///
 			(y = z*k^{alpha}*h^(1-{alpha}))                  ///
