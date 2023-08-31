@@ -19,8 +19,8 @@ constraint 4 _b[chi] = 2
 
 // Estimate the remaining parameters
 
-dsgenl (1/c = {beta}*(1/F.c)*(1+F.r-{delta}))                            ///
-			({chi}*h = w/c)					 ///
+dsgenl (1/c = {beta}*(1/F.c)*(1+F.r-{delta}))                ///
+			({chi}*h = w/c)									 ///
 			(y = c + i)                                      ///
 			(y = z*k^{alpha}*h^(1-{alpha}))                  ///
 			(r = {alpha}*y/k)                                ///
@@ -44,7 +44,7 @@ irf set rbcirf, replace
 
 irf create est, step(20) replace
 
-irf graph irf, impulse(z) response(y c i h w z k)            ///
+irf graph irf, impulse(z) response(y c i h w z)              ///
   byopts(yrescale) ttitle(Effects of a Productivity shock (z))
   
 graph rename prod, replace
