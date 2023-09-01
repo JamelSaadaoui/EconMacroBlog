@@ -1,0 +1,899 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='WolframDesktop 13.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       161,          7]
+NotebookDataLength[     33648,        890]
+NotebookOptionsPosition[     26722,        783]
+NotebookOutlinePosition[     27071,        798]
+CellTagsIndexPosition[     27028,        795]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+Cell[TextData[{
+ StyleBox[ButtonBox["A simple model of the determination of the GDP with \
+Mathematica",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["https://community.wolfram.com/groups/-/m/t/2479315"], None},
+  ButtonNote->"https://community.wolfram.com/groups/-/m/t/2479315"],
+  FontWeight->"Bold",
+  FontTracking->"Plain"],
+ "\n",
+ StyleBox["by ",
+  FontSlant->"Italic"],
+ StyleBox[ButtonBox["Jamel Saadaoui",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["https://community.wolfram.com/web/saadaoui"], None},
+  ButtonNote->"https://community.wolfram.com/web/saadaoui"],
+  FontSlant->"Italic"],
+ StyleBox["\nUniversity of Strasbourg, BETA,CNRS\n",
+  FontSlant->"Italic"],
+ StyleBox[ButtonBox["https://www.jamelsaadaoui.com/",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["https://www.jamelsaadaoui.com/"], None},
+  ButtonNote->"https://www.jamelsaadaoui.com/"],
+  FontSlant->"Italic"]
+}], "Text",
+ CellChangeTimes->{{3.8486715534101505`*^9, 3.8486715767517834`*^9}, {
+  3.8542737821182156`*^9, 3.8542737883144855`*^9}, {3.854618058203452*^9, 
+  3.8546180737683973`*^9}, {3.8546269077374525`*^9, 3.8546269077384524`*^9}, {
+  3.854628860489112*^9, 3.8546288604909286`*^9}}],
+
+Cell[TextData[{
+ "In this post, I will show how to build a simple model of the determination \
+of the GDP with government and trade. The idea is to find the equilibrium \
+GDP, where desired aggregate expenditures are equal to the level of good and \
+services produced. To this end, I will use Mathematica 12.3 and the chapter \
+16 of the following book: ",
+ ButtonBox["https://global.oup.com/ukhe/product/economics-9780198791034",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["https://global.oup.com/ukhe/product/economics-9780198791034"], None},
+  
+  ButtonNote->"https://global.oup.com/ukhe/product/economics-9780198791034"],
+ ", that I use in my lecture of Principles of Macroeconomics at the \
+University of Strasbourg. Let me explain, step by step, the notebook I \
+reproduced below."
+}], "Text",
+ CellChangeTimes->{
+  3.854273879405863*^9, {3.854274106619562*^9, 3.854274106620645*^9}, {
+   3.8542741401341286`*^9, 3.8542741642188597`*^9}, {3.8542755901975946`*^9, 
+   3.854275671397905*^9}, {3.854275798069564*^9, 3.8542758340425205`*^9}, {
+   3.8542776332130237`*^9, 3.85427765615254*^9}, {3.8546180818647776`*^9, 
+   3.8546180818657627`*^9}, {3.8546288377759686`*^9, 3.854628838240715*^9}}],
+
+Cell["\<\
+Presentation notebook of this work attached at the end of this post\
+\>", "Text",
+ CellChangeTimes->{{3.854629799749276*^9, 3.8546298436905265`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell["I. The simple model with a tax rate on GDP", "Section",
+ CellChangeTimes->{{3.854275532235303*^9, 3.8542755646050215`*^9}, {
+  3.854331890829341*^9, 3.8543318980189323`*^9}}],
+
+Cell[TextData[StyleBox["First, I have to clear the symbols to be sure that \
+the previous registered symbol will not interfere with your model . Use \
+(*something*) to insert the comment \"something\" :",
+ FontFamily->"Source Sans Pro"]], "Text",
+ CellChangeTimes->{{3.8542741705859585`*^9, 3.854274179529273*^9}, 
+   3.854275304051573*^9}],
+
+Cell[BoxData[
+ RowBox[{
+  RowBox[{"ClearAll", "[", "\"\<Global`*\>\"", "]"}], " ", 
+  RowBox[{"(*", 
+   RowBox[{
+   "completely", " ", "clear", " ", "global", " ", "symbols", " ", "to", " ", 
+    "start", " ", "fresh"}], "*)"}]}]], "Input",
+ CellChangeTimes->{{3.8486686379347377`*^9, 3.8486686461617303`*^9}, {
+   3.8486691848982663`*^9, 3.848669205248169*^9}, {3.8487078570232325`*^9, 
+   3.8487078614004164`*^9}, {3.8487081709959803`*^9, 3.8487081812896748`*^9}, 
+   3.854277955690858*^9},
+ CellLabel->"In[2]:="],
+
+Cell[TextData[StyleBox["Then, I will use a first version of the model, with a \
+tax rate. I name the equation \[OpenCurlyQuote]eq\[CloseCurlyQuote] and I \
+declare that my model can be reduced to one equation, where the GPD is in \
+function of a consumption function, exogenous investment, exogenous \
+government expenditures, exogenous exports, and an import function.",
+ FontFamily->"Source Sans Pro",
+ FontWeight->"Plain"]], "Text",
+ CellChangeTimes->{
+  3.8542742783212934`*^9, {3.8542752762298284`*^9, 3.8542752774228277`*^9}, {
+   3.854332511781516*^9, 3.8543325209397135`*^9}, {3.8543333856437197`*^9, 
+   3.8543334209615507`*^9}, {3.8543334563047276`*^9, 3.854333467497886*^9}},
+ FontFamily->"Times New Roman",
+ FontWeight->"Normal"],
+
+Cell[BoxData[
+ TemplateBox[<|"boxes" -> FormBox[
+     RowBox[{
+       StyleBox["Y", "TI"], "\[LongEqual]", 
+       StyleBox["C", "TI"], "+", 
+       StyleBox["F", "TI"], "+", 
+       StyleBox["G", "TI"], "+", 
+       RowBox[{"(", 
+         RowBox[{
+           StyleBox["X", "TI"], "-", 
+           StyleBox["M", "TI"]}], ")"}]}], TraditionalForm], "errors" -> {}, 
+   "input" -> "Y = C + F + G +(X - M)", "state" -> "Boxes"|>,
+  "TeXAssistantTemplate"]], "DisplayFormulaNumbered",
+ CellChangeTimes->{{3.8543313030767927`*^9, 3.8543313045935802`*^9}, {
+   3.854331366778045*^9, 3.8543313742809753`*^9}, {3.854331788183965*^9, 
+   3.8543318422883472`*^9}, 3.854331910373227*^9, {3.8543325457994075`*^9, 
+   3.8543325485680113`*^9}, {3.8543328842415423`*^9, 
+   3.8543328933183784`*^9}, {3.854332960056082*^9, 3.8543330173011875`*^9}}],
+
+Cell[BoxData[
+ FormBox[
+  TemplateBox[<|"boxes" -> FormBox[
+      RowBox[{
+        StyleBox["C", "TI"], "\[LongEqual]", 
+        SubscriptBox[
+         StyleBox["c", "TI"], "0"], "+", 
+        SubscriptBox[
+         StyleBox["c", "TI"], "1"], 
+        RowBox[{"(", 
+          RowBox[{"1", "-", 
+            StyleBox["t", "TI"]}], ")"}], 
+        StyleBox["Y", "TI"]}], TraditionalForm], "errors" -> {}, "input" -> 
+    "C=c_{0}+c_{1}(1-t)Y", "state" -> "Boxes"|>,
+   "TeXAssistantTemplate"], TraditionalForm]], "DisplayFormulaNumbered",
+ CellChangeTimes->{
+  3.8543330440920925`*^9, {3.8543331228351235`*^9, 3.8543331308293247`*^9}, {
+   3.854333175383358*^9, 3.85433317913244*^9}}],
+
+Cell[BoxData[
+ TemplateBox[<|"boxes" -> FormBox[
+     RowBox[{
+       StyleBox["M", "TI"], "\[LongEqual]", 
+       SubscriptBox[
+        StyleBox["m", "TI"], "1"], 
+       StyleBox["Y", "TI"]}], TraditionalForm], "errors" -> {}, "input" -> 
+   "M=m_{1}Y", "state" -> "Boxes"|>,
+  "TeXAssistantTemplate"]], "DisplayFormulaNumbered",
+ CellChangeTimes->{3.854333255505265*^9}],
+
+Cell[TextData[StyleBox["I use \[OpenCurlyQuote]f\[CloseCurlyQuote] for the \
+investment to not confuse with imaginary numbers and for the french \
+\[OpenCurlyDoubleQuote]formation brute de capital \
+fixe\[CloseCurlyDoubleQuote]. You have to use \
+\[OpenCurlyDoubleQuote]Ctrl+Enter\[CloseCurlyDoubleQuote] to execute the \
+command. The above line gives this the following output:",
+ FontFamily->"Source Sans Pro",
+ FontWeight->"Plain"]], "Text",
+ CellChangeTimes->{3.8543334641277885`*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"eq", "=", 
+  RowBox[{"y", "==", 
+   RowBox[{"c0", "+", 
+    RowBox[{"c1", "*", 
+     RowBox[{"(", 
+      RowBox[{"1", "-", "t"}], ")"}], "*", "y"}], "+", "f", "+", "g", "+", 
+    "x", "-", 
+    RowBox[{"m1", "*", "y", "    ", 
+     RowBox[{"(*", 
+      RowBox[{"f", " ", "stands", " ", "for", " ", "the", " ", "investment"}],
+       "*)"}]}]}]}]}]], "Input",
+ CellLabel->"In[3]:="],
+
+Cell[BoxData[
+ RowBox[{"y", "\[Equal]", 
+  RowBox[{"c0", "+", "f", "+", "g", "+", "x", "-", 
+   RowBox[{"m1", " ", "y"}], "+", 
+   RowBox[{"c1", " ", 
+    RowBox[{"(", 
+     RowBox[{"1", "-", "t"}], ")"}], " ", "y"}]}]}]], "Output",
+ CellChangeTimes->{3.8542743190613604`*^9, 3.854278100165923*^9, 
+  3.8543319153428707`*^9},
+ CellLabel->"Out[3]="]
+}, Open  ]],
+
+Cell["\<\
+Then, I solve the model and I store the result in an object \
+\[OpenCurlyQuote]PIB\[CloseCurlyQuote] (the french acronym for GDP):\
+\>", "Text",
+ CellChangeTimes->{3.854274354894725*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"PIB", "=", 
+  RowBox[{"Solve", "[", 
+   RowBox[{"eq", ",", "y"}], "]"}]}]], "Input",
+ CellLabel->"In[4]:="],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"{", 
+   RowBox[{"y", "\[Rule]", 
+    FractionBox[
+     RowBox[{"c0", "+", "f", "+", "g", "+", "x"}], 
+     RowBox[{"1", "-", "c1", "+", "m1", "+", 
+      RowBox[{"c1", " ", "t"}]}]]}], "}"}], "}"}]], "Output",
+ CellChangeTimes->{3.8542744041512737`*^9, 3.854278103871834*^9, 
+  3.8543319196324186`*^9},
+ CellLabel->"Out[4]="]
+}, Open  ]],
+
+Cell["\<\
+Now, I want to compute the algebraic value of the multiplier effect of this \
+model. By definition, the multiplier is the value of a change in the GDP \
+after an increase in an exogenous expenditure. In this example, I choose to \
+evaluate the value of change in the GDP after an increase in exogenous \
+government spending. I store the value in an object called \
+\[OpenCurlyQuote]Multiplier\[CloseCurlyQuote]. The numerical value will \
+depend on the value of the parameters of your models.\
+\>", "Text",
+ CellChangeTimes->{3.854274467769058*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"Multiplier", "=", 
+  RowBox[{"D", "[", 
+   RowBox[{"PIB", ",", "g"}], "]"}]}]], "Input",
+ CellLabel->"In[5]:="],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"{", 
+   RowBox[{"0", "\[Rule]", 
+    FractionBox["1", 
+     RowBox[{"1", "-", "c1", "+", "m1", "+", 
+      RowBox[{"c1", " ", "t"}]}]]}], "}"}], "}"}]], "Output",
+ CellChangeTimes->{3.854274490702373*^9, 3.8542781104980555`*^9, 
+  3.854331941881235*^9},
+ CellLabel->"Out[5]="]
+}, Open  ]],
+
+Cell["\<\
+In the chapter 16 of the book, we can read that the multiplier is positively \
+linked with the marginal propensity to consume and is negatively linked with \
+the tax rate and the marginal propensity to import. I will derive the value \
+of the multiplier relatively to these three last variables. The partial \
+derivative of the multiplier effect relative to marginal propensity to import \
+is indeed negative:\
+\>", "Text",
+ CellChangeTimes->{3.854274506946092*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"partialm1", "=", 
+  RowBox[{"D", "[", 
+   RowBox[{"Multiplier", ",", "m1"}], "]"}]}]], "Input",
+ CellLabel->"In[6]:="],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"{", 
+   RowBox[{"0", "\[Rule]", 
+    RowBox[{"-", 
+     FractionBox["1", 
+      SuperscriptBox[
+       RowBox[{"(", 
+        RowBox[{"1", "-", "c1", "+", "m1", "+", 
+         RowBox[{"c1", " ", "t"}]}], ")"}], "2"]]}]}], "}"}], "}"}]], "Output",\
+
+ CellChangeTimes->{3.8542745292145967`*^9, 3.8542781136217356`*^9, 
+  3.854331958415594*^9},
+ CellLabel->"Out[6]="]
+}, Open  ]],
+
+Cell["\<\
+Besides, the partial derivative of the multiplier effect relative to the tax \
+rate is also negative :\
+\>", "Text",
+ CellChangeTimes->{{3.854274538140603*^9, 3.854274558699994*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"partialt", "=", 
+  RowBox[{"D", "[", 
+   RowBox[{"Multiplier", ",", "t"}], "]"}]}]], "Input",
+ CellLabel->"In[7]:="],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"{", 
+   RowBox[{"0", "\[Rule]", 
+    RowBox[{"-", 
+     FractionBox["c1", 
+      SuperscriptBox[
+       RowBox[{"(", 
+        RowBox[{"1", "-", "c1", "+", "m1", "+", 
+         RowBox[{"c1", " ", "t"}]}], ")"}], "2"]]}]}], "}"}], "}"}]], "Output",\
+
+ CellChangeTimes->{3.8542746017301035`*^9, 3.8542781163974733`*^9, 
+  3.8543319619127893`*^9},
+ CellLabel->"Out[7]="]
+}, Open  ]],
+
+Cell["\<\
+Finally, the partial derivative of the multiplier effect relative to the \
+marginal propensity to consume is positive.\
+\>", "Text",
+ CellChangeTimes->{3.8542746241196585`*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[
+ RowBox[{"partialc1", "=", 
+  RowBox[{"D", "[", 
+   RowBox[{"Multiplier", ",", "c1"}], "]"}]}]], "Input",
+ CellLabel->"In[8]:="],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"{", 
+   RowBox[{"0", "\[Rule]", 
+    RowBox[{"-", 
+     FractionBox[
+      RowBox[{
+       RowBox[{"-", "1"}], "+", "t"}], 
+      SuperscriptBox[
+       RowBox[{"(", 
+        RowBox[{"1", "-", "c1", "+", "m1", "+", 
+         RowBox[{"c1", " ", "t"}]}], ")"}], "2"]]}]}], "}"}], "}"}]], "Output",\
+
+ CellChangeTimes->{3.854274642142873*^9, 3.854278120092539*^9, 
+  3.8543319645881643`*^9},
+ CellLabel->"Out[8]="]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["II. A little numerical exercise", "Section",
+ CellChangeTimes->{{3.854275857630062*^9, 3.854275890763714*^9}, {
+  3.8543319689833484`*^9, 3.854331970755375*^9}}],
+
+Cell["\<\
+Now, we run a numerical example to determine (a) the equilibrium GDP, (b) the \
+size of the multiplier effect, and (c) the sign of the three partial \
+derivatives by choosing vales for the exogenous variables and the parameters:\
+\
+\>", "Text",
+ CellChangeTimes->{
+  3.8542746582915735`*^9, {3.854331989666911*^9, 3.8543319919685235`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"c0", "=", "100"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"c1", "=", "0.8"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"t", "=", "0.2"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"f", "=", "1000"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"g", "=", "100"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"x", "=", "500"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"m1", "=", "0.25"}], 
+  ";"}], "\[IndentingNewLine]", "PIB", "\[IndentingNewLine]", "Multiplier", "\
+\[IndentingNewLine]", "partialm1", "\[IndentingNewLine]", "partialt", "\
+\[IndentingNewLine]", "partialc1"}], "Input",
+ CellLabel->"In[9]:="],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"{", 
+   RowBox[{"y", "\[Rule]", "2786.8852459016393`"}], "}"}], "}"}]], "Output",
+ CellChangeTimes->{3.8542746852491083`*^9, 3.8542781287103176`*^9, 
+  3.854331996448839*^9},
+ CellLabel->"Out[16]="],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"{", 
+   RowBox[{"0", "\[Rule]", "1.639344262295082`"}], "}"}], "}"}]], "Output",
+ CellChangeTimes->{3.8542746852491083`*^9, 3.8542781287103176`*^9, 
+  3.8543319964531336`*^9},
+ CellLabel->"Out[17]="],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"{", 
+   RowBox[{"0", "\[Rule]", 
+    RowBox[{"-", "2.6874496103198067`"}]}], "}"}], "}"}]], "Output",
+ CellChangeTimes->{3.8542746852491083`*^9, 3.8542781287103176`*^9, 
+  3.854331996458681*^9},
+ CellLabel->"Out[18]="],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"{", 
+   RowBox[{"0", "\[Rule]", 
+    RowBox[{"-", "2.1499596882558456`"}]}], "}"}], "}"}]], "Output",
+ CellChangeTimes->{3.8542746852491083`*^9, 3.8542781287103176`*^9, 
+  3.8543319964622974`*^9},
+ CellLabel->"Out[19]="],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"{", 
+   RowBox[{"0", "\[Rule]", "2.1499596882558456`"}], "}"}], "}"}]], "Output",
+ CellChangeTimes->{3.8542746852491083`*^9, 3.8542781287103176`*^9, 
+  3.854331996465847*^9},
+ CellLabel->"Out[20]="]
+}, Open  ]],
+
+Cell["\<\
+I use '; ' to hide the output for the parameters . We found the equilibrium \
+value for the GDP (2786.9), the size of the multiplier (1.63934), and the \
+excepted signs for the partial derivative .\
+\>", "Text",
+ CellChangeTimes->{{3.854274705189554*^9, 3.854274720229842*^9}, {
+  3.854332004795685*^9, 3.854332009320404*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["III. The simple model with lump-sum taxes", "Section",
+ CellChangeTimes->{{3.854275926626668*^9, 3.8542759684089766`*^9}, {
+  3.8543320225278053`*^9, 3.8543320246313868`*^9}}],
+
+Cell["\<\
+I can use a version of the model with lump-sum taxes to evaluate the balanced \
+budget multiplier (a simultaneous and equivalent increase in public \
+consumption and in taxes).\
+\>", "Text",
+ CellChangeTimes->{{3.854274752385501*^9, 3.854274783634199*^9}, {
+   3.8543320384094987`*^9, 3.854332052611625*^9}, {3.8543328419153066`*^9, 
+   3.854332849372017*^9}, 3.854333788978405*^9}],
+
+Cell[BoxData[
+ TemplateBox[<|"boxes" -> FormBox[
+     RowBox[{
+       StyleBox["Y", "TI"], "\[LongEqual]", 
+       StyleBox["C", "TI"], "+", 
+       StyleBox["F", "TI"], "+", 
+       StyleBox["G", "TI"], "+", 
+       RowBox[{"(", 
+         RowBox[{
+           StyleBox["X", "TI"], "-", 
+           StyleBox["M", "TI"]}], ")"}]}], TraditionalForm], "errors" -> {}, 
+   "input" -> "Y=C+F+G+(X-M)", "state" -> "Boxes"|>,
+  "TeXAssistantTemplate"]], "DisplayFormulaNumbered",
+ CellChangeTimes->{{3.8543338131485853`*^9, 3.8543338316691437`*^9}}],
+
+Cell[BoxData[
+ TemplateBox[<|"boxes" -> FormBox[
+     RowBox[{
+       StyleBox["C", "TI"], "\[LongEqual]", 
+       SubscriptBox[
+        StyleBox["c", "TI"], "0"], "+", 
+       SubscriptBox[
+        StyleBox["c", "TI"], "1"], 
+       RowBox[{"(", 
+         RowBox[{
+           StyleBox["Y", "TI"], "-", 
+           StyleBox["T", "TI"]}], ")"}]}], TraditionalForm], "errors" -> {}, 
+   "input" -> "C=c_{0}+c_{1}(Y-T)", "state" -> "Boxes"|>,
+  "TeXAssistantTemplate"]], "DisplayFormulaNumbered",
+ CellChangeTimes->{
+  3.854333842903406*^9, {3.8543343566666684`*^9, 3.854334373463025*^9}}],
+
+Cell[BoxData[
+ TemplateBox[<|"boxes" -> FormBox[
+     RowBox[{
+       StyleBox["M", "TI"], "\[LongEqual]", 
+       SubscriptBox[
+        StyleBox["m", "TI"], "1"], 
+       StyleBox["Y", "TI"]}], TraditionalForm], "errors" -> {}, "input" -> 
+   "M=m_{1}Y", "state" -> "Boxes"|>,
+  "TeXAssistantTemplate"]], "DisplayFormulaNumbered",
+ CellChangeTimes->{3.8543343863221407`*^9}],
+
+Cell["The above lines give the following output:", "Text",
+ CellChangeTimes->{{3.8543344210415955`*^9, 3.8543344431174355`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"ClearAll", "[", "\"\<Global`*\>\"", "]"}], " ", 
+  RowBox[{"(*", 
+   RowBox[{
+   "completely", " ", "clear", " ", "global", " ", "symbols", " ", "to", " ", 
+    "start", " ", "fresh"}], "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"eq", "=", 
+   RowBox[{"y", "==", 
+    RowBox[{"c0", "+", 
+     RowBox[{"c1", "*", 
+      RowBox[{"(", 
+       RowBox[{"y", "-", "t"}], ")"}]}], "+", "f", "+", "g", "+", "x", "-", 
+     RowBox[{"m1", "*", "y"}]}]}]}], "  ", 
+  RowBox[{"(*", 
+   RowBox[{
+    RowBox[{"f", " ", "stands", " ", "for", " ", "the", " ", "investment"}], 
+    ",", " ", 
+    RowBox[{
+     RowBox[{"t", " ", "is", " ", "now", " ", "a", " ", "lump"}], "-", 
+     RowBox[{"sum", " ", "tax"}]}]}], "*)"}]}], "\[IndentingNewLine]", 
+ RowBox[{"PIB", "=", 
+  RowBox[{"Solve", "[", 
+   RowBox[{"eq", ",", "y"}], "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"Multiplier", "=", 
+  RowBox[{"D", "[", 
+   RowBox[{"PIB", ",", "g"}], "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"partialm1", "=", 
+  RowBox[{"D", "[", 
+   RowBox[{"Multiplier", ",", "m1"}], "]"}]}], "\[IndentingNewLine]", 
+ RowBox[{"partialc1", "=", 
+  RowBox[{"D", "[", 
+   RowBox[{"Multiplier", ",", "c1"}], "]"}]}]}], "Input",
+ CellChangeTimes->{{3.854274840075416*^9, 3.854274850843987*^9}},
+ CellLabel->"In[20]:="],
+
+Cell[BoxData[
+ RowBox[{"y", "\[Equal]", 
+  RowBox[{"c0", "+", "f", "+", "g", "+", "x", "-", 
+   RowBox[{"m1", " ", "y"}], "+", 
+   RowBox[{"c1", " ", 
+    RowBox[{"(", 
+     RowBox[{
+      RowBox[{"-", "t"}], "+", "y"}], ")"}]}]}]}]], "Output",
+ CellChangeTimes->{3.854274857637577*^9, 3.8542749944783115`*^9, 
+  3.8542781359416323`*^9},
+ CellLabel->"Out[21]="],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"{", 
+   RowBox[{"y", "\[Rule]", 
+    FractionBox[
+     RowBox[{"c0", "+", "f", "+", "g", "-", 
+      RowBox[{"c1", " ", "t"}], "+", "x"}], 
+     RowBox[{"1", "-", "c1", "+", "m1"}]]}], "}"}], "}"}]], "Output",
+ CellChangeTimes->{3.854274857637577*^9, 3.8542749944783115`*^9, 
+  3.8542781359487305`*^9},
+ CellLabel->"Out[22]="],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"{", 
+   RowBox[{"0", "\[Rule]", 
+    FractionBox["1", 
+     RowBox[{"1", "-", "c1", "+", "m1"}]]}], "}"}], "}"}]], "Output",
+ CellChangeTimes->{3.854274857637577*^9, 3.8542749944783115`*^9, 
+  3.854278135955746*^9},
+ CellLabel->"Out[23]="],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"{", 
+   RowBox[{"0", "\[Rule]", 
+    RowBox[{"-", 
+     FractionBox["1", 
+      SuperscriptBox[
+       RowBox[{"(", 
+        RowBox[{"1", "-", "c1", "+", "m1"}], ")"}], "2"]]}]}], "}"}], 
+  "}"}]], "Output",
+ CellChangeTimes->{3.854274857637577*^9, 3.8542749944783115`*^9, 
+  3.8542781359615197`*^9},
+ CellLabel->"Out[24]="],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"{", 
+   RowBox[{"0", "\[Rule]", 
+    FractionBox["1", 
+     SuperscriptBox[
+      RowBox[{"(", 
+       RowBox[{"1", "-", "c1", "+", "m1"}], ")"}], "2"]]}], "}"}], 
+  "}"}]], "Output",
+ CellChangeTimes->{3.854274857637577*^9, 3.8542749944783115`*^9, 
+  3.854278135964512*^9},
+ CellLabel->"Out[25]="]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["A second little numerical exercise", "Section",
+ CellChangeTimes->{{3.854276037700451*^9, 3.854276050209118*^9}}],
+
+Cell["\<\
+To simplify, I use a version of this model with lump-sum taxes where the \
+propensity to import is equal to zero and evaluate the balanced budget \
+multiplier:\
+\>", "Text",
+ CellChangeTimes->{3.8542748900534396`*^9, 3.854278138378829*^9}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"c0", "=", "100"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"c1", "=", "0.8"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"t", "=", "100"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"f", "=", "1000"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"g", "=", "100"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"x", "=", "500"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"m1", "=", "0.0"}], 
+  ";"}], "\[IndentingNewLine]", "PIB", "\[IndentingNewLine]", "Multiplier", "\
+\[IndentingNewLine]", "partialm1", "\[IndentingNewLine]", "partialc1"}], \
+"Input",
+ CellChangeTimes->{{3.854275042445199*^9, 3.8542750566350117`*^9}},
+ CellLabel->"In[26]:="],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"{", 
+   RowBox[{"y", "\[Rule]", "8100.000000000002`"}], "}"}], "}"}]], "Output",
+ CellChangeTimes->{3.854274942178092*^9, 3.8542750198138075`*^9, 
+  3.854275060288004*^9, 3.8542781468651414`*^9},
+ CellLabel->"Out[33]="],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"{", 
+   RowBox[{"0", "\[Rule]", "5.000000000000001`"}], "}"}], "}"}]], "Output",
+ CellChangeTimes->{3.854274942178092*^9, 3.8542750198138075`*^9, 
+  3.854275060288004*^9, 3.8542781468723946`*^9},
+ CellLabel->"Out[34]="],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"{", 
+   RowBox[{"0", "\[Rule]", 
+    RowBox[{"-", "25.000000000000014`"}]}], "}"}], "}"}]], "Output",
+ CellChangeTimes->{3.854274942178092*^9, 3.8542750198138075`*^9, 
+  3.854275060288004*^9, 3.8542781468785086`*^9},
+ CellLabel->"Out[35]="],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"{", 
+   RowBox[{"0", "\[Rule]", "25.000000000000014`"}], "}"}], "}"}]], "Output",
+ CellChangeTimes->{3.854274942178092*^9, 3.8542750198138075`*^9, 
+  3.854275060288004*^9, 3.8542781468868732`*^9},
+ CellLabel->"Out[36]="]
+}, Open  ]],
+
+Cell["\<\
+After an increase in public expenditures and in taxes, we can observe that \
+the balanced budget multiplier is equal to one since the equilibrium GDP \
+moves from 8000 to 8001 (\[OpenCurlyQuote]g\[CloseCurlyQuote] moved from 100 \
+to 101 and \[OpenCurlyQuote]t\[CloseCurlyQuote] moved from 100 to 101), as in \
+the balanced budget multiplier (Haavelmo, 1945):\
+\>", "Text",
+ CellChangeTimes->{{3.854275080636598*^9, 3.8542750854447365`*^9}, {
+  3.854276585056282*^9, 3.854276601830881*^9}, {3.8542767008390656`*^9, 
+  3.8542767020166044`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"c0", "=", "100"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"c1", "=", "0.8"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"t", "=", "101"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"f", "=", "1000"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"g", "=", "101"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"x", "=", "500"}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"m1", "=", "0.0"}], 
+  ";"}], "\[IndentingNewLine]", "PIB", "\[IndentingNewLine]", "Multiplier", "\
+\[IndentingNewLine]", "partialm1", "\[IndentingNewLine]", "partialc1"}], \
+"Input",
+ CellChangeTimes->{{3.854275110000991*^9, 3.854275111820979*^9}},
+ CellLabel->"In[37]:="],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"{", 
+   RowBox[{"y", "\[Rule]", "8101.000000000002`"}], "}"}], "}"}]], "Output",
+ CellChangeTimes->{3.85427511304615*^9, 3.8542781563585205`*^9},
+ CellLabel->"Out[44]="],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"{", 
+   RowBox[{"0", "\[Rule]", "5.000000000000001`"}], "}"}], "}"}]], "Output",
+ CellChangeTimes->{3.85427511304615*^9, 3.854278156366935*^9},
+ CellLabel->"Out[45]="],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"{", 
+   RowBox[{"0", "\[Rule]", 
+    RowBox[{"-", "25.000000000000014`"}]}], "}"}], "}"}]], "Output",
+ CellChangeTimes->{3.85427511304615*^9, 3.8542781563703547`*^9},
+ CellLabel->"Out[46]="],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"{", 
+   RowBox[{"0", "\[Rule]", "25.000000000000014`"}], "}"}], "}"}]], "Output",
+ CellChangeTimes->{3.85427511304615*^9, 3.854278156387807*^9},
+ CellLabel->"Out[47]="]
+}, Open  ]]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell["Bibliographic references", "Section",
+ CellChangeTimes->{{3.854275159448784*^9, 3.854275169730756*^9}, {
+  3.8542781809018545`*^9, 3.85427819050581*^9}}],
+
+Cell[TextData[{
+ "Lipsey, R., & Chrystal, A. (2020). Economics. Oxford University Press. ",
+ ButtonBox["https://global.oup.com/ukhe/product/economics-9780198791034",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["https://global.oup.com/ukhe/product/economics-9780198791034"], None},
+  
+  ButtonNote->"https://global.oup.com/ukhe/product/economics-9780198791034"]
+}], "Item",
+ CellChangeTimes->{{3.8542751850912533`*^9, 3.854275208805563*^9}, {
+   3.8542754834465904`*^9, 3.854275485188819*^9}, {3.854276622512394*^9, 
+   3.854276624012724*^9}, 3.8542768677400084`*^9, {3.8542769577853823`*^9, 
+   3.8542770389295506`*^9}, {3.8546182103083677`*^9, 3.854618210311737*^9}}],
+
+Cell[TextData[{
+ "Haavelmo, T. (1945). Multiplier Effects of a Balanced Budget. Econometrica, \
+13(4), 311\[Dash]318. ",
+ ButtonBox["https://doi.org/10.2307/1906924",
+  BaseStyle->"Hyperlink",
+  ButtonData->{
+    URL["https://doi.org/10.2307/1906924"], None},
+  ButtonNote->"https://doi.org/10.2307/1906924"]
+}], "Item",
+ CellChangeTimes->{{3.8542751850912533`*^9, 3.854275208805563*^9}, {
+   3.8542754834465904`*^9, 3.854275485188819*^9}, {3.854276622512394*^9, 
+   3.854276624012724*^9}, 3.8542768677400084`*^9, {3.8542769577853823`*^9, 
+   3.8542770287338147`*^9}, {3.854618217691036*^9, 3.8546182176915855`*^9}}]
+}, Open  ]]
+},
+WindowSize->{1012.5, 501.75},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
+FrontEndVersion->"13.0 for Microsoft Windows (64-bit) (December 6, 2021)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[561, 20, 1190, 30, 70, "Text",ExpressionUUID->"e5817fda-87f8-4f40-b062-5b269a7602be"],
+Cell[1754, 52, 1204, 21, 70, "Text",ExpressionUUID->"ccbcea04-79dd-42eb-a192-4e083f647eb4"],
+Cell[2961, 75, 159, 3, 70, "Text",ExpressionUUID->"73fd2089-9ced-4bea-a137-d767f508c88e"],
+Cell[CellGroupData[{
+Cell[3145, 82, 180, 2, 70, "Section",ExpressionUUID->"f7325ecb-d422-4166-966a-161f49464036"],
+Cell[3328, 86, 340, 5, 70, "Text",ExpressionUUID->"fcc09a11-3558-487c-b52c-25880c1aa081"],
+Cell[3671, 93, 515, 11, 70, "Input",ExpressionUUID->"6d5ed54f-565e-45aa-bd6a-05c000d62de1"],
+Cell[4189, 106, 741, 12, 70, "Text",ExpressionUUID->"61261dac-b5a3-44bf-8317-2f38c21cc3dd"],
+Cell[4933, 120, 832, 17, 70, "DisplayFormulaNumbered",ExpressionUUID->"3246cfb6-dca1-4fea-91cf-7891dabd9d81"],
+Cell[5768, 139, 682, 17, 70, "DisplayFormulaNumbered",ExpressionUUID->"0ad82033-40f7-4a68-8764-3d76f2e9fefe"],
+Cell[6453, 158, 373, 9, 70, "DisplayFormulaNumbered",ExpressionUUID->"bae2fb3f-de7d-44ff-92c0-dbe5033431ec"],
+Cell[6829, 169, 488, 8, 70, "Text",ExpressionUUID->"3e4d78ff-cc07-4c37-abfb-ee906fe56f50"],
+Cell[CellGroupData[{
+Cell[7342, 181, 405, 12, 70, "Input",ExpressionUUID->"c5432343-c066-4483-8d07-88587a11a66c"],
+Cell[7750, 195, 348, 9, 70, "Output",ExpressionUUID->"a8000ce2-0869-419b-9407-ea06f44c9bf3"]
+}, Open  ]],
+Cell[8113, 207, 196, 4, 70, "Text",ExpressionUUID->"57309c67-267c-4b45-8d33-d09c888ca586"],
+Cell[CellGroupData[{
+Cell[8334, 215, 131, 4, 70, "Input",ExpressionUUID->"c128b17b-8b43-43af-9726-08689cb7c0f6"],
+Cell[8468, 221, 365, 10, 70, "Output",ExpressionUUID->"067e1b1d-cfe2-4b28-b182-a81a6b419f30"]
+}, Open  ]],
+Cell[8848, 234, 558, 9, 70, "Text",ExpressionUUID->"45d0800c-9c4f-467d-a79e-c0027c669d0b"],
+Cell[CellGroupData[{
+Cell[9431, 247, 135, 4, 70, "Input",ExpressionUUID->"4b602d1f-36fc-4bad-b027-3985353b2589"],
+Cell[9569, 253, 316, 9, 70, "Output",ExpressionUUID->"491bccc6-ae71-41b3-adff-c2a3f04a6bc8"]
+}, Open  ]],
+Cell[9900, 265, 475, 8, 70, "Text",ExpressionUUID->"3ccdb88c-9994-4d7d-877d-d17c21ddf166"],
+Cell[CellGroupData[{
+Cell[10400, 277, 142, 4, 70, "Input",ExpressionUUID->"36425d5d-ba07-4415-98fc-0b0ed16fb9e1"],
+Cell[10545, 283, 403, 13, 70, "Output",ExpressionUUID->"7ef42d05-44c6-4f0f-844b-56d0f0cdf01d"]
+}, Open  ]],
+Cell[10963, 299, 192, 4, 70, "Text",ExpressionUUID->"6ce9a05c-4658-4fa9-b757-7e84e1c05a3f"],
+Cell[CellGroupData[{
+Cell[11180, 307, 140, 4, 70, "Input",ExpressionUUID->"fc9dd1ee-5c22-4894-90a2-4de6ebad1eb7"],
+Cell[11323, 313, 406, 13, 70, "Output",ExpressionUUID->"5484266b-c70b-4317-aaf3-c8993ec21010"]
+}, Open  ]],
+Cell[11744, 329, 186, 4, 70, "Text",ExpressionUUID->"0187e5f5-75b7-4188-973e-dc62391b66b9"],
+Cell[CellGroupData[{
+Cell[11955, 337, 142, 4, 70, "Input",ExpressionUUID->"fdab0896-91f7-450b-94dd-486928f0df44"],
+Cell[12100, 343, 451, 15, 70, "Output",ExpressionUUID->"4fe54453-5a0d-4bdd-aa37-1e94eedb105e"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[12600, 364, 167, 2, 70, "Section",ExpressionUUID->"c29f6b4e-9001-477a-9274-8a46967e174c"],
+Cell[12770, 368, 349, 7, 70, "Text",ExpressionUUID->"f10abb91-aba2-44f8-bc4f-83882278b23e"],
+Cell[CellGroupData[{
+Cell[13144, 379, 700, 18, 70, "Input",ExpressionUUID->"547c6b9e-2c40-40bf-9af3-526ab85c795f"],
+Cell[13847, 399, 238, 6, 70, "Output",ExpressionUUID->"0f58b16e-3dd1-47ea-8a11-265ec5cecad7"],
+Cell[14088, 407, 239, 6, 70, "Output",ExpressionUUID->"58316e63-d6c0-4cbc-937d-8eb5ddf8c93c"],
+Cell[14330, 415, 258, 7, 70, "Output",ExpressionUUID->"36258074-9602-43e9-8e4f-20479358c0ff"],
+Cell[14591, 424, 260, 7, 70, "Output",ExpressionUUID->"013f3fc6-45b6-4d55-a9fb-0ea5b2a4d4ad"],
+Cell[14854, 433, 238, 6, 70, "Output",ExpressionUUID->"2e7d85b6-2fbe-4278-816f-22bd28aa0b2d"]
+}, Open  ]],
+Cell[15107, 442, 336, 6, 70, "Text",ExpressionUUID->"ef737a21-c75e-4cb5-b6d0-c10c1b7a2e63"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[15480, 453, 181, 2, 70, "Section",ExpressionUUID->"8f01911b-2cf7-4777-b327-17d946c5ebe6"],
+Cell[15664, 457, 392, 7, 70, "Text",ExpressionUUID->"1655fedc-a85e-4e36-ab5b-227d238838ac"],
+Cell[16059, 466, 541, 13, 70, "DisplayFormulaNumbered",ExpressionUUID->"9b154f52-cbbd-448e-b4b0-b8eb3beff50e"],
+Cell[16603, 481, 586, 15, 70, "DisplayFormulaNumbered",ExpressionUUID->"0ccc30a4-3a09-45da-874d-78cd9394772d"],
+Cell[17192, 498, 375, 9, 70, "DisplayFormulaNumbered",ExpressionUUID->"c8483175-42cd-4988-8b2d-615e18848369"],
+Cell[17570, 509, 128, 1, 70, "Text",ExpressionUUID->"57fc991a-22e9-4107-9e06-de06d04707a1"],
+Cell[CellGroupData[{
+Cell[17723, 514, 1318, 35, 70, "Input",ExpressionUUID->"ebb91d8b-e0d0-43b3-ac03-d2bd5f6a7a9d"],
+Cell[19044, 551, 361, 10, 70, "Output",ExpressionUUID->"b25d3ff2-e97f-4dfd-8f86-dbaef97a191b"],
+Cell[19408, 563, 366, 10, 70, "Output",ExpressionUUID->"784500b5-eb26-40c1-a12e-531ccae38a08"],
+Cell[19777, 575, 279, 8, 70, "Output",ExpressionUUID->"c46103e4-c989-4057-8be4-c416effc838d"],
+Cell[20059, 585, 364, 12, 70, "Output",ExpressionUUID->"48fda11f-a3e2-4bea-bab2-7d59cd16a998"],
+Cell[20426, 599, 338, 11, 70, "Output",ExpressionUUID->"5361b36f-d2b8-4f36-8470-bab4e515b1c9"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[20813, 616, 119, 1, 70, "Section",ExpressionUUID->"7997fdde-6e74-4e37-9c2e-02bb42c2d931"],
+Cell[20935, 619, 249, 5, 70, "Text",ExpressionUUID->"c4152e00-5651-40a7-8a4c-032b3e97fb48"],
+Cell[CellGroupData[{
+Cell[21209, 628, 733, 19, 70, "Input",ExpressionUUID->"da643aa5-c80b-4be3-a964-71e91d58b5f9"],
+Cell[21945, 649, 259, 6, 70, "Output",ExpressionUUID->"de45362f-5f6e-4ecf-9c9f-7c6aa5df2fee"],
+Cell[22207, 657, 259, 6, 70, "Output",ExpressionUUID->"944d70b3-686d-4bcc-b984-1d40c6b55e6a"],
+Cell[22469, 665, 280, 7, 70, "Output",ExpressionUUID->"8bb8eef0-c255-40f0-9a1f-3b75618150b6"],
+Cell[22752, 674, 260, 6, 70, "Output",ExpressionUUID->"cb927550-db74-4a17-acbc-d26c71036d9c"]
+}, Open  ]],
+Cell[23027, 683, 553, 9, 70, "Text",ExpressionUUID->"328b3c23-9a40-45c9-86b8-259394565391"],
+Cell[CellGroupData[{
+Cell[23605, 696, 731, 19, 70, "Input",ExpressionUUID->"3186d657-9e74-484e-9016-9f836a1c1b05"],
+Cell[24339, 717, 209, 5, 70, "Output",ExpressionUUID->"457bea24-5d78-4041-8648-f17b08f24810"],
+Cell[24551, 724, 207, 5, 70, "Output",ExpressionUUID->"0c973cfa-04e9-48c6-a925-3137a1a6f788"],
+Cell[24761, 731, 230, 6, 70, "Output",ExpressionUUID->"42792938-eb35-43ca-817d-c3e39786fb93"],
+Cell[24994, 739, 208, 5, 70, "Output",ExpressionUUID->"cbc71b64-529f-42c9-9c1e-377d694371a1"]
+}, Open  ]]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[25251, 750, 159, 2, 70, "Section",ExpressionUUID->"519b00e4-9a53-48d1-be09-a106f07bc502"],
+Cell[25413, 754, 674, 12, 70, "Item",ExpressionUUID->"69e51ebe-fc5e-4347-ab71-c0b50223cbce"],
+Cell[26090, 768, 616, 12, 70, "Item",ExpressionUUID->"11ccdbd5-64fd-47ff-8251-90bd9bdd3f12"]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)
