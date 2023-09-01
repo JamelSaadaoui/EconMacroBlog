@@ -19,8 +19,8 @@ constraint 4 _b[chi] = 2
 
 // Estimate the remaining parameters
 
-dsgenl (1/c = {beta}*(1/F.c)*(1+F.r-{delta}))                ///
-			({chi}*h = w/c)									 ///
+dsgenl (0 = {beta}*(c/F.c)*(1+F.r-{delta}) - 1)              ///
+			(h = (1/{chi})*(w/c))						     ///
 			(y = c + i)                                      ///
 			(y = z*k^{alpha}*h^(1-{alpha}))                  ///
 			(r = {alpha}*y/k)                                ///
@@ -28,7 +28,7 @@ dsgenl (1/c = {beta}*(1/F.c)*(1+F.r-{delta}))                ///
 			(F.k = i + (1-{delta})*k)                        ///
 			(ln(F.z) = {rho}*ln(z))                          /// 
 			, observed(y) unobserved(c i r w h) exostate(z)  ///
-			endostate(k) constraint(1/4)
+			endostate(k) constraint(1/4) tech(nr)
 			
 // Solving the model and finding the steady states
 
