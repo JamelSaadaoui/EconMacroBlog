@@ -6,6 +6,7 @@ This repository houses the code and data to accompany the [Jamel Saadaoui's **Ec
 
 |Blog Topic (EconMacro link) |Codes and Data (Github Repository)|Date|
 |:----|:----|:----|
+|[JEL Survey](https://www.jamelsaadaoui.com/macroeconomic-research-present-and-past/)| ["Macroeconomic Research, Present and Past"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Macroeconomic%20Research%2C%20Present%20and%20Past) | September 4, 2023|
 |[NRE MMA](https://www.jamelsaadaoui.com/natural-resources-economics-with-mathematica/)| ["Natural Resources Economics with Mathematica"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Natural%20Resources%20Economics%20with%20Mathematica) | September 3, 2023|
 |[DSGENL Stata](https://www.jamelsaadaoui.com/estimating-a-nonlinear-dsge-model-with-stata/)| ["Estimating a nonlinear DSGE model with Stata"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Estimating%20a%20nonlinear%20DSGE%20model%20with%20Stata) | August 30, 2023|
 |[VARS Stata](https://www.jamelsaadaoui.com/sign-and-narrative-restrictions-in-svar-with-stata/)|["Sign and Narrative Restrictions in SVAR with Stata"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Sign%20and%20Narrative%20Restrictions%20in%20SVAR%20with%20Stata) | August 23, 2023|
