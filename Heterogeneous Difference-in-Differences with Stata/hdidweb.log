@@ -1,0 +1,361 @@
+----------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\jamel\Dropbox\stata\hdidweb\hdidweb.log
+  log type:  text
+ opened on:  15 Sep 2023, 00:50:27
+
+. 
+. // Use the data in the folder
+. 
+. use minwage
+(Written by R.              )
+
+. 
+. describe
+
+Contains data from minwage.dta
+ Observations:        15,988                  Written by R.              
+    Variables:            24                  3 May 2023 10:14
+----------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------
+state_name      str14   %14s                  state_name
+county_name     str20   %20s                  county_name
+emp0A01_BS      long    %9.0g                 emp0A01_BS
+year            long    %9.0g                 year
+quarter         double  %9.0g                 quarter
+countyreal      double  %9.0g                 countyreal
+censusdiv       long    %9.0g      censusdiv
+                                              censusdiv
+FIPS            double  %9.0g                 FIPS
+msa             byte    %9.0g                 msa
+pop             double  %9.0g                 pop
+white           double  %9.0g                 white
+black           double  %9.0g                 black
+hs              double  %9.0g                 hs
+col             double  %9.0g                 col
+medinc          double  %9.0g                 medinc
+pov             double  %9.0g                 pov
+nssi            long    %9.0g                 nssi
+first_treat     double  %9.0g                 first.treat
+lemp            double  %9.0g                 lemp
+lpop            double  %9.0g                 lpop
+lmedinc         double  %9.0g                 lmedinc
+region          long    %9.0g      region     region
+treat           float   %9.0g                 
+state           long    %14.0g     state      state_name
+----------------------------------------------------------------------------------------------
+Sorted by: countyreal  year
+
+. xtdescribe
+
+countyreal:  8001, 8003, ..., 55141                          n =       2284
+    year:  2001, 2002, ..., 2007                             T =          7
+           Delta(year) = 1 unit
+           Span(year)  = 7 periods
+           (countyreal*year uniquely identifies each observation)
+
+Distribution of T_i:   min      5%     25%       50%       75%     95%     max
+                         7       7       7         7         7       7       7
+
+     Freq.  Percent    Cum. |  Pattern
+ ---------------------------+---------
+     2284    100.00  100.00 |  1111111
+ ---------------------------+---------
+     2284    100.00         |  XXXXXXX
+
+. 
+. sum
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+  state_name |          0
+ county_name |          0
+  emp0A01_BS |     15,988    1086.871    3162.274          3      88246
+        year |     15,988        2004    2.000063       2001       2007
+     quarter |     15,988           1           0          1          1
+-------------+---------------------------------------------------------
+  countyreal |     15,988    32429.32    14042.17       8001      55141
+   censusdiv |     15,988    5.047723    1.613506          3          8
+        FIPS |     15,988    32429.32    14042.17       8001      55141
+         msa |     15,988           1           0          1          1
+         pop |     15,988    69.66555     200.788       .729   5376.741
+-------------+---------------------------------------------------------
+       white |     15,988    .8529558    .1511508       .045       .995
+       black |     15,988    .0840902    .1358814          0        .79
+          hs |     15,988    .5661664    .0732582       .249       .744
+         col |     15,988    .1321392    .0634244       .037       .534
+      medinc |     15,988     32.6927    7.732934     14.178     77.513
+-------------+---------------------------------------------------------
+         pov |     15,988    .1469785    .0612621       .019       .467
+        nssi |     15,988    1396.727    4806.915          0     156340
+ first_treat |     15,988    796.7715    981.7723          0       2007
+        lemp |     15,988    5.714803    1.525451   1.098612   11.38788
+        lpop |     15,988    3.224796    1.304159  -.3160815   8.589838
+-------------+---------------------------------------------------------
+     lmedinc |     15,988    3.461655    .2226008   2.651691   4.350446
+      region |     15,988    2.660245    .6491307          2          4
+       treat |     15,988    .0894421    .2853897          0          1
+       state |     15,988    15.18389    8.737705          1         29
+
+. xtsum
+
+Variable         |      Mean   Std. dev.       Min        Max |    Observations
+-----------------+--------------------------------------------+----------------
+state_~e overall |         .          .          .          . |     N =       0
+         between |                    .          .          . |     n =       0
+         within  |                    .          .          . |     T =       .
+                 |                                            |
+county~e overall |         .          .          .          . |     N =       0
+         between |                    .          .          . |     n =       0
+         within  |                    .          .          . |     T =       .
+                 |                                            |
+emp0A0~S overall |  1086.871   3162.274          3      88246 |     N =   15988
+         between |             3140.371   5.285714   70551.14 |     n =    2284
+         within  |             376.4976  -5666.272   18781.73 |     T =       7
+                 |                                            |
+year     overall |      2004   2.000063       2001       2007 |     N =   15988
+         between |                    0       2004       2004 |     n =    2284
+         within  |             2.000063       2001       2007 |     T =       7
+                 |                                            |
+quarter  overall |         1          0          1          1 |     N =   15988
+         between |                    0          1          1 |     n =    2284
+         within  |                    0          1          1 |     T =       7
+                 |                                            |
+county~l overall |  32429.32   14042.17       8001      55141 |     N =   15988
+         between |             14044.81       8001      55141 |     n =    2284
+         within  |                    0   32429.32   32429.32 |     T =       7
+                 |                                            |
+census~v overall |  5.047723   1.613506          3          8 |     N =   15988
+         between |             1.613809          3          8 |     n =    2284
+         within  |                    0   5.047723   5.047723 |     T =       7
+                 |                                            |
+FIPS     overall |  32429.32   14042.17       8001      55141 |     N =   15988
+         between |             14044.81       8001      55141 |     n =    2284
+         within  |                    0   32429.32   32429.32 |     T =       7
+                 |                                            |
+msa      overall |         1          0          1          1 |     N =   15988
+         between |                    0          1          1 |     n =    2284
+         within  |                    0          1          1 |     T =       7
+                 |                                            |
+pop      overall |  69.66555    200.788       .729   5376.741 |     N =   15988
+         between |             200.8257       .729   5376.741 |     n =    2284
+         within  |             2.81e-14   69.66555   69.66555 |     T =       7
+                 |                                            |
+white    overall |  .8529558   .1511508       .045       .995 |     N =   15988
+         between |             .1511791       .045       .995 |     n =    2284
+         within  |             1.06e-16   .8529558   .8529558 |     T =       7
+                 |                                            |
+black    overall |  .0840902   .1358814          0        .79 |     N =   15988
+         between |             .1359069          0        .79 |     n =    2284
+         within  |             1.95e-17   .0840902   .0840902 |     T =       7
+                 |                                            |
+hs       overall |  .5661664   .0732582       .249       .744 |     N =   15988
+         between |              .073272       .249       .744 |     n =    2284
+         within  |             6.50e-17   .5661664   .5661664 |     T =       7
+                 |                                            |
+col      overall |  .1321392   .0634244       .037       .534 |     N =   15988
+         between |             .0634363       .037       .534 |     n =    2284
+         within  |             1.74e-17   .1321392   .1321392 |     T =       7
+                 |                                            |
+medinc   overall |   32.6927   7.732934     14.178     77.513 |     N =   15988
+         between |             7.734386     14.178     77.513 |     n =    2284
+         within  |             3.84e-15    32.6927    32.6927 |     T =       7
+                 |                                            |
+pov      overall |  .1469785   .0612621       .019       .467 |     N =   15988
+         between |             .0612736       .019       .467 |     n =    2284
+         within  |             1.93e-17   .1469785   .1469785 |     T =       7
+                 |                                            |
+nssi     overall |  1396.727   4806.915          0     156340 |     N =   15988
+         between |             4807.817          0     156340 |     n =    2284
+         within  |                    0   1396.727   1396.727 |     T =       7
+                 |                                            |
+first_~t overall |  796.7715   981.7723          0       2007 |     N =   15988
+         between |             981.9565          0       2007 |     n =    2284
+         within  |                    0   796.7715   796.7715 |     T =       7
+                 |                                            |
+lemp     overall |  5.714803   1.525451   1.098612   11.38788 |     N =   15988
+         between |              1.51902   1.594888   11.15736 |     n =    2284
+         within  |             .1429878   4.033124    7.03562 |     T =       7
+                 |                                            |
+lpop     overall |  3.224796   1.304159  -.3160815   8.589838 |     N =   15988
+         between |             1.304404  -.3160815   8.589838 |     n =    2284
+         within  |             4.02e-16   3.224796   3.224796 |     T =       7
+                 |                                            |
+lmedinc  overall |  3.461655   .2226008   2.651691   4.350446 |     N =   15988
+         between |             .2226426   2.651691   4.350446 |     n =    2284
+         within  |             4.34e-16   3.461655   3.461655 |     T =       7
+                 |                                            |
+region   overall |  2.660245   .6491307          2          4 |     N =   15988
+         between |             .6492525          2          4 |     n =    2284
+         within  |                    0   2.660245   2.660245 |     T =       7
+                 |                                            |
+treat    overall |  .0894421   .2853897          0          1 |     N =   15988
+         between |             .1396193          0   .5714286 |     n =    2284
+         within  |             .2489198  -.4819865   .9465849 |     T =       7
+                 |                                            |
+state    overall |  15.18389   8.737705          1         29 |     N =   15988
+         between |             8.739345          1         29 |     n =    2284
+         within  |                    0   15.18389   15.18389 |     T =       7
+
+. 
+. // use local/global for the control variables
+. 
+. global covars i.region pop medinc white hs pov c.pop#c.pop  ///
+> c.medinc#c.medinc
+
+. 
+. // Estimates with the AIPW
+. 
+. xthdidregress aipw (lemp $covars) (treat $covars), group(state)
+note: variable _did_cohort, containing cohort indicators formed by treatment variable treat
+      and group variable state, was added to the dataset.
+
+Computing ATET for each cohort and time:
+Cohort 2004 (6): ...... done
+Cohort 2006 (6): ...... done
+Cohort 2007 (6): ...... done
+
+Treatment and time information
+
+Time variable: year
+Time interval: 2001 to 2007
+Control:       _did_cohort = 0
+Treatment:     _did_cohort > 0
+-------------------------------
+                  | _did_cohort
+------------------+------------
+Number of cohorts |           4
+------------------+------------
+Number of obs     |
+    Never treated |        9639
+             2004 |         700
+             2006 |        1561
+             2007 |        4088
+-------------------------------
+
+Heterogeneous-treatment-effects regression           Number of obs    = 15,988
+                                                     Number of panels =     29
+Estimator:       Augmented IPW
+Panel variable:  countyreal
+Treatment level: state
+Control group:   Never treated
+
+                                 (Std. err. adjusted for 29 clusters in state)
+------------------------------------------------------------------------------
+             |               Robust
+Cohort       |       ATET   std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+2004         |
+        year |
+       2002  |   .0672458   .0061125    11.00   0.000     .0552655     .079226
+       2003  |   .0266718   .0122508     2.18   0.029     .0026608    .0506829
+       2004  |  -.0979371    .002649   -36.97   0.000     -.103129   -.0927451
+       2005  |  -.1139248   .0070092   -16.25   0.000    -.1276627   -.1001869
+       2006  |  -.1719979   .0082852   -20.76   0.000    -.1882366   -.1557592
+       2007  |  -.2078132   .0056814   -36.58   0.000    -.2189485    -.196678
+-------------+----------------------------------------------------------------
+2006         |
+        year |
+       2002  |  -.0186685   .0105915    -1.76   0.078    -.0394274    .0020904
+       2003  |    .056737   .0181748     3.12   0.002     .0211151    .0923589
+       2004  |   .0212315   .0363779     0.58   0.559    -.0500679     .092531
+       2005  |   .0319911   .0158191     2.02   0.043     .0009863    .0629959
+       2006  |   -.009851   .0117487    -0.84   0.402    -.0328781     .013176
+       2007  |  -.0510452   .0092241    -5.53   0.000     -.069124   -.0329664
+-------------+----------------------------------------------------------------
+2007         |
+        year |
+       2002  |  -.0215125    .014779    -1.46   0.145    -.0504788    .0074538
+       2003  |   .0167167   .0132905     1.26   0.208    -.0093322    .0427655
+       2004  |   .0149363   .0133763     1.12   0.264    -.0112809    .0411534
+       2005  |   .0038453   .0092391     0.42   0.677     -.014263    .0219537
+       2006  |  -.0390546   .0114977    -3.40   0.001    -.0615896   -.0165196
+       2007  |  -.0292338   .0136042    -2.15   0.032    -.0558976     -.00257
+------------------------------------------------------------------------------
+Note: ATET computed using covariates.
+
+. 
+. // Plot the Average Treatment Effect on the Treated group (ATET)
+. 
+. estat atetplot, sci name(atet, replace)
+
+. graph export "figures\atetplot.png", as(png) name("atet") replace
+file figures\atetplot.png saved as PNG format
+
+. 
+. // Event study (length of exposure to the treatment)
+. 
+. estat aggregation, dynamic graph(name(d1, replace))
+
+Duration of exposure ATET                               Number of obs = 15,988
+
+                                 (Std. err. adjusted for 29 clusters in state)
+------------------------------------------------------------------------------
+             |               Robust
+    Exposure |       ATET   std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+          -5 |  -.0215125    .014779    -1.46   0.145    -.0504788    .0074538
+          -4 |   .0069386   .0100519     0.69   0.490    -.0127627    .0266399
+          -3 |   .0264872   .0126915     2.09   0.037     .0016122    .0513621
+          -2 |   .0151101   .0118987     1.27   0.204    -.0082109    .0384311
+          -1 |  -.0143403   .0124878    -1.15   0.251    -.0388159    .0101353
+           0 |   -.032043   .0122219    -2.62   0.009    -.0559975   -.0080885
+           1 |  -.0705126   .0161956    -4.35   0.000    -.1022553   -.0387699
+           2 |  -.1719979   .0082852   -20.76   0.000    -.1882366   -.1557592
+           3 |  -.2078132   .0056814   -36.58   0.000    -.2189485    -.196678
+------------------------------------------------------------------------------
+Note: Exposure is the number of periods since the first treatment time.
+
+. graph export "figures\event.png", as(png) name("d1") replace
+file figures\event.png saved as PNG format
+
+. 
+. // ATETs over cohort
+. 
+. estat aggregation, cohort graph(name(c1, replace))
+
+ATET over cohort                                        Number of obs = 15,988
+
+                                 (Std. err. adjusted for 29 clusters in state)
+------------------------------------------------------------------------------
+             |               Robust
+      Cohort |       ATET   std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+        2004 |  -.1479183   .0053113   -27.85   0.000    -.1583283   -.1375082
+        2006 |  -.0304481   .0075561    -4.03   0.000    -.0452578   -.0156384
+        2007 |  -.0292338   .0136042    -2.15   0.032    -.0558976     -.00257
+------------------------------------------------------------------------------
+
+. graph export "figures\cohort.png", as(png) name("c1") replace
+file figures\cohort.png saved as PNG format
+
+. 
+. // ATETs across time
+. 
+. estat aggregation, time graph(name(t1, replace))
+
+ATET over time                                          Number of obs = 15,988
+
+                                 (Std. err. adjusted for 29 clusters in state)
+------------------------------------------------------------------------------
+             |               Robust
+        Time |       ATET   std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+        2004 |  -.0979371    .002649   -36.97   0.000     -.103129   -.0927451
+        2005 |  -.1139248   .0070092   -16.25   0.000    -.1276627   -.1001869
+        2006 |  -.0600513   .0406199    -1.48   0.139    -.1396648    .0195622
+        2007 |  -.0542855   .0206191    -2.63   0.008    -.0946981   -.0138728
+------------------------------------------------------------------------------
+
+. graph export "figures\time.png", as(png) name("t1") replace
+file figures\time.png saved as PNG format
+
+. 
+. log close _all
+      name:  <unnamed>
+       log:  C:\Users\jamel\Dropbox\stata\hdidweb\hdidweb.log
+  log type:  text
+ closed on:  15 Sep 2023, 00:50:35
+----------------------------------------------------------------------------------------------
