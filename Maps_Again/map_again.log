@@ -1,0 +1,276 @@
+----------------------------------------------------------------------------------------------
+      name:  map_again
+       log:  C:\Users\jamel\Documents\GitHub\EconMacroBlog\Maps_Again\map_again.log
+  log type:  text
+ opened on:  19 Dec 2023, 12:11:36
+
+. 
+. use data\map.dta, clear
+
+. 
+. *drop if country==""
+. 
+. sort COWcode
+
+. 
+. kountry COWcode, from(cown) to(imfn)
+
+--------------------------------------------
+You are converting from cown to imfn....
+--------------------------------------------
+
+--------------------------------------
+The command has finished.
+The new variable is named _IMFN_.
+--------------------------------------
+
+. 
+. rename _IMFN_ IFScode
+
+. order IFScode COWcode, first
+
+. 
+. save data\maps_again.dta, replace
+file data\maps_again.dta saved
+
+. 
+. **#****** Generate Average Financial openness ******************
+. 
+. use data\kaopen_2021.dta, clear
+
+. 
+. rename cn IFScode
+
+. 
+. keep if year>=2011
+(7,486 observations deleted)
+
+. 
+. by IFScode: egen mean_ka_open=mean(ka_open) 
+(76 missing values generated)
+
+. 
+. keep if year==2021
+(1,850 observations deleted)
+
+. 
+. save data\kaopen_again.dta, replace
+file data\kaopen_again.dta saved
+
+. 
+. **#****** Merge and draw the Maps ******************************
+. 
+. use data\maps_again.dta, clear
+
+. 
+. duplicates list IFScode
+
+Duplicates in terms of IFScode
+
+  +-----------------------+
+  | Group   Obs   IFScode |
+  |-----------------------|
+  |     1    81       172 |
+  |     1    82       172 |
+  |     2   187       193 |
+  |     2   188       193 |
+  |     2   189       193 |
+  |-----------------------|
+  |     2   190       193 |
+  |     2   191       193 |
+  |     3    67       423 |
+  |     3    68       423 |
+  |     4   147       436 |
+  |-----------------------|
+  |     4   148       436 |
+  |     5   162       924 |
+  |     5   163       924 |
+  |     6     2         . |
+  |     6    43         . |
+  |-----------------------|
+  |     6    44         . |
+  |     6    47         . |
+  |     6    64         . |
+  |     6   139         . |
+  |     6   166         . |
+  |-----------------------|
+  |     6   197         . |
+  |     6   205         . |
+  |     6   206         . |
+  |     6   207         . |
+  |     6   208         . |
+  |-----------------------|
+  |     6   209         . |
+  |     6   210         . |
+  |     6   211         . |
+  |     6   212         . |
+  |     6   213         . |
+  |-----------------------|
+  |     6   214         . |
+  |     6   215         . |
+  |     6   216         . |
+  |     6   217         . |
+  |     6   218         . |
+  |-----------------------|
+  |     6   219         . |
+  |     6   220         . |
+  |     6   221         . |
+  |     6   222         . |
+  |     6   223         . |
+  |-----------------------|
+  |     6   224         . |
+  |     6   225         . |
+  |     6   226         . |
+  |     6   227         . |
+  |     6   228         . |
+  |-----------------------|
+  |     6   229         . |
+  |     6   230         . |
+  |     6   231         . |
+  |     6   232         . |
+  |     6   233         . |
+  |-----------------------|
+  |     6   234         . |
+  |     6   235         . |
+  |     6   236         . |
+  |     6   237         . |
+  |     6   238         . |
+  |-----------------------|
+  |     6   239         . |
+  |     6   240         . |
+  |     6   241         . |
+  |     6   242         . |
+  +-----------------------+
+
+. 
+. *drop if IFScode==.
+. 
+. drop ccode
+
+. 
+. merge m:1 IFScode using data\kaopen_again.dta, nogenerate
+(variable IFScode was int, now double to accommodate using data's values)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                            58
+        from master                        54  
+        from using                          4  
+
+    Matched                               188  
+    -----------------------------------------
+
+. 
+. format mean_ka_open %12.2f
+
+. 
+. spmap mean_ka_open using data\coord_mercator_world.dta, ///
+> id(na_id_world) fcolor(Blues2) ///
+> osize(vvthin vvthin vvthin vvthin) ndsize(vvthin) ///
+> ndfcolor(gray) clmethod(custom) /// 
+> clbreaks(0 0.17 0.5 0.97 1) ///
+> title("Financial openness (average 2011-2021)")
+
+. 
+. graph rename Graph map_ka_open, replace
+
+. 
+. graph export figures\map_ka_open.png, as(png) width(4000) replace
+file figures\map_ka_open.png saved as PNG format
+
+. graph export figures\map_ka_open.pdf, as(pdf) replace
+file figures\map_ka_open.pdf saved as PDF format
+
+. 
+. format mean_debt %12.0f
+
+. 
+. spmap mean_debt using data\coord_mercator_world.dta, ///
+> id(na_id_world) fcolor(YlOrRd) ///
+> osize(vvthin vvthin vvthin vvthin) ///
+> ndsize(vvthin) ndfcolor(gray) clmethod(custom) /// 
+> clbreaks(0 38 52 97 300) ///
+> title("Central government debt (average 2015-2023)")
+
+. 
+. graph rename Graph map_debt, replace
+
+. 
+. graph export figures\map_debt.png, as(png) width(4000) replace
+file figures\map_debt.png saved as PNG format
+
+. graph export figures\map_debt.pdf, as(pdf) replace
+file figures\map_debt.pdf saved as PDF format
+
+. 
+. sum mean_debt mean_ka_open, detail
+
+                          mean_debt
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%         7.75          2.427
+ 5%     18.13007           7.75
+10%     27.11529       9.678143       Obs                 195
+25%     38.57071       10.03914       Sum of wgt.         195
+
+50%     52.68829                      Mean           60.90182
+                        Largest       Std. dev.      37.61061
+75%     73.67822       193.5294
+90%       96.998        204.148       Variance       1414.558
+95%     121.2432        246.302       Skewness        2.38335
+99%      246.302       268.1016       Kurtosis       11.59312
+
+                        mean_ka_open
+-------------------------------------------------------------
+      Percentiles      Smallest
+ 1%            0              0
+ 5%     .0296268              0
+10%     .1629476              0       Obs                 186
+25%     .1629476              0       Sum of wgt.         186
+
+50%     .5011252                      Mean           .5463742
+                        Largest       Std. dev.      .3692159
+75%     .9768828              1
+90%            1              1       Variance       .1363204
+95%            1              1       Skewness       .0275628
+99%            1              1       Kurtosis       1.334518
+
+. 
+. pwcorr mean_debt mean_ka_open if mean_ka_open>=0.97, obs sig
+
+             | mean_d~t mean_k~n
+-------------+------------------
+   mean_debt |   1.0000 
+             |
+             |       61
+             |
+mean_ka_open |   0.1942   1.0000 
+             |   0.1860
+             |       48       49
+             |
+
+. pwcorr mean_debt mean_ka_open if mean_ka_open<=0.17, obs sig
+
+             | mean_d~t mean_k~n
+-------------+------------------
+   mean_debt |   1.0000 
+             |
+             |       62
+             |
+mean_ka_open |  -0.4067   1.0000 
+             |   0.0010
+             |       62       65
+             |
+
+. 
+. // Save the data
+. save data\map_again_final.dta, replace
+file data\map_again_final.dta saved
+
+. 
+. log close map_again
+      name:  map_again
+       log:  C:\Users\jamel\Documents\GitHub\EconMacroBlog\Maps_Again\map_again.log
+  log type:  text
+ closed on:  19 Dec 2023, 12:11:41
+----------------------------------------------------------------------------------------------
