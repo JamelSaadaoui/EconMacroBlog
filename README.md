@@ -6,7 +6,7 @@ This repository houses the code and data to accompany the [Jamel Saadaoui's **Ec
 
 |Blog Topic (EconMacro link) |Codes and Data (Github Repository)|Date|
 |:----|:----|:----|
-|[Maps Stata](https://www.jamelsaadaoui.com/drawing-maps-with-stata-for-africa/)| ["Drawing Maps with Stata for Africa"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Drawing%20Maps%20with%20Stata%20for%20Africa) | December 19, 2023|
+|[Maps](https://www.jamelsaadaoui.com/drawing-maps-with-stata-for-africa/)| ["Drawing Maps with Stata for Africa"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Drawing%20Maps%20with%20Stata%20for%20Africa) | December 19, 2023|
 |[Denton Stata](https://www.jamelsaadaoui.com/dentons-method-with-stata/)| ["Denton’s method with Stata"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Dentons_method_with_Stata) | November 26, 2023|
 |[HDID Stata](https://www.jamelsaadaoui.com/heterogeneous-difference-in-differences-with-stata/)| ["Heterogeneous Difference-in-Differences with Stata"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Heterogeneous%20Difference-in-Differences%20with%20Stata) | September 14, 2023|
 |[JEL Survey](https://www.jamelsaadaoui.com/macroeconomic-research-present-and-past/)| ["Macroeconomic Research, Present and Past"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Macroeconomic%20Research%2C%20Present%20and%20Past) | September 4, 2023|
