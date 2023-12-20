@@ -2,7 +2,7 @@
       name:  map_again
        log:  C:\Users\jamel\Documents\GitHub\EconMacroBlog\Maps_Again\map_again.log
   log type:  text
- opened on:  19 Dec 2023, 12:11:36
+ opened on:  20 Dec 2023, 07:20:49
 
 . 
 . use data\map.dta, clear
@@ -34,6 +34,10 @@ The new variable is named _IMFN_.
 file data\maps_again.dta saved
 
 . 
+end of do-file
+
+. do "C:\Users\jamel\AppData\Local\Temp\STD5810_000000.tmp"
+
 . **#****** Generate Average Financial openness ******************
 . 
 . use data\kaopen_2021.dta, clear
@@ -58,6 +62,10 @@ file data\maps_again.dta saved
 file data\kaopen_again.dta saved
 
 . 
+end of do-file
+
+. do "C:\Users\jamel\AppData\Local\Temp\STD5810_000000.tmp"
+
 . **#****** Merge and draw the Maps ******************************
 . 
 . use data\maps_again.dta, clear
@@ -173,6 +181,7 @@ Duplicates in terms of IFScode
 
 . 
 . graph rename Graph map_ka_open, replace
+(note: graph map_ka_open not found)
 
 . 
 . graph export figures\map_ka_open.png, as(png) width(4000) replace
@@ -194,6 +203,7 @@ file figures\map_ka_open.pdf saved as PDF format
 
 . 
 . graph rename Graph map_debt, replace
+(note: graph map_debt not found)
 
 . 
 . graph export figures\map_debt.png, as(png) width(4000) replace
@@ -272,5 +282,5 @@ file data\map_again_final.dta saved
       name:  map_again
        log:  C:\Users\jamel\Documents\GitHub\EconMacroBlog\Maps_Again\map_again.log
   log type:  text
- closed on:  19 Dec 2023, 12:11:41
+ closed on:  20 Dec 2023, 07:32:53
 ----------------------------------------------------------------------------------------------
