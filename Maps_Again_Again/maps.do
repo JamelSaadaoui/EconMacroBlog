@@ -22,15 +22,26 @@ use ne_10m_admin_0_countries.dta, replace
 
 generate LPOP = ln(POP_EST)
 
+generate POP = POP_EST/1000000
+
 format LPOP %4.2f
 
 order _ID LPOP REGION_UN, first
 
-spmap LPOP using ne_10m_admin_0_countries_shp.dta ///
+sum POP_EST, detail
+
+sum LPOP, detail
+
+grmap, activate
+
+grmap POP using ne_10m_admin_0_countries_shp.dta ///
  if ADMIN!="Antarctica", id(_ID) ///
  fcolor(Blues)  ///
  osize(vvthin vvthin vvthin vvthin) ///
- ndsize(vvthin)
+ ndsize(vvthin) ///
+ ndfcolor(gray) clmethod(custom) /// 
+ clbreaks(0 10 50 100 200 1000 1500) ///
+ title("World population in millions (2019)")
  
 **#******** Generate country codes *****************************
 
