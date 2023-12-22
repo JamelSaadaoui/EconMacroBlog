@@ -6,6 +6,7 @@ This repository houses the code and data to accompany the [Jamel Saadaoui's **Ec
 
 |Blog Topic (EconMacro link) |Codes and Data (Github Repository)|Date|
 |:----|:----|:----|
+|[Maps](https://www.jamelsaadaoui.com/drawing-maps-for-the-chinese-regions-with-stata/)| ["Drawing Maps for the Chinese regions with Stata"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Maps_China_Regions) | December 22, 2023|
 |[Maps](https://www.jamelsaadaoui.com/drawing-maps-with-stata-again-and-again/)| ["Drawing Maps with Stata… Again and Again!"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Maps_Again_Again) | December 21, 2023|
 |[Maps](https://www.jamelsaadaoui.com/drawing-maps-with-stata-again/)| ["Drawing Maps with Stata… Again!"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Maps_Again) | December 20, 2023|
 |[Maps](https://www.jamelsaadaoui.com/drawing-maps-with-stata-for-africa/)| ["Drawing Maps with Stata for Africa"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Drawing%20Maps%20with%20Stata%20for%20Africa) | December 19, 2023|
