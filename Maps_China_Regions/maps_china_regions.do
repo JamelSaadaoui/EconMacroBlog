@@ -21,7 +21,13 @@ order name length, first
 
 **#*** Draw the map for Chinese regions ************************
 
-grmap, activate
+// Run everything between preserve and restore
+
+*grmap, activate
+
+preserve
+
+keep if iso_a2 == "CN"
 
 grmap length using ne_10m_admin_1_states_provinces_shp.dta ///
  if iso_a2 == "CN", id(_ID) ///
@@ -29,7 +35,8 @@ grmap length using ne_10m_admin_1_states_provinces_shp.dta ///
  osize(vvthin vvthin vvthin vvthin) ///
  ndsize(vvthin) ///
  ndfcolor(gray) clmethod(quantile) ///
- title("Region name length")
+ title("Region name length") label(xcoord(_CX) ycoord(_CY) ///
+ label(name) size(*.5))
  
 graph rename Graph map_china_regions, replace
 
@@ -38,15 +45,26 @@ graph export figures\map_china_regions.png, as(png) ///
 graph export figures\map_china_regions.pdf, as(pdf) ///
  replace
 
+restore
+
 **#*** Draw the map for Austrian regions ************************
+
+// Run everything between preserve and restore
+
+preserve
+
+keep if iso_a2 == "AT"
 
 grmap length using ne_10m_admin_1_states_provinces_shp.dta ///
  if iso_a2 == "AT", id(_ID) ///
  fcolor(Blues)  ///
  osize(vvthin vvthin vvthin vvthin) ///
  ndsize(vvthin) ///
- ndfcolor(gray) ///
- title("Region name length")
+ ndfcolor(gray) clmethod(quantile) ///
+ title("Region name length") label(xcoord(_CX) ycoord(_CY) ///
+ label(gn_name) size(*.75) length(22))
+ 
+*Wien is inside Niederoesterreich... 
  
 graph rename Graph map_austria_regions, replace
 
@@ -55,7 +73,17 @@ graph export figures\map_austria_regions.png, as(png) ///
 graph export figures\map_austria_regions.pdf, as(pdf) ///
  replace
 
+restore
+ 
 **#*** Draw the map for French regions *************************
+
+// Run everything between preserve and restore
+
+preserve
+
+keep if iso_a2 == "FR" & name != "Guyane française" ///
+ & name != "Guadeloupe" & name != "La Réunion" ///
+ & name != "Martinique" & name != "Mayotte"
 
 grmap length using ne_10m_admin_1_states_provinces_shp.dta ///
  if iso_a2 == "FR" & name != "Guyane française" ///
@@ -65,7 +93,8 @@ grmap length using ne_10m_admin_1_states_provinces_shp.dta ///
  osize(vvthin vvthin vvthin vvthin) ///
  ndsize(vvthin) ///
  ndfcolor(gray) ///
- title("Region name length")
+ title("Region name length") label(xcoord(_CX) ycoord(_CY) ///
+ label(name) size(*.5))
  
 graph rename Graph map_france_regions, replace
 
@@ -74,7 +103,20 @@ graph export figures\map_france_regions.png, as(png) ///
 graph export figures\map_france_regions.pdf, as(pdf) ///
  replace
 
+restore
+ 
 **#*** Draw the map for Tunisian regions ***********************
+
+
+/*
+https://www.statalist.org/forums/forum/general-stata-discussion/general/1683184-drawing-country-maps-on-stata
+*/
+
+// Run everything between preserve and restore
+
+preserve
+
+keep if iso_a2 == "TN"
 
 grmap length using ne_10m_admin_1_states_provinces_shp.dta ///
  if iso_a2 == "TN", id(_ID) ///
@@ -82,7 +124,8 @@ grmap length using ne_10m_admin_1_states_provinces_shp.dta ///
  osize(vvthin vvthin vvthin vvthin) ///
  ndsize(vvthin) ///
  ndfcolor(gray) ///
- title("Region name length")
+ title("Region name length") label(xcoord(_CX) ycoord(_CY) ///
+ label(name) size(*.5))
  
 graph rename Graph map_tunisia_regions, replace
 
@@ -90,6 +133,8 @@ graph export figures\map_tunisia_regions.png, as(png) ///
  width(4000) replace
 graph export figures\map_tunisia_regions.pdf, as(pdf) ///
  replace
+
+restore 
  
 save data\maps_region.dta, replace 
  
