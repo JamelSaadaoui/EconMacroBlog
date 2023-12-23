@@ -11,7 +11,7 @@ spshape2dta data\ne_10m_admin_1_states_provinces, replace
 use ne_10m_admin_1_states_provinces.dta, replace
 
 
-**#*** Generate a variable with the lenght of the name *********
+**#*** Generate a variable with the length of the name *********
 
 generate length = length(name)
 
@@ -92,7 +92,7 @@ grmap length using ne_10m_admin_1_states_provinces_shp.dta ///
  ndsize(vvthin) ///
  ndfcolor(gray) ///
  title("Region name length") label(xcoord(_CX) ycoord(_CY) ///
- label(name) size(*.5))
+ label(name) size(*.5) length(10))
  
 graph rename Graph map_france_regions, replace
 
