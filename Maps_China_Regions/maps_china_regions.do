@@ -47,6 +47,23 @@ graph export figures\map_china_regions.pdf, as(pdf) ///
 
 restore
 
+preserve
+
+keep if iso_a2 == "CN" & name != "Paracel Islands"
+
+grmap length using ne_10m_admin_1_states_provinces_shp.dta ///
+ if iso_a2 == "CN", id(_ID) ///
+ fcolor(Blues)  ///
+ osize(vvthin vvthin vvthin vvthin) ///
+ ndsize(vvthin) ///
+ ndfcolor(gray) clmethod(quantile) ///
+ title("Region name length") label(xcoord(_CX) ycoord(_CY) ///
+ label(name_zht) size(*.5) length(50))
+ 
+graph rename Graph map_china_regions_cn, replace
+ 
+restore
+
 **#*** Draw the map for Austrian regions ************************
 
 // Run everything between preserve and restore
@@ -130,7 +147,22 @@ graph export figures\map_tunisia_regions.png, as(png) ///
 graph export figures\map_tunisia_regions.pdf, as(pdf) ///
  replace
 
-restore 
+restore
+
+preserve
+
+keep if iso_a2 == "TN"
+
+grmap length using ne_10m_admin_1_states_provinces_shp.dta ///
+ if iso_a2 == "TN", id(_ID) ///
+ fcolor(Blues)  ///
+ ndfcolor(gray) ///
+ title("Region name length") label(xcoord(_CX) ycoord(_CY) ///
+ label(name_ar) size(*.75) length(30))
+ 
+graph rename Graph map_tunisia_regions_ar, replace
+
+restore
  
 save data\maps_region.dta, replace 
  
