@@ -113,6 +113,57 @@ graph export figures\map_china_regions_gdp.pdf, as(pdf) ///
  
 restore
 
+**#*** Use Geoplot for Chinese regions *************************
+
+/*
+ssc install palettes, replace
+ssc install colrspace, replace
+ssc install moremata, replace
+net install geoplot, replace ///
+ from(https://raw.githubusercontent.com/benjann/geoplot/main/)
+*/
+
+*help colorpalette
+
+preserve
+
+geoframe create regions ///
+ ne_10m_admin_1_states_provinces.dta, id(_ID) ///
+ coord(_CX _CY) ///
+ shpfile(ne_10m_admin_1_states_provinces_shp.dta) ///
+ replace
+ 
+keep if iso_a2 == "CN" & name != "Paracel Islands" 
+
+merge 1:1 _ID using "Regional_GDP.dta", nogenerate
+
+**#*** Generate a variable with the length of the name *********
+
+generate length = length(name)
+
+*format LPOP %4.2f
+
+order name length GDP_*, first
+
+format GDP_* %4.0f
+
+geoplot ///
+ (area regions GDP_2021, color(Blues) ///
+ label("@lb-@ub (N=@n)")) ///
+ (label regions name, size(vsmall) color(black)) ///
+ (line regions, lwidth(vvthin)), clegend(position(sw)) ///
+ zlabel(40(40)200) ///
+ title("GDP per capita in thousands of Chinese Yuan (2021)")
+ 
+graph rename Graph map_china_regions_geoplot, replace
+
+graph export figures\map_china_regions_geoplot.png, as(png) ///
+ width(4000) replace
+graph export figures\map_china_regions_geoplot.pdf, as(pdf) ///
+ replace
+ 
+restore
+
 **#*** Draw the map for Austrian regions ************************
 
 // Run everything between preserve and restore
