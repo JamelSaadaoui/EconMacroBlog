@@ -109,6 +109,12 @@ restore
 
 preserve
 
+capture drop gn_a1_code1  gn_a1_code2  gn_a1_code3
+
+split gn_a1_code, parse(.)
+
+rename gn_a1_code2 dept
+
 keep if iso_a2 == "FR" & name != "Guyane française" ///
  & name != "Guadeloupe" & name != "La Réunion" ///
  & name != "Martinique" & name != "Mayotte"
@@ -122,7 +128,7 @@ grmap length using ne_10m_admin_1_states_provinces_shp.dta ///
  ndsize(vvthin) ///
  ndfcolor(gray) ///
  title("Region name length") label(xcoord(_CX) ycoord(_CY) ///
- label(name) size(*.5) length(10))
+ label(dept) size(*.5) length(10))
  
 graph rename Graph map_france_regions, replace
 
@@ -131,6 +137,11 @@ graph export figures\map_france_regions.png, as(png) ///
 graph export figures\map_france_regions.pdf, as(pdf) ///
  replace
 
+/*
+https://www.wikiwand.com/en/Departments_of_France
+#Current_departments 
+*/
+ 
 restore
  
 **#*** Draw the map for Tunisian regions ***********************
