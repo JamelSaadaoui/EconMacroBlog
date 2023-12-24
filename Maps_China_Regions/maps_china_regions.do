@@ -125,6 +125,8 @@ net install geoplot, replace ///
 
 *help colorpalette
 
+// Run everything between preserve and restore
+
 preserve
 
 geoframe create regions ///
@@ -137,23 +139,16 @@ keep if iso_a2 == "CN" & name != "Paracel Islands"
 
 merge 1:1 _ID using "Regional_GDP.dta", nogenerate
 
-**#*** Generate a variable with the length of the name *********
-
-generate length = length(name)
-
-*format LPOP %4.2f
-
-order name length GDP_*, first
-
 format GDP_* %4.0f
 
 geoplot ///
  (area regions GDP_2021, color(Blues) ///
- label("@lb-@ub (N=@n)")) ///
- (label regions name, size(vsmall) color(black)) ///
- (line regions, lwidth(vvthin)), clegend(position(sw)) ///
- zlabel(40(40)200) ///
- title("GDP per capita in thousands of Chinese Yuan (2021)")
+   label("@lb-@ub (N=@n)") ///
+   levels(5, quantile weight(GDP_2021))) ///
+ (line regions, lwidth(vvthin)) ///
+ (label regions name, size(tiny) color(black)), ///
+  legend(position(sw)) ///
+  title("GDP per capita in thousands of Chinese Yuan (2021)")
  
 graph rename Graph map_china_regions_geoplot, replace
 
