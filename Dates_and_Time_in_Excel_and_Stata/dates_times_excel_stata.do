@@ -32,7 +32,7 @@ tsset month
 
 // Draw a time series graph
 
-format SAHMCURRENT %4.0f
+format SAHMCURRENT %4.2f
 
 label variable SAHMCURRENT "Sahm Rule (Recession if >= 0.5)"
 label variable month "Date"
@@ -46,12 +46,13 @@ display tm(2020m2)
 display tm(2020m4)
 
 tsline SAHMCURRENT if month>=tm(2000m1), yline(0.5) ///
-xline(494 502 575 593 721 723, lpattern(solid)) ///
-text(10 532 "{bf:Internet Krach}" "{it:NBER dates}") ///
-text(10 640 "{bf:Global Financial Crisis}" "{it:NBER dates}") ///
-text(10 758 "{bf:Pandemic Crisis}" "{it:NBER dates}") ///
-text(1 770 "{bf:???}") ///
-note("Recession = 3-month average UR rises a 0.5 point above prior 12 months lower point.", size(vsmall))
+ xline(494 502 575 593 721 723, lpattern(solid)) ///
+ ylabel(,format(%4.2fc)) ///
+ text(10 532 "{bf:Internet Krach}" "{it:NBER dates}") ///
+ text(10 640 "{bf:Global Financial Crisis}" "{it:NBER dates}") ///
+ text(10 758 "{bf:Pandemic Crisis}" "{it:NBER dates}") ///
+ text(1 770 "{bf:Nov. 2023}""{it:0.30}") ///
+ note("Recession = 3-month average UR rises a 0.5 point above prior 12 months lower point.", size(vsmall))
 
 // Export the graph in two different formats 
 
