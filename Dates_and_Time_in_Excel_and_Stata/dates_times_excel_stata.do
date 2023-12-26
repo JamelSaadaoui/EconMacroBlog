@@ -46,13 +46,18 @@ display tm(2020m2)
 display tm(2020m4)
 
 tsline SAHMCURRENT if month>=tm(2000m1), yline(0.5) ///
+ yline(0, lpattern(solid)) ///
  xline(494 502 575 593 721 723, lpattern(solid)) ///
- ylabel(,format(%4.2fc)) ///
- text(10 532 "{bf:Internet Krach}" "{it:NBER dates}") ///
- text(10 640 "{bf:Global Financial Crisis}" "{it:NBER dates}") ///
- text(10 758 "{bf:Pandemic Crisis}" "{it:NBER dates}") ///
- text(1 770 "{bf:Nov. 2023}""{it:0.30}") ///
- note("Recession = 3-month average UR rises a 0.5 point above prior 12 months lower point.", size(vsmall))
+ ylabel(,format(%4.0fc)) ///
+ text(10 528 "{bf:Internet Krach}" "{it:NBER dates}", ///
+  size(small)) ///
+ text(10 632 "{bf:Global Financial Crisis}" "{it:NBER dates}", ///
+  size(small)) ///
+ text(10 752 "{bf:Pandemic Crisis}" "{it:NBER dates}", ///
+  size(small)) ///
+ text(1 770 "{bf:Nov. 2023}""{it:0.30}", size(small)) ///
+ note("Recession = 3-month average UR rises a 0.5 point above prior 12 months lower point.", size(small)) ///
+ graphregion(margin(l+2 r+2))
 
 // Export the graph in two different formats 
 
