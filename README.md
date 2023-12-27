@@ -6,6 +6,8 @@ This repository houses the code and data to accompany the [Jamel Saadaoui's **Ec
 
 |Blog Topic (EconMacro link) |Codes and Data (Github Repository)|Date|
 |:----|:----|:----|
+|[Database](https://www.jamelsaadaoui.com/from-panel-data-to-time-series-with-stata/)| ["From panel data to time series with Stata"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Panel_Data_to_Time_Series_with_Stata) | December 27, 2023|
+|[Dates](https://www.jamelsaadaoui.com/dates-and-times-in-excel-and-in-stata/)| ["Dates and Times in Excel and in Stata"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Dates_and_Time_in_Excel_and_Stata) | December 26, 2023|
 |[Maps](https://www.jamelsaadaoui.com/drawing-maps-for-the-chinese-regions-with-stata/)| ["Drawing Maps for the Chinese regions with Stata"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Maps_China_Regions) | December 22, 2023|
 |[Maps](https://www.jamelsaadaoui.com/drawing-maps-with-stata-again-and-again/)| ["Drawing Maps with Stata… Again and Again!"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Maps_Again_Again) | December 21, 2023|
 |[Maps](https://www.jamelsaadaoui.com/drawing-maps-with-stata-again/)| ["Drawing Maps with Stata… Again!"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Maps_Again) | December 20, 2023|
