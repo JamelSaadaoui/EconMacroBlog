@@ -23,7 +23,6 @@ order mycountry myweek fx lfx
 
 label variable mycountry "Country name"
 label variable myweek "Date - current week"
-label variable fx "Natural logarithm of 1 + fx"
 label variable fx "Currency i units per unit of US dollar"
 label variable lfx "Natural logarithm of 1 + fx"
 
