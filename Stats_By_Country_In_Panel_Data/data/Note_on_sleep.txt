@@ -1,0 +1,1 @@
+I have to add the following command, sleep 1000, on line 103 and 108, because my PC is too slow!
