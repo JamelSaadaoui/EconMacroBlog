@@ -6,6 +6,7 @@ This repository houses the code and data to accompany the [Jamel Saadaoui's **Ec
 
 |Blog Topic (EconMacro link) |Codes and Data (Github Repository)|Date|
 |:----|:----|:----|
+|[Stats](https://www.jamelsaadaoui.com/descriptive-statistics-by-country-in-panel-data-with-stata/)| ["Descriptive Statistics by Country in Panel Data with Stata"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Stats_By_Country_In_Panel_Data) | December 29, 2023|
 |[Database](https://www.jamelsaadaoui.com/from-panel-data-to-time-series-with-stata/)| ["From panel data to time series with Stata"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Panel_Data_to_Time_Series_with_Stata) | December 27, 2023|
 |[Dates](https://www.jamelsaadaoui.com/dates-and-times-in-excel-and-in-stata/)| ["Dates and Times in Excel and in Stata"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Dates_and_Time_in_Excel_and_Stata) | December 26, 2023|
 |[Maps](https://www.jamelsaadaoui.com/drawing-maps-for-the-chinese-regions-with-stata/)| ["Drawing Maps for the Chinese regions with Stata"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Maps_China_Regions) | December 22, 2023|
