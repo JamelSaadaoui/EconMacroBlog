@@ -1,6 +1,6 @@
 **# **** Maps with GADM data ***********************************
 
-cd C:\Users\jamel\Dropbox\stata\blog\Maps_Austria
+cd C:\Users\jamel\Documents\GitHub\EconMacroBlog\Maps_GDAM
 
 **# **** Source of the Maps ************************************
 
@@ -20,16 +20,18 @@ use gadm41_AUT_1.dta, clear
 
 generate length = length(NAME_1)
 
-grmap length using gadm41_AUT_1_shp.dta, id(_ID) ///
+grmap length using data\gadm41_AUT_1_shp.dta, id(_ID) ///
  fcolor(Blues)  ///
  ndfcolor(gray) clmethod(quantile) ///
-  polygon(data(gadm41_AUT_1_shp.dta) select(keep if _ID==9 | ///
-  _ID==1) fc(red) os(vvthin)) ///
+  polygon(data(data\gadm41_AUT_1_shp.dta) select(keep if ///
+  _ID==9 | _ID==1) fc(red) os(vvthin)) ///
  os(vvthin vvthin vvthin vvthin) ndsize(vvthin) //////
  title("Region name length [length]") ///
  label(xcoord(_CX) ycoord(_CY) select(keep if _ID==9 | ///
-  _ID==1) ///
- label(NAME_1) size(3.75) length(22))
+  _ID==1 |_ID==2 | _ID==7) ///
+  label(NAME_1) size(5) length(22) pos(11) angle(340) ///
+  gap(-3)) ///
+ legend(pos(11) size(5)) legcount 
  
 graph rename Graph map_austria_1, replace
 graph export figures\map_austria_1.png, as(png) ///
@@ -48,17 +50,19 @@ use gadm41_AUT_2.dta, clear
 
 generate length = length(NAME_2)
 
-grmap length using gadm41_AUT_2_shp.dta, id(_ID) ///
+grmap length using data\gadm41_AUT_2_shp.dta, id(_ID) ///
  fcolor(Blues)  ///
  ndfcolor(gray) clmethod(quantile) ///
-  polygon(data(gadm41_AUT_2_shp.dta) ///
+  polygon(data(data\gadm41_AUT_2_shp.dta) ///
    select(keep if _ID==94 | ///
   _ID==2) fc(red) os(vvthin)) ///
  os(vvthin vvthin vvthin vvthin) ndsize(vvthin) ///
  title("Region name length [length]") ///
  label(xcoord(_CX) ycoord(_CY) select(keep if _ID==94 | ///
-  _ID==2) ///
- label(NAME_2) size(3.75) length(22))
+  _ID==2 | _ID==83)  ///
+  label(NAME_2) size(5) length(22) pos(11) angle(340) ///
+  gap(-3)) ///
+ legend(pos(11) size(5)) legcount 
  
 graph rename Graph map_austria_2, replace
 graph export figures\map_austria_2.png, as(png) ///
@@ -78,17 +82,19 @@ use gadm41_AUT_3.dta, clear
 
 generate length = length(NAME_3)
 
-grmap length using gadm41_AUT_3_shp.dta, id(_ID) ///
+grmap length using data\gadm41_AUT_3_shp.dta, id(_ID) ///
  fcolor(Reds)  ///
  ndfcolor(gray) clmethod(quantile) ///
-  polygon(data(gadm41_AUT_3_shp.dta) ///
+  polygon(data(data\gadm41_AUT_3_shp.dta) ///
    select(keep if _ID==24 | ///
-  _ID==2100) fc(ltbluishgray) os(vvthin)) ///
+  _ID==2100 | _ID==1814) fc(yellow) os(vvthin)) ///
  os(vvthin vvthin vvthin vvthin) ndsize(vvthin) ///
  title("Region name length [length]") ///
  label(xcoord(_CX) ycoord(_CY) select(keep if _ID==24 | ///
-  _ID==2100) ///
- label(NAME_2) size(3.75) length(22))
+  _ID==2100 | _ID==1814) ///
+ label(NAME_3) size(5) length(22) pos(11) angle(340) ///
+  gap(-3)) ///
+ legend(pos(11) size(5)) legcount 
  
 graph rename Graph map_austria_3, replace
 graph export figures\map_austria_3.png, as(png) ///
@@ -109,15 +115,17 @@ use gadm41_CHN_3.dta, clear
 
 generate length = length(NAME_1)
 
-grmap length using gadm41_CHN_3_shp.dta, id(_ID) ///
+grmap length using data\gadm41_CHN_3_shp.dta, id(_ID) ///
  fcolor(Blues)  ///
  ndfcolor(gray) clmethod(quantile) ///
- polygon(data(gadm41_CHN_3_shp.dta) select(keep if _ID==78) ///
- fc(red) os(vvthin)) ///
+ polygon(data(data\gadm41_CHN_3_shp.dta) select(keep if _ID==78) ///
+ fc(maroon) os(vvthin)) ///
  os(vvthin vvthin vvthin vvthin) ndsize(vvthin) ///
  title("Region name length [length]") ///
  label(xcoord(_CX) ycoord(_CY) select(keep if _ID==78) ///
- label(NAME_1) size(3.75) length(22))
+ label(NAME_1) size(3) length(22) pos(3) angle(340) ///
+  gap(1) color(maroon)) ///
+ legend(pos(11) size(3)) legcount
 
 graph rename Graph map_china, replace
 graph export figures\map_china.png, as(png) ///
