@@ -60,9 +60,9 @@ graph rename sahm, replace
 display tm(2001m1) tm(2024m1)
 
 generate REC = 0
-replace REC = 1 if datem>=tm(2001m3) & datem<=tm(2001m11) | ///
-                   datem>=tm(2007m12) & datem<=tm(2009m6) | ///
-				   datem>=tm(2020m2) & datem<=tm(2020m4)
+replace REC = 1 if datem>=tm(2001m3) & datem<tm(2001m11) | ///
+                   datem>=tm(2007m12) & datem<tm(2009m6) | ///
+				   datem>=tm(2020m2) & datem<tm(2020m4)
 
 gen REC13=REC*13				   
 
@@ -70,14 +70,20 @@ label variable REC13 ///
  "NBER recessions"
 
 				   
-set scheme white_jet				   
+set scheme white_jet
+
+summarize SAHMREALTIME
+generate recession = 13 if REC13 == 13 // 13 is the max of the y-axis
+replace  recession = -0.5 if REC13 == 0		   
+
+label variable recession "NBER Recession"
 				   
-twoway (bar REC13 datem, color(gs14) lstyle(none) ///
- barwidth(2)) ///
+twoway (bar recession datem, color(gs14%50) lstyle(none) ///
+        barwidth(1) bargap(0) base(-0.5)) ///
  (tsline SAHMCURRENT SAHMREALTIME, lcolor(gold blue) ///
   xlabel(482 542 602 666 726 776) ///
   tlabel(482 542 602 666 726 776, ///
-  format(%tmCCYY))), yline(0.5) legend(pos(2) col(1)) ///			   
+  format(%tmCCYY))), yline(0.5) legend(pos(1) row(1)) ///			   
  text(14 508 "{bf:Internet Krach}" "{it:NBER dates}", ///
   size(small)) ///
  text(14 590 "{bf:Global Financial Crisis}" ///
