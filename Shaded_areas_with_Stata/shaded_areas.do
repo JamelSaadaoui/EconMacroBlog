@@ -5,6 +5,8 @@ https://blog.stata.com/2020/02/13/adding-recession-
 shading-to-time-series-graphs/
 */
 
+set scheme Cleanplots
+
 /*
 set fredkey 01b83643a9864a8f910a499e5022b2d6, permanently
 */
@@ -193,24 +195,24 @@ capture drop REC
 generate REC = 0
 replace REC = 1 if datem>=tm(1960m4) & datem<=tm(1961m2)  | ///
                    datem>=tm(1969m12) & datem<=tm(1970m11) | ///
-				   datem>=tm(1973m11) & datem<=tm(1975m3) | ///
-				   datem>=tm(1980m1) & datem<=tm(1980m7)  | ///
+		   datem>=tm(1973m11) & datem<=tm(1975m3) | ///
+		   datem>=tm(1980m1) & datem<=tm(1980m7)  | ///
                    datem>=tm(1981m7) & datem<=tm(1982m11) | ///
-				   datem>=tm(1990m7) & datem<=tm(1991m3)  | ///
-				   datem>=tm(2001m3) & datem<=tm(2001m11) | ///
+		   datem>=tm(1990m7) & datem<=tm(1991m3)  | ///
+		   datem>=tm(2001m3) & datem<=tm(2001m11) | ///
                    datem>=tm(2007m12) & datem<=tm(2009m6) | ///
-				   datem>=tm(2020m2) & datem<=tm(2020m4)
+		   datem>=tm(2020m2) & datem<=tm(2020m4)
 
 summarize USAB6BLTT02STSAQ
-generate recession = 2 if REC == 0
+generate recession = 2 if REC == 0 // 2 is the max of the y-axis
 replace  recession = r(min) if REC == 1
 *local max = r(max) 
 
 label variable recession ///
  "NBER Recession dates"
 
-twoway (bar recession dateq, color(gs14) lstyle(none) ///
- barwidth(2) base(2)) /// max = 1.21
+twoway (bar recession dateq, color(gs14%50) lstyle(none) ///
+ barwidth(1) bargap(0) base(2)) /// 2 is the max of the y-axis
  (tsline USAB6BLTT02STSAQ, lcolor(blue) ///
   , yline(0) legend(pos(1)) xsize(8) ///
    tlabel(#11 , format(%tqCCYY))), ///
@@ -229,7 +231,6 @@ graph export figures\uscab.png, as(png) ///
 graph export figures\uscab.pdf, as(pdf) ///
  replace
  
-save data\uscab.dta, replace
- 
+save data\uscab.dta, replace 
  
 **# ** The end of program ************************************** 
