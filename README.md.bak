@@ -6,7 +6,18 @@ This repository houses the code and data to accompany the [Jamel Saadaoui's **Ec
 
 |Blog Topic (EconMacro link) |Codes and Data (Github Repository)|Date|
 |:----|:----|:----|
-|[Denton Stata](https://www.jamelsaadaoui.com/dentons-method-with-stata/| ["Denton’s method with Stata"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Dentons_method_with_Stata) | November 26, 2023|
+|[Quantiles](https://www.jamelsaadaoui.com/visualizing-quantile-regressions-with-stata/)| ["Visualizing quantile regressions with Stata"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Quantile_Graphs) | March 17, 2024|
+|[Database](https://www.jamelsaadaoui.com/nuts-data-with-dbnomics/)| ["NUTS Data with DBnomics"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/DBnomics_NUTS2) | February 21, 2024|
+|[Database](https://www.jamelsaadaoui.com/panel-data-with-dbnomics/)| ["Panel Data with DBnomics"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Panel_Data_DBnomics) | February 11, 2024|
+|[Maps](https://www.jamelsaadaoui.com/drawing-maps-with-gadm-data/)| ["Drawing Maps with GADM data"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Maps_GDAM) | January 04, 2024|
+|[Stats](https://www.jamelsaadaoui.com/descriptive-statistics-by-country-in-panel-data-with-stata/)| ["Descriptive Statistics by Country in Panel Data with Stata"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Stats_By_Country_In_Panel_Data) | December 29, 2023|
+|[Database](https://www.jamelsaadaoui.com/from-panel-data-to-time-series-with-stata/)| ["From panel data to time series with Stata"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Panel_Data_to_Time_Series_with_Stata) | December 27, 2023|
+|[Dates](https://www.jamelsaadaoui.com/dates-and-times-in-excel-and-in-stata/)| ["Dates and Times in Excel and in Stata"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Dates_and_Time_in_Excel_and_Stata) | December 26, 2023|
+|[Maps](https://www.jamelsaadaoui.com/drawing-maps-for-the-chinese-regions-with-stata/)| ["Drawing Maps for the Chinese regions with Stata"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Maps_China_Regions) | December 22, 2023|
+|[Maps](https://www.jamelsaadaoui.com/drawing-maps-with-stata-again-and-again/)| ["Drawing Maps with Stata… Again and Again!"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Maps_Again_Again) | December 21, 2023|
+|[Maps](https://www.jamelsaadaoui.com/drawing-maps-with-stata-again/)| ["Drawing Maps with Stata… Again!"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Maps_Again) | December 20, 2023|
+|[Maps](https://www.jamelsaadaoui.com/drawing-maps-with-stata-for-africa/)| ["Drawing Maps with Stata for Africa"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Drawing%20Maps%20with%20Stata%20for%20Africa) | December 19, 2023|
+|[Denton Stata](https://www.jamelsaadaoui.com/dentons-method-with-stata/)| ["Denton’s method with Stata"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Dentons_method_with_Stata) | November 26, 2023|
 |[HDID Stata](https://www.jamelsaadaoui.com/heterogeneous-difference-in-differences-with-stata/)| ["Heterogeneous Difference-in-Differences with Stata"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Heterogeneous%20Difference-in-Differences%20with%20Stata) | September 14, 2023|
 |[JEL Survey](https://www.jamelsaadaoui.com/macroeconomic-research-present-and-past/)| ["Macroeconomic Research, Present and Past"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Macroeconomic%20Research%2C%20Present%20and%20Past) | September 4, 2023|
 |[NRE MMA](https://www.jamelsaadaoui.com/natural-resources-economics-with-mathematica/)| ["Natural Resources Economics with Mathematica"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Natural%20Resources%20Economics%20with%20Mathematica) | September 3, 2023|
