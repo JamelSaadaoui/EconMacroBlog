@@ -6,8 +6,7 @@ This repository houses the code and data to accompany the [Jamel Saadaoui's **Ec
 
 |Blog Topic (EconMacro link) |Codes and Data (Github Repository)|Date|
 |:----|:----|:----|
-|[PIIE](https://www.jamelsaadaoui.com/measuring-friendliness-and-like-mindedness/)| ["Measuring friendliness and like-mindedness
-"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Friendliness_PIIE) | April 26, 2024|
+|[PIIE](https://www.jamelsaadaoui.com/measuring-friendliness-and-like-mindedness/)| ["Measuring friendliness and like-mindedness"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Friendliness_PIIE) | April 26, 2024|
 |[GDELT](https://www.jamelsaadaoui.com/starting-with-gdelt-data/)| ["Starting with GDELT data"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Start_GDELT_Data) | April 14, 2024|
 |[Quantiles](https://www.jamelsaadaoui.com/visualizing-quantile-regressions-with-stata/)| ["Visualizing quantile regressions with Stata"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Quantile_Graphs) | March 17, 2024|
 |[Database](https://www.jamelsaadaoui.com/nuts-data-with-dbnomics/)| ["NUTS Data with DBnomics"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/DBnomics_NUTS2) | February 21, 2024|
