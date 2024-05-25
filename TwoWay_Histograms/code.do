@@ -4,7 +4,7 @@
 
 *cd C:\Users\jamel\Dropbox\PC\Downloads
 
-import excel Data_Ghana.xlsx, sheet("Feuil1") firstrow clear
+import excel "Data.xlsx", sheet("Feuil1") firstrow clear 
 
 **# Sort the data and create frequency class
 
@@ -39,13 +39,13 @@ twoway ///
  if Relativeproductivity>=Relativeproductivity[1] ///
  & Relativeproductivity<=Relativeproductivity[2], ///
  bartype(spanning) bstyle(histogram) yscale(range(0)) ///
- bcolor(blue%20) legend(label(1 "Personal services")) ///
- yline(4.462122)) ///
+ bcolor(blue%20) legend(label(1 "Agriculture")) ///
+ yline(2.408333)) ///
 (bar Relativeproductivity Employmentshare_ ///
  if Relativeproductivity>=Relativeproductivity[2] & ///
  Relativeproductivity<=Relativeproductivity[3], ///
  bartype(spanning) ///
- bcolor(red%20) legend(label(2 "Agriculture"))) ///
+ bcolor(red%20) legend(label(2 "Personal services"))) ///
 (bar Relativeproductivity Employmentshare_ ///
  if Relativeproductivity>=Relativeproductivity[3] & ///
  Relativeproductivity<=Relativeproductivity[4], ///
@@ -55,12 +55,12 @@ twoway ///
  if Relativeproductivity>=Relativeproductivity[4] & ///
  Relativeproductivity<=Relativeproductivity[5], ///
  bartype(spanning) ///
- bcolor(pink%20) legend(label(4 "Manufacturing"))) ///
+ bcolor(pink%20) legend(label(4 "Public services"))) ///
 (bar Relativeproductivity Employmentshare_ ///
  if Relativeproductivity>=Relativeproductivity[5] & ///
  Relativeproductivity<=Relativeproductivity[6], ///
  bartype(spanning) ///
- bcolor(yellow%20) legend(label(5 "Public services"))) ///
+ bcolor(yellow%20) legend(label(5 "Manufacturing"))) ///
 (bar Relativeproductivity Employmentshare_ ///
  if Relativeproductivity>=Relativeproductivity[6] & ///
  Relativeproductivity<=Relativeproductivity[7], ///
@@ -80,23 +80,23 @@ twoway ///
  if Relativeproductivity>=Relativeproductivity[9] & ///
  Relativeproductivity<=Relativeproductivity[10], ///
  bartype(spanning) ///
- bcolor(purple%20) legend(label(9 "Utilities"))) ///
+ bcolor(purple%20) legend(label(9 "Financial services"))) ///
 (bar Relativeproductivity Employmentshare_ ///
  if Relativeproductivity>=Relativeproductivity[10] & ///
  Relativeproductivity<=Relativeproductivity[11], ///
  bartype(spanning) ///
- bcolor(red%20) legend(label(10 "Financial services"))) ///
+ bcolor(red%20) legend(label(10 "Real estate"))) ///
 (bar Relativeproductivity Employmentshare_ ///
  if Relativeproductivity>=Relativeproductivity[11] & ///
  Relativeproductivity<=Relativeproductivity[12], ///
  bartype(spanning) ///
- bcolor(black%60) legend(label(11 "Real estate"))) ///
+ bcolor(black%60) legend(label(11 "Utilities"))) ///
 (bar Relativeproductivity Employmentshare_ ///
  if Relativeproductivity>=Relativeproductivity[12] & ///
  Relativeproductivity<=Relativeproductivity[13], ///
  bartype(spanning) ///
  bcolor(blue%50) legend(label(12 "Mining")) ///
- title("{bf:Productivity and Employment Share in Ghana}"))
+ title("{bf:Productivity and Employment Share}"))
  
 **# Export the Graph
 
