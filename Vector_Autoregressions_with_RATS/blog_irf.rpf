@@ -1,0 +1,97 @@
+OPEN DATA "C:\Users\jamel\Dropbox\Latex\PROJECTS\23-05-geopolitical-risk-pol-tension-oil-price\Data and command\lpirf_PRI_GPR.dta"
+CALENDAR(M) 1960:1
+DATA(FORMAT=DTA,RIGHT=9) 1960:01 2019:12 PERIOD PRI PRI_S PRO RPO DEM DINV GPRCN IGREA
+
+set lpri = PRI_S
+set lpro = 1*log(PRO)
+set lrpo = 1*log(RPO)
+set ldem = 1*log(DEM)
+
+*****************************************************************
+
+compute  nlags  = 24
+compute  nsteps = 48
+
+system(model=prirpo)
+variables lpri ldem lpro lrpo
+lags 1 to nlags
+det constant
+end(system)
+
+compute implabel=|| $
+  "Political Relations",$
+  "Oil Demand",$
+  "Oil Production",$
+  "Real Price"||
+
+estimate(noprint) 1989:01 2019:12
+
+@montevar(draws=4000,model=prirpo,$
+   shocks=implabel,varlabels=implabel,$
+   header="IRF's with Error Bands")
+
+****************************************************************
+
+compute  nlags  = 24
+compute  nsteps = 48
+
+system(model=prirpo)
+variables lpri ldem lpro lrpo
+lags 1 to nlags
+det constant
+end(system)
+
+compute hstart=2003:1
+compute hend  =2019:12
+
+compute varlabels=|| $
+  "Real Price",$
+  "Oil Production",$
+  "Oil Demand",$
+"Political Relations"||
+
+compute neqn=%modelsize(prirpo)
+dec vect[int] depvar(neqn)
+dec vect[string] varlabels(neqn) shocklabels(neqn)
+ewise varlabels(i)=%modellabel(prirpo,i)
+ewise shocklabels(i)=%modellabel(prirpo,i)
+compute depvar=%modeldepvars(prirpo)
+
+estimate(noprint,noftests,resids=resids) 1989:01 2019:12
+
+HISTORY(MODEL=PRIRPO,add,base=base,effects=effects,FROM=2003:01,TO=2019:12,PRINT)
+
+compute rows=fix(sqrt(neqn))
+compute cols=(neqn-1)/rows+1
+do i=1,neqn
+   spgraph(vfields=rows,hfields=cols,window=varlabels(i),$
+     header="Historical Decomposition of "+varlabels(i))
+   do j=1,neqn
+      *
+      * This graphs the actual data (including four pre-sample values),
+      * the base forecast, and the effects of shock J on variable I.
+      *
+      graph(header="Effect of "+shocklabels(j)) 3
+      # depvar(i) hstart-4 hend
+      # base(i)
+      # effects(i,j)
+   end do j
+   spgraph(done)
+end do i
+
+*****************************************************************
+
+system(model=prirpo)
+variables lpri ldem lpro lrpo
+lags 1 to 24
+det constant
+end(system)
+estimate(cvout=v,noprint) 1989:01 2019:12
+*
+*  The first decomposition is done in the original order:
+*  system(model=prirpo)
+*  lpri ldem lpro lrpo.
+*
+ERRORS(MODEL=PRIRPO,STEPS=12,PRINT)
+
+*****************************************************************
