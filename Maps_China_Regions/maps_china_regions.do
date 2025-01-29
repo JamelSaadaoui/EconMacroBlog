@@ -129,6 +129,14 @@ net install geoplot, replace ///
 
 preserve
 
+/// New geoplot ///
+use ne_10m_admin_1_states_provinces.dta,clear
+
+merge 1:1 _ID using "Regional_GDP.dta", nogenerate
+
+format GDP_* %4.0f
+/// New geoplot ///
+
 geoframe create regions ///
  ne_10m_admin_1_states_provinces.dta, id(_ID) ///
  coord(_CX _CY) ///
