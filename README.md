@@ -6,6 +6,7 @@ This repository houses the code and data to accompany the [Jamel Saadaoui's **Ec
 
 |Blog Topic (EconMacro link) |Codes and Data (Github Repository)|Date|
 |:----|:----|:----|
+|[SVAR](https://www.jamelsaadaoui.com/leveraging-personal-programs-with-stata/)| ["Leveraging personal programs with Stata"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Leveraging%20personal%20programs%20with%20Stata) | January 29, 2025|
 |[SVAR RATS](https://www.jamelsaadaoui.com/vector-autoregressions-with-rats/)| ["Vector Autoregressions with RATS"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Vector_Autoregressions_with_RATS) | August 7, 2024|
 |[Histograms](https://www.jamelsaadaoui.com/two-way-histograms/)| ["Two-Way Histograms"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/TwoWay_Histograms) | May 24, 2024|
 |[PIIE](https://www.jamelsaadaoui.com/measuring-friendliness-and-like-mindedness/)| ["Measuring friendliness and like-mindedness"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Friendliness_PIIE) | April 26, 2024|
