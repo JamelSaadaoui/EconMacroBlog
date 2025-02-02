@@ -1,0 +1,1723 @@
+%!PS-Adobe-2.0 EPSF-2.0
+%%Creator: WinRATS Pro (32-bit)
+%%CreationDate: Sun Feb  2 05:43:06 AM
+%%BoundingBox: 0 0 580 366
+/RGFHORZ 2 def/RGFVERT -9 def/ROTATE 0 def
+%%
+%% prolog.pst
+%% PostScript prolog for GRAFEDIT
+%%  (c) 1993-2007 Thomas A. Doan. All rights reserved.
+%%
+%%Pages:(atend)
+%%EndComments
+
+save
+
+%
+% Local dictionary - we need a matching end in the postlog
+%
+
+150 dict begin
+
+%
+% Set the origins and orientation
+% PostScript specifies a default user space with the origin at the
+% lower left of the page in <<portrait>> mode. Our user space has the
+% origin at the lower left in <<landscape>> mode, with a printable
+% area of 720 points by 576 points (10" x 8"). We need to translate
+% and rotate (clockwise) to move from our space to PostScript space.
+%
+% In order to center an image on a sheet of paper whose physical size
+% is A points (long dimension) x B points, the translation should be
+%
+% -(A+720)/2 (B-576)/2 translate
+%
+% For Letter size (11" x 8.5")  (792 points x 612 points)
+%  -756 18 translate
+% For A4 size (11.7" x 8.3") (842.4 points x 597.6 points)
+%  -781.2 10.8 translate
+%
+% For EPS import, use -(4th element in %%BoundingBox) 0
+%
+% If RGFHORZ and RGFVERT are not set above to the appropriate values
+% the following line will define them.
+%
+
+/RGFHORZ where {pop} {/RGFHORZ -756 def/RGFVERT 18 def} ifelse
+/ROTATE  where {pop} {/ROTATE  -90 def} ifelse
+
+/USERTODEFAULT {ROTATE rotate RGFHORZ RGFVERT translate} def
+
+%
+% User definable
+%
+
+%
+% Define the possible line widths
+% THIN is a "hairline". 0 gives the minimal width on the device. That's
+% not recommended because it can be almost invisible. r THICK sets the
+% line thickness at r * the value in the definition.
+%
+
+/THIN  {0.125 setlinewidth } def
+/THICK {1.000 mul setlinewidth } def
+
+
+%
+%Define the solid line pattern
+%
+
+/LINESOLID			{[] 0 setdash} def
+
+%
+% Determine the actual height of this font. Used to center strings vertically
+%
+
+/HEIGHT {gsave newpath 0 0 moveto
+	(M) true charpath flattenpath pathbbox
+	exch pop exch sub exch pop
+	grestore
+	} def
+
+%
+%  Define macros to print text in each alignment and orientation
+%  To put out a text string we need to following syntax:
+%
+%  {string} x y BEGTEXT "rotation op" "horiz pos" "vertical pos" ENDTEXT
+%
+
+/BEGTEXT    {moveto gsave currentpoint translate} def
+/ENDTEXT    {rmoveto show grestore} def
+
+/LEFTAXIS   {90 rotate} def
+/RIGHTAXIS  {-90 rotate} def
+/UPSIDEDOWN {180 rotate} def
+
+/HCENTER    {dup stringwidth pop -2 div} def
+/HLEFT      {0} def
+/HRIGHT     {dup stringwidth pop -1 mul} def
+
+/VCENTER    {HEIGHT -2 div} def
+/VTOP       {HEIGHT -1 mul} def
+/VBOTTOM    {0} def
+
+%
+%Define a macro to outline the existing shape in a thin black line
+%
+
+/OUTLINE {[] 0.0 setgray 0 setdash 0.25 setlinewidth stroke } def
+
+%
+%Define a macro to white out a region
+%
+
+/WHITEOUT {gsave 1.000 setgray fill grestore} def
+
+%
+%Define a macro to draw a box
+%
+
+/BOX {newpath
+	3 index 3 index moveto
+	3 index 1 index lineto
+	2 copy lineto
+	1 index 3 index lineto
+	pop pop lineto
+	} def
+
+%
+%Define a macro to draw an arbitrary polygon given 4 points
+%
+
+/POLYGON {newpath
+	moveto lineto lineto lineto
+	closepath
+	} def
+
+%
+%Define a macro to draw a dot
+%
+
+/DOT {1 setlinejoin THIN moveto currentpoint lineto stroke 0 setlinejoin} def
+
+%
+%Define a macro to find the bounding box of the current path
+%aligned on 1 inch centers
+%
+
+/INCHBOX {
+	gsave flattenpath pathbbox
+	72 div ceiling 72 mul 4 1 roll
+	72 div ceiling 72 mul 4 1 roll
+	72 div floor   72 mul 4 1 roll
+	72 div floor   72 mul 4 1 roll
+	grestore } def
+
+%
+%Define a macro to draw vertical rules through the box
+%whose lower left and upper right corners on the stack
+%
+/RULES {
+	mark
+	1 index
+	4 index
+	sub
+	0
+	exch
+	5 index
+	7 index
+	2.25    %this is the gap in points between the lines
+	7 index
+	{ 4 copy exch moveto rlineto stroke pop }
+	newpath
+	for
+	cleartomark
+	} def
+
+%
+%Draw vertical bars through the shape defined by the current path
+%
+/DRAWHATCHING {
+	gsave THIN
+	clip
+	mark
+	INCHBOX
+	RULES
+	cleartomark grestore } def
+
+%
+%Draw crosshatched lines through the shape defined by the current path
+%
+/HATCHCROSS {
+	gsave
+	45 rotate DRAWHATCHING
+	-90 rotate DRAWHATCHING
+	grestore
+} def
+
+%
+% Vertical hatching
+%
+/HATCHVERT {
+	gsave
+    DRAWHATCHING
+    grestore
+} def
+
+
+%
+% Horizontal hatching
+%
+/HATCHHORIZ {
+	gsave
+	-90 rotate DRAWHATCHING
+	grestore
+} def
+
+%
+%Draw upward sloping lines through the shape defined by the current path
+%
+/HATCHUP {
+	gsave
+	-45 rotate DRAWHATCHING
+	grestore
+} def
+
+%
+%Draw downward sloping lines through the shape defined by the current path
+%
+/HATCHDOWN {
+	gsave
+	45 rotate DRAWHATCHING
+	grestore
+} def
+
+%
+%Draw a checker board pattern through the shape defined by the current path
+%
+/HATCHCHECK {
+	gsave
+	DRAWHATCHING
+	-90 rotate DRAWHATCHING
+	grestore
+} def
+
+%
+%  Define graphics symbols
+%   Calling sequence   0 or 90 size x y SYMBOLx
+%
+%  The definitions are based upon points on a radius 1 circle
+%
+
+/SYMBOLIN {
+	gsave translate LINESOLID THIN dup scale rotate newpath
+} def
+
+/SYMBOLOUT {
+	grestore
+} def
+
+USERTODEFAULT
+
+%%EndProlog
+
+%%Page: ? 34078958
+save
+newpath
+/Arial-Bold findfont 17.600000 scalefont setfont
+(Sign Restrictions, 3 Variable Model, Zone Japan)287.84 364.64 BEGTEXT HCENTER VTOP ENDTEXT
+/Arial-Bold findfont 14.240000 scalefont setfont
+(Responses of)14.40 180.00 BEGTEXT LEFTAXIS HCENTER VTOP ENDTEXT
+/Arial-Bold findfont 9.760000 scalefont setfont
+(Y-Y*)62.72 285.44 BEGTEXT HRIGHT VTOP ENDTEXT
+(P-P*)62.72 185.12 BEGTEXT HRIGHT VTOP ENDTEXT
+(Q)62.72 84.80 BEGTEXT HRIGHT VTOP ENDTEXT
+(Supply)187.36 29.44 BEGTEXT HCENTER VTOP ENDTEXT
+(Supply)187.36 340.80 BEGTEXT HCENTER VTOP ENDTEXT
+(Demand)436.80 29.44 BEGTEXT HCENTER VTOP ENDTEXT
+(Demand)436.80 340.80 BEGTEXT HCENTER VTOP ENDTEXT
+/Arial findfont 6.080000 scalefont setfont
+(0)111.84 235.20 BEGTEXT HCENTER VBOTTOM ENDTEXT
+(5)144.00 235.20 BEGTEXT HCENTER VBOTTOM ENDTEXT
+(10)176.32 235.20 BEGTEXT HCENTER VBOTTOM ENDTEXT
+(15)208.48 235.20 BEGTEXT HCENTER VBOTTOM ENDTEXT
+(20)240.64 235.20 BEGTEXT HCENTER VBOTTOM ENDTEXT
+(25)272.96 235.20 BEGTEXT HCENTER VBOTTOM ENDTEXT
+THIN LINESOLID 0.0000 setgray
+111.84 242.72 moveto
+111.84 240.16 lineto
+currentpoint stroke moveto
+118.24 242.72 moveto
+118.24 241.44 lineto
+currentpoint stroke moveto
+124.64 242.72 moveto
+124.64 241.44 lineto
+currentpoint stroke moveto
+131.20 242.72 moveto
+131.20 241.44 lineto
+currentpoint stroke moveto
+137.60 242.72 moveto
+137.60 241.44 lineto
+currentpoint stroke moveto
+144.00 242.72 moveto
+144.00 240.16 lineto
+currentpoint stroke moveto
+150.40 242.72 moveto
+150.40 241.44 lineto
+currentpoint stroke moveto
+156.96 242.72 moveto
+156.96 241.44 lineto
+currentpoint stroke moveto
+163.36 242.72 moveto
+163.36 241.44 lineto
+currentpoint stroke moveto
+169.76 242.72 moveto
+169.76 241.44 lineto
+currentpoint stroke moveto
+176.32 242.72 moveto
+176.32 240.16 lineto
+currentpoint stroke moveto
+182.72 242.72 moveto
+182.72 241.44 lineto
+currentpoint stroke moveto
+189.12 242.72 moveto
+189.12 241.44 lineto
+currentpoint stroke moveto
+195.52 242.72 moveto
+195.52 241.44 lineto
+currentpoint stroke moveto
+202.08 242.72 moveto
+202.08 241.44 lineto
+currentpoint stroke moveto
+208.48 242.72 moveto
+208.48 240.16 lineto
+currentpoint stroke moveto
+214.88 242.72 moveto
+214.88 241.44 lineto
+currentpoint stroke moveto
+221.28 242.72 moveto
+221.28 241.44 lineto
+currentpoint stroke moveto
+227.84 242.72 moveto
+227.84 241.44 lineto
+currentpoint stroke moveto
+234.24 242.72 moveto
+234.24 241.44 lineto
+currentpoint stroke moveto
+240.64 242.72 moveto
+240.64 240.16 lineto
+currentpoint stroke moveto
+247.20 242.72 moveto
+247.20 241.44 lineto
+currentpoint stroke moveto
+253.60 242.72 moveto
+253.60 241.44 lineto
+currentpoint stroke moveto
+260.00 242.72 moveto
+260.00 241.44 lineto
+currentpoint stroke moveto
+266.40 242.72 moveto
+266.40 241.44 lineto
+currentpoint stroke moveto
+272.96 242.72 moveto
+272.96 240.16 lineto
+currentpoint stroke moveto
+279.36 242.72 moveto
+279.36 241.44 lineto
+currentpoint stroke moveto
+285.76 242.72 moveto
+285.76 241.44 lineto
+currentpoint stroke moveto
+292.32 242.72 moveto
+292.32 241.44 lineto
+currentpoint stroke moveto
+THIN LINESOLID 0.0000 setgray
+/Arial findfont 6.080000 scalefont setfont
+(0.00)87.36 242.72 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+98.24 242.72 moveto
+92.80 242.72 lineto
+currentpoint stroke moveto
+(0.25)87.36 251.84 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+98.24 251.84 moveto
+92.80 251.84 lineto
+currentpoint stroke moveto
+(0.50)87.36 261.12 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+98.24 261.12 moveto
+92.80 261.12 lineto
+currentpoint stroke moveto
+(0.75)87.36 270.24 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+98.24 270.24 moveto
+92.80 270.24 lineto
+currentpoint stroke moveto
+(1.00)87.36 279.52 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+98.24 279.52 moveto
+92.80 279.52 lineto
+currentpoint stroke moveto
+(1.25)87.36 288.64 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+98.24 288.64 moveto
+92.80 288.64 lineto
+currentpoint stroke moveto
+(1.50)87.36 297.92 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+98.24 297.92 moveto
+92.80 297.92 lineto
+currentpoint stroke moveto
+(1.75)87.36 307.04 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+98.24 307.04 moveto
+92.80 307.04 lineto
+currentpoint stroke moveto
+(2.00)87.36 316.32 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+98.24 316.32 moveto
+92.80 316.32 lineto
+currentpoint stroke moveto
+(2.25)87.36 325.44 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+98.24 325.44 moveto
+92.80 325.44 lineto
+currentpoint stroke moveto
+THIN LINESOLID 0.0000 setgray
+305.92 242.72 moveto
+98.24 242.72 lineto
+98.24 325.44 lineto
+305.92 325.44 lineto
+305.92 242.72 lineto
+currentpoint stroke moveto
+1 THICK LINESOLID 0.0000 0.0000 0.0000 setrgbcolor
+111.84 270.72 moveto
+118.24 276.00 lineto
+124.64 274.24 lineto
+131.20 282.56 lineto
+137.60 284.32 lineto
+144.00 284.64 lineto
+150.40 286.56 lineto
+156.96 287.52 lineto
+163.36 287.52 lineto
+169.76 288.00 lineto
+176.32 288.32 lineto
+182.72 288.32 lineto
+189.12 288.64 lineto
+195.52 288.96 lineto
+202.08 289.12 lineto
+208.48 288.96 lineto
+214.88 289.12 lineto
+221.28 289.12 lineto
+227.84 289.12 lineto
+234.24 289.28 lineto
+240.64 289.44 lineto
+247.20 289.60 lineto
+253.60 289.60 lineto
+260.00 289.44 lineto
+266.40 289.44 lineto
+272.96 289.44 lineto
+279.36 289.60 lineto
+285.76 289.60 lineto
+292.32 289.76 lineto
+currentpoint stroke moveto
+1 THICK LINESOLID 0.0000 0.0000 1.0000 setrgbcolor
+111.84 280.00 moveto
+118.24 287.52 lineto
+124.64 288.00 lineto
+131.20 299.04 lineto
+137.60 304.00 lineto
+144.00 304.48 lineto
+150.40 308.16 lineto
+156.96 310.88 lineto
+163.36 311.36 lineto
+169.76 313.60 lineto
+176.32 314.24 lineto
+182.72 314.72 lineto
+189.12 316.48 lineto
+195.52 317.12 lineto
+202.08 317.60 lineto
+208.48 317.60 lineto
+214.88 318.56 lineto
+221.28 318.72 lineto
+227.84 319.04 lineto
+234.24 319.04 lineto
+240.64 319.20 lineto
+247.20 319.52 lineto
+253.60 319.36 lineto
+260.00 319.36 lineto
+266.40 319.36 lineto
+272.96 319.52 lineto
+279.36 319.68 lineto
+285.76 319.84 lineto
+292.32 319.84 lineto
+currentpoint stroke moveto
+1 THICK LINESOLID 0.0000 0.0000 1.0000 setrgbcolor
+111.84 257.28 moveto
+118.24 260.32 lineto
+124.64 256.80 lineto
+131.20 262.88 lineto
+137.60 263.20 lineto
+144.00 262.56 lineto
+150.40 263.68 lineto
+156.96 263.20 lineto
+163.36 263.04 lineto
+169.76 263.84 lineto
+176.32 263.36 lineto
+182.72 262.72 lineto
+189.12 262.56 lineto
+195.52 262.08 lineto
+202.08 261.60 lineto
+208.48 260.80 lineto
+214.88 260.80 lineto
+221.28 260.64 lineto
+227.84 260.64 lineto
+234.24 260.64 lineto
+240.64 260.80 lineto
+247.20 260.64 lineto
+253.60 260.48 lineto
+260.00 260.48 lineto
+266.40 260.48 lineto
+272.96 260.64 lineto
+279.36 260.48 lineto
+285.76 260.48 lineto
+292.32 260.48 lineto
+currentpoint stroke moveto
+/Arial findfont 6.080000 scalefont setfont
+0 0 0 setrgbcolor 0 setgray
+(0)361.12 235.20 BEGTEXT HCENTER VBOTTOM ENDTEXT
+(5)393.44 235.20 BEGTEXT HCENTER VBOTTOM ENDTEXT
+(10)425.60 235.20 BEGTEXT HCENTER VBOTTOM ENDTEXT
+(15)457.76 235.20 BEGTEXT HCENTER VBOTTOM ENDTEXT
+(20)490.08 235.20 BEGTEXT HCENTER VBOTTOM ENDTEXT
+(25)522.24 235.20 BEGTEXT HCENTER VBOTTOM ENDTEXT
+THIN LINESOLID 0.0000 setgray
+361.12 242.72 moveto
+361.12 240.16 lineto
+currentpoint stroke moveto
+367.52 242.72 moveto
+367.52 241.44 lineto
+currentpoint stroke moveto
+374.08 242.72 moveto
+374.08 241.44 lineto
+currentpoint stroke moveto
+380.48 242.72 moveto
+380.48 241.44 lineto
+currentpoint stroke moveto
+386.88 242.72 moveto
+386.88 241.44 lineto
+currentpoint stroke moveto
+393.44 242.72 moveto
+393.44 240.16 lineto
+currentpoint stroke moveto
+399.84 242.72 moveto
+399.84 241.44 lineto
+currentpoint stroke moveto
+406.24 242.72 moveto
+406.24 241.44 lineto
+currentpoint stroke moveto
+412.64 242.72 moveto
+412.64 241.44 lineto
+currentpoint stroke moveto
+419.20 242.72 moveto
+419.20 241.44 lineto
+currentpoint stroke moveto
+425.60 242.72 moveto
+425.60 240.16 lineto
+currentpoint stroke moveto
+432.00 242.72 moveto
+432.00 241.44 lineto
+currentpoint stroke moveto
+438.40 242.72 moveto
+438.40 241.44 lineto
+currentpoint stroke moveto
+444.96 242.72 moveto
+444.96 241.44 lineto
+currentpoint stroke moveto
+451.36 242.72 moveto
+451.36 241.44 lineto
+currentpoint stroke moveto
+457.76 242.72 moveto
+457.76 240.16 lineto
+currentpoint stroke moveto
+464.32 242.72 moveto
+464.32 241.44 lineto
+currentpoint stroke moveto
+470.72 242.72 moveto
+470.72 241.44 lineto
+currentpoint stroke moveto
+477.12 242.72 moveto
+477.12 241.44 lineto
+currentpoint stroke moveto
+483.52 242.72 moveto
+483.52 241.44 lineto
+currentpoint stroke moveto
+490.08 242.72 moveto
+490.08 240.16 lineto
+currentpoint stroke moveto
+496.48 242.72 moveto
+496.48 241.44 lineto
+currentpoint stroke moveto
+502.88 242.72 moveto
+502.88 241.44 lineto
+currentpoint stroke moveto
+509.44 242.72 moveto
+509.44 241.44 lineto
+currentpoint stroke moveto
+515.84 242.72 moveto
+515.84 241.44 lineto
+currentpoint stroke moveto
+522.24 242.72 moveto
+522.24 240.16 lineto
+currentpoint stroke moveto
+528.64 242.72 moveto
+528.64 241.44 lineto
+currentpoint stroke moveto
+535.20 242.72 moveto
+535.20 241.44 lineto
+currentpoint stroke moveto
+541.60 242.72 moveto
+541.60 241.44 lineto
+currentpoint stroke moveto
+THIN LINESOLID 0.0000 setgray
+/Arial findfont 6.080000 scalefont setfont
+(0.00)336.80 242.72 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+347.52 242.72 moveto
+342.08 242.72 lineto
+currentpoint stroke moveto
+(0.25)336.80 251.84 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+347.52 251.84 moveto
+342.08 251.84 lineto
+currentpoint stroke moveto
+(0.50)336.80 261.12 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+347.52 261.12 moveto
+342.08 261.12 lineto
+currentpoint stroke moveto
+(0.75)336.80 270.24 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+347.52 270.24 moveto
+342.08 270.24 lineto
+currentpoint stroke moveto
+(1.00)336.80 279.52 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+347.52 279.52 moveto
+342.08 279.52 lineto
+currentpoint stroke moveto
+(1.25)336.80 288.64 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+347.52 288.64 moveto
+342.08 288.64 lineto
+currentpoint stroke moveto
+(1.50)336.80 297.92 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+347.52 297.92 moveto
+342.08 297.92 lineto
+currentpoint stroke moveto
+(1.75)336.80 307.04 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+347.52 307.04 moveto
+342.08 307.04 lineto
+currentpoint stroke moveto
+(2.00)336.80 316.32 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+347.52 316.32 moveto
+342.08 316.32 lineto
+currentpoint stroke moveto
+(2.25)336.80 325.44 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+347.52 325.44 moveto
+342.08 325.44 lineto
+currentpoint stroke moveto
+THIN LINESOLID 0.0000 setgray
+555.20 242.72 moveto
+347.52 242.72 lineto
+347.52 325.44 lineto
+555.20 325.44 lineto
+555.20 242.72 lineto
+currentpoint stroke moveto
+1 THICK LINESOLID 0.0000 0.0000 0.0000 setrgbcolor
+361.12 260.00 moveto
+367.52 262.56 lineto
+374.08 265.92 lineto
+380.48 267.52 lineto
+386.88 270.24 lineto
+393.44 271.36 lineto
+399.84 271.52 lineto
+406.24 272.32 lineto
+412.64 273.28 lineto
+419.20 273.60 lineto
+425.60 274.24 lineto
+432.00 274.56 lineto
+438.40 274.72 lineto
+444.96 274.72 lineto
+451.36 274.72 lineto
+457.76 274.72 lineto
+464.32 274.88 lineto
+470.72 274.88 lineto
+477.12 274.88 lineto
+483.52 274.72 lineto
+490.08 274.88 lineto
+496.48 274.72 lineto
+502.88 274.88 lineto
+509.44 274.88 lineto
+515.84 274.88 lineto
+522.24 274.88 lineto
+528.64 275.04 lineto
+535.20 275.04 lineto
+541.60 275.20 lineto
+currentpoint stroke moveto
+1 THICK LINESOLID 0.0000 0.0000 1.0000 setrgbcolor
+361.12 271.68 moveto
+367.52 277.28 lineto
+374.08 280.80 lineto
+380.48 285.60 lineto
+386.88 289.76 lineto
+393.44 290.72 lineto
+399.84 291.84 lineto
+406.24 293.76 lineto
+412.64 294.24 lineto
+419.20 295.52 lineto
+425.60 296.16 lineto
+432.00 296.64 lineto
+438.40 297.28 lineto
+444.96 298.08 lineto
+451.36 298.24 lineto
+457.76 298.56 lineto
+464.32 298.56 lineto
+470.72 298.88 lineto
+477.12 298.88 lineto
+483.52 299.20 lineto
+490.08 299.20 lineto
+496.48 299.36 lineto
+502.88 299.36 lineto
+509.44 299.36 lineto
+515.84 299.52 lineto
+522.24 300.00 lineto
+528.64 300.16 lineto
+535.20 300.16 lineto
+541.60 300.16 lineto
+currentpoint stroke moveto
+1 THICK LINESOLID 0.0000 0.0000 1.0000 setrgbcolor
+361.12 249.12 moveto
+367.52 250.08 lineto
+374.08 253.12 lineto
+380.48 252.00 lineto
+386.88 253.28 lineto
+393.44 253.44 lineto
+399.84 252.64 lineto
+406.24 252.80 lineto
+412.64 253.12 lineto
+419.20 253.12 lineto
+425.60 253.44 lineto
+432.00 253.28 lineto
+438.40 253.28 lineto
+444.96 253.12 lineto
+451.36 253.28 lineto
+457.76 253.28 lineto
+464.32 253.28 lineto
+470.72 253.28 lineto
+477.12 253.28 lineto
+483.52 252.96 lineto
+490.08 252.80 lineto
+496.48 252.80 lineto
+502.88 252.64 lineto
+509.44 252.48 lineto
+515.84 252.48 lineto
+522.24 252.48 lineto
+528.64 252.48 lineto
+535.20 252.32 lineto
+541.60 252.32 lineto
+currentpoint stroke moveto
+/Arial findfont 6.080000 scalefont setfont
+0 0 0 setrgbcolor 0 setgray
+(0)114.40 134.88 BEGTEXT HCENTER VBOTTOM ENDTEXT
+(5)146.08 134.88 BEGTEXT HCENTER VBOTTOM ENDTEXT
+(10)177.92 134.88 BEGTEXT HCENTER VBOTTOM ENDTEXT
+(15)209.76 134.88 BEGTEXT HCENTER VBOTTOM ENDTEXT
+(20)241.60 134.88 BEGTEXT HCENTER VBOTTOM ENDTEXT
+(25)273.28 134.88 BEGTEXT HCENTER VBOTTOM ENDTEXT
+THIN LINESOLID 0.0000 setgray
+114.40 142.40 moveto
+114.40 139.84 lineto
+currentpoint stroke moveto
+120.64 142.40 moveto
+120.64 141.12 lineto
+currentpoint stroke moveto
+127.04 142.40 moveto
+127.04 141.12 lineto
+currentpoint stroke moveto
+133.44 142.40 moveto
+133.44 141.12 lineto
+currentpoint stroke moveto
+139.84 142.40 moveto
+139.84 141.12 lineto
+currentpoint stroke moveto
+146.08 142.40 moveto
+146.08 139.84 lineto
+currentpoint stroke moveto
+152.48 142.40 moveto
+152.48 141.12 lineto
+currentpoint stroke moveto
+158.88 142.40 moveto
+158.88 141.12 lineto
+currentpoint stroke moveto
+165.28 142.40 moveto
+165.28 141.12 lineto
+currentpoint stroke moveto
+171.52 142.40 moveto
+171.52 141.12 lineto
+currentpoint stroke moveto
+177.92 142.40 moveto
+177.92 139.84 lineto
+currentpoint stroke moveto
+184.32 142.40 moveto
+184.32 141.12 lineto
+currentpoint stroke moveto
+190.72 142.40 moveto
+190.72 141.12 lineto
+currentpoint stroke moveto
+196.96 142.40 moveto
+196.96 141.12 lineto
+currentpoint stroke moveto
+203.36 142.40 moveto
+203.36 141.12 lineto
+currentpoint stroke moveto
+209.76 142.40 moveto
+209.76 139.84 lineto
+currentpoint stroke moveto
+216.16 142.40 moveto
+216.16 141.12 lineto
+currentpoint stroke moveto
+222.40 142.40 moveto
+222.40 141.12 lineto
+currentpoint stroke moveto
+228.80 142.40 moveto
+228.80 141.12 lineto
+currentpoint stroke moveto
+235.20 142.40 moveto
+235.20 141.12 lineto
+currentpoint stroke moveto
+241.60 142.40 moveto
+241.60 139.84 lineto
+currentpoint stroke moveto
+247.84 142.40 moveto
+247.84 141.12 lineto
+currentpoint stroke moveto
+254.24 142.40 moveto
+254.24 141.12 lineto
+currentpoint stroke moveto
+260.64 142.40 moveto
+260.64 141.12 lineto
+currentpoint stroke moveto
+267.04 142.40 moveto
+267.04 141.12 lineto
+currentpoint stroke moveto
+273.28 142.40 moveto
+273.28 139.84 lineto
+currentpoint stroke moveto
+279.68 142.40 moveto
+279.68 141.12 lineto
+currentpoint stroke moveto
+286.08 142.40 moveto
+286.08 141.12 lineto
+currentpoint stroke moveto
+292.48 142.40 moveto
+292.48 141.12 lineto
+currentpoint stroke moveto
+THIN LINESOLID 0.0000 setgray
+/Arial findfont 6.080000 scalefont setfont
+(-3.00)90.08 142.40 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+100.96 142.40 moveto
+95.52 142.40 lineto
+currentpoint stroke moveto
+(-2.00)90.08 158.88 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+100.96 158.88 moveto
+95.52 158.88 lineto
+currentpoint stroke moveto
+(-1.00)90.08 175.52 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+100.96 175.52 moveto
+95.52 175.52 lineto
+currentpoint stroke moveto
+(0.00)90.08 192.00 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+100.96 192.00 moveto
+95.52 192.00 lineto
+currentpoint stroke moveto
+(1.00)90.08 208.64 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+100.96 208.64 moveto
+95.52 208.64 lineto
+currentpoint stroke moveto
+(2.00)90.08 225.12 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+100.96 225.12 moveto
+95.52 225.12 lineto
+currentpoint stroke moveto
+THIN LINESOLID 0.0000 setgray
+100.96 192.00 moveto
+305.92 192.00 lineto
+currentpoint stroke moveto
+THIN LINESOLID 0.0000 setgray
+305.92 142.40 moveto
+100.96 142.40 lineto
+100.96 225.12 lineto
+305.92 225.12 lineto
+305.92 142.40 lineto
+currentpoint stroke moveto
+1 THICK LINESOLID 0.0000 0.0000 0.0000 setrgbcolor
+114.40 185.44 moveto
+120.64 184.16 lineto
+127.04 182.24 lineto
+133.44 179.52 lineto
+139.84 177.92 lineto
+146.08 176.48 lineto
+152.48 175.04 lineto
+158.88 173.92 lineto
+165.28 172.96 lineto
+171.52 172.16 lineto
+177.92 171.36 lineto
+184.32 170.56 lineto
+190.72 170.08 lineto
+196.96 169.60 lineto
+203.36 169.12 lineto
+209.76 168.64 lineto
+216.16 168.32 lineto
+222.40 168.00 lineto
+228.80 167.68 lineto
+235.20 167.52 lineto
+241.60 167.36 lineto
+247.84 167.20 lineto
+254.24 167.04 lineto
+260.64 166.88 lineto
+267.04 166.72 lineto
+273.28 166.56 lineto
+279.68 166.24 lineto
+286.08 166.08 lineto
+292.48 166.08 lineto
+currentpoint stroke moveto
+1 THICK LINESOLID 0.0000 0.0000 1.0000 setrgbcolor
+114.40 188.00 moveto
+120.64 187.84 lineto
+127.04 187.84 lineto
+133.44 186.88 lineto
+139.84 187.04 lineto
+146.08 187.04 lineto
+152.48 186.72 lineto
+158.88 186.72 lineto
+165.28 186.72 lineto
+171.52 186.72 lineto
+177.92 186.72 lineto
+184.32 186.72 lineto
+190.72 186.56 lineto
+196.96 186.72 lineto
+203.36 186.88 lineto
+209.76 186.88 lineto
+216.16 186.88 lineto
+222.40 187.04 lineto
+228.80 187.04 lineto
+235.20 187.04 lineto
+241.60 187.04 lineto
+247.84 187.04 lineto
+254.24 187.04 lineto
+260.64 186.88 lineto
+267.04 187.04 lineto
+273.28 187.04 lineto
+279.68 187.04 lineto
+286.08 187.04 lineto
+292.48 187.04 lineto
+currentpoint stroke moveto
+1 THICK LINESOLID 0.0000 0.0000 1.0000 setrgbcolor
+114.40 183.36 moveto
+120.64 181.76 lineto
+127.04 178.88 lineto
+133.44 175.20 lineto
+139.84 172.96 lineto
+146.08 170.56 lineto
+152.48 168.16 lineto
+158.88 166.08 lineto
+165.28 164.32 lineto
+171.52 162.40 lineto
+177.92 160.80 lineto
+184.32 159.20 lineto
+190.72 157.76 lineto
+196.96 156.64 lineto
+203.36 155.36 lineto
+209.76 154.24 lineto
+216.16 153.44 lineto
+222.40 152.32 lineto
+228.80 151.52 lineto
+235.20 150.88 lineto
+241.60 150.08 lineto
+247.84 149.44 lineto
+254.24 148.80 lineto
+260.64 148.32 lineto
+267.04 147.68 lineto
+273.28 147.20 lineto
+279.68 146.88 lineto
+286.08 146.56 lineto
+292.48 146.24 lineto
+currentpoint stroke moveto
+/Arial findfont 6.080000 scalefont setfont
+0 0 0 setrgbcolor 0 setgray
+(0)363.68 134.88 BEGTEXT HCENTER VBOTTOM ENDTEXT
+(5)395.52 134.88 BEGTEXT HCENTER VBOTTOM ENDTEXT
+(10)427.20 134.88 BEGTEXT HCENTER VBOTTOM ENDTEXT
+(15)459.04 134.88 BEGTEXT HCENTER VBOTTOM ENDTEXT
+(20)490.88 134.88 BEGTEXT HCENTER VBOTTOM ENDTEXT
+(25)522.72 134.88 BEGTEXT HCENTER VBOTTOM ENDTEXT
+THIN LINESOLID 0.0000 setgray
+363.68 142.40 moveto
+363.68 139.84 lineto
+currentpoint stroke moveto
+370.08 142.40 moveto
+370.08 141.12 lineto
+currentpoint stroke moveto
+376.32 142.40 moveto
+376.32 141.12 lineto
+currentpoint stroke moveto
+382.72 142.40 moveto
+382.72 141.12 lineto
+currentpoint stroke moveto
+389.12 142.40 moveto
+389.12 141.12 lineto
+currentpoint stroke moveto
+395.52 142.40 moveto
+395.52 139.84 lineto
+currentpoint stroke moveto
+401.76 142.40 moveto
+401.76 141.12 lineto
+currentpoint stroke moveto
+408.16 142.40 moveto
+408.16 141.12 lineto
+currentpoint stroke moveto
+414.56 142.40 moveto
+414.56 141.12 lineto
+currentpoint stroke moveto
+420.96 142.40 moveto
+420.96 141.12 lineto
+currentpoint stroke moveto
+427.20 142.40 moveto
+427.20 139.84 lineto
+currentpoint stroke moveto
+433.60 142.40 moveto
+433.60 141.12 lineto
+currentpoint stroke moveto
+440.00 142.40 moveto
+440.00 141.12 lineto
+currentpoint stroke moveto
+446.40 142.40 moveto
+446.40 141.12 lineto
+currentpoint stroke moveto
+452.64 142.40 moveto
+452.64 141.12 lineto
+currentpoint stroke moveto
+459.04 142.40 moveto
+459.04 139.84 lineto
+currentpoint stroke moveto
+465.44 142.40 moveto
+465.44 141.12 lineto
+currentpoint stroke moveto
+471.84 142.40 moveto
+471.84 141.12 lineto
+currentpoint stroke moveto
+478.08 142.40 moveto
+478.08 141.12 lineto
+currentpoint stroke moveto
+484.48 142.40 moveto
+484.48 141.12 lineto
+currentpoint stroke moveto
+490.88 142.40 moveto
+490.88 139.84 lineto
+currentpoint stroke moveto
+497.28 142.40 moveto
+497.28 141.12 lineto
+currentpoint stroke moveto
+503.68 142.40 moveto
+503.68 141.12 lineto
+currentpoint stroke moveto
+509.92 142.40 moveto
+509.92 141.12 lineto
+currentpoint stroke moveto
+516.32 142.40 moveto
+516.32 141.12 lineto
+currentpoint stroke moveto
+522.72 142.40 moveto
+522.72 139.84 lineto
+currentpoint stroke moveto
+529.12 142.40 moveto
+529.12 141.12 lineto
+currentpoint stroke moveto
+535.36 142.40 moveto
+535.36 141.12 lineto
+currentpoint stroke moveto
+541.76 142.40 moveto
+541.76 141.12 lineto
+currentpoint stroke moveto
+THIN LINESOLID 0.0000 setgray
+/Arial findfont 6.080000 scalefont setfont
+(-3.00)339.52 142.40 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+350.24 142.40 moveto
+344.80 142.40 lineto
+currentpoint stroke moveto
+(-2.00)339.52 158.88 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+350.24 158.88 moveto
+344.80 158.88 lineto
+currentpoint stroke moveto
+(-1.00)339.52 175.52 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+350.24 175.52 moveto
+344.80 175.52 lineto
+currentpoint stroke moveto
+(0.00)339.52 192.00 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+350.24 192.00 moveto
+344.80 192.00 lineto
+currentpoint stroke moveto
+(1.00)339.52 208.64 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+350.24 208.64 moveto
+344.80 208.64 lineto
+currentpoint stroke moveto
+(2.00)339.52 225.12 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+350.24 225.12 moveto
+344.80 225.12 lineto
+currentpoint stroke moveto
+THIN LINESOLID 0.0000 setgray
+350.24 192.00 moveto
+555.20 192.00 lineto
+currentpoint stroke moveto
+THIN LINESOLID 0.0000 setgray
+555.20 142.40 moveto
+350.24 142.40 lineto
+350.24 225.12 lineto
+555.20 225.12 lineto
+555.20 142.40 lineto
+currentpoint stroke moveto
+1 THICK LINESOLID 0.0000 0.0000 0.0000 setrgbcolor
+363.68 196.64 moveto
+370.08 196.32 lineto
+376.32 197.92 lineto
+382.72 199.36 lineto
+389.12 200.16 lineto
+395.52 201.12 lineto
+401.76 201.92 lineto
+408.16 202.72 lineto
+414.56 203.52 lineto
+420.96 204.16 lineto
+427.20 204.64 lineto
+433.60 205.28 lineto
+440.00 205.60 lineto
+446.40 206.08 lineto
+452.64 206.40 lineto
+459.04 206.72 lineto
+465.44 207.04 lineto
+471.84 207.36 lineto
+478.08 207.52 lineto
+484.48 207.84 lineto
+490.88 208.00 lineto
+497.28 208.16 lineto
+503.68 208.48 lineto
+509.92 208.64 lineto
+516.32 208.80 lineto
+522.72 208.96 lineto
+529.12 209.12 lineto
+535.36 209.28 lineto
+541.76 209.28 lineto
+currentpoint stroke moveto
+1 THICK LINESOLID 0.0000 0.0000 1.0000 setrgbcolor
+363.68 198.88 moveto
+370.08 199.36 lineto
+376.32 201.76 lineto
+382.72 204.48 lineto
+389.12 205.76 lineto
+395.52 207.68 lineto
+401.76 209.28 lineto
+408.16 210.72 lineto
+414.56 212.00 lineto
+420.96 213.28 lineto
+427.20 214.40 lineto
+433.60 215.20 lineto
+440.00 216.16 lineto
+446.40 216.96 lineto
+452.64 217.60 lineto
+459.04 218.40 lineto
+465.44 219.04 lineto
+471.84 219.68 lineto
+478.08 220.32 lineto
+484.48 220.80 lineto
+490.88 221.44 lineto
+497.28 222.08 lineto
+503.68 222.40 lineto
+509.92 222.72 lineto
+516.32 223.04 lineto
+522.72 223.36 lineto
+529.12 223.68 lineto
+535.36 224.16 lineto
+541.76 224.32 lineto
+currentpoint stroke moveto
+1 THICK LINESOLID 0.0000 0.0000 1.0000 setrgbcolor
+363.68 194.40 moveto
+370.08 193.60 lineto
+376.32 194.24 lineto
+382.72 194.72 lineto
+389.12 194.88 lineto
+395.52 195.20 lineto
+401.76 195.36 lineto
+408.16 195.36 lineto
+414.56 195.52 lineto
+420.96 195.52 lineto
+427.20 195.52 lineto
+433.60 195.52 lineto
+440.00 195.52 lineto
+446.40 195.68 lineto
+452.64 195.68 lineto
+459.04 195.68 lineto
+465.44 195.68 lineto
+471.84 195.68 lineto
+478.08 195.68 lineto
+484.48 195.52 lineto
+490.88 195.68 lineto
+497.28 195.68 lineto
+503.68 195.68 lineto
+509.92 195.68 lineto
+516.32 195.52 lineto
+522.72 195.52 lineto
+529.12 195.52 lineto
+535.36 195.52 lineto
+541.76 195.52 lineto
+currentpoint stroke moveto
+/Arial findfont 6.080000 scalefont setfont
+0 0 0 setrgbcolor 0 setgray
+(0)114.40 34.56 BEGTEXT HCENTER VBOTTOM ENDTEXT
+(5)146.08 34.56 BEGTEXT HCENTER VBOTTOM ENDTEXT
+(10)177.92 34.56 BEGTEXT HCENTER VBOTTOM ENDTEXT
+(15)209.76 34.56 BEGTEXT HCENTER VBOTTOM ENDTEXT
+(20)241.60 34.56 BEGTEXT HCENTER VBOTTOM ENDTEXT
+(25)273.28 34.56 BEGTEXT HCENTER VBOTTOM ENDTEXT
+THIN LINESOLID 0.0000 setgray
+114.40 41.92 moveto
+114.40 39.52 lineto
+currentpoint stroke moveto
+120.64 41.92 moveto
+120.64 40.80 lineto
+currentpoint stroke moveto
+127.04 41.92 moveto
+127.04 40.80 lineto
+currentpoint stroke moveto
+133.44 41.92 moveto
+133.44 40.80 lineto
+currentpoint stroke moveto
+139.84 41.92 moveto
+139.84 40.80 lineto
+currentpoint stroke moveto
+146.08 41.92 moveto
+146.08 39.52 lineto
+currentpoint stroke moveto
+152.48 41.92 moveto
+152.48 40.80 lineto
+currentpoint stroke moveto
+158.88 41.92 moveto
+158.88 40.80 lineto
+currentpoint stroke moveto
+165.28 41.92 moveto
+165.28 40.80 lineto
+currentpoint stroke moveto
+171.52 41.92 moveto
+171.52 40.80 lineto
+currentpoint stroke moveto
+177.92 41.92 moveto
+177.92 39.52 lineto
+currentpoint stroke moveto
+184.32 41.92 moveto
+184.32 40.80 lineto
+currentpoint stroke moveto
+190.72 41.92 moveto
+190.72 40.80 lineto
+currentpoint stroke moveto
+196.96 41.92 moveto
+196.96 40.80 lineto
+currentpoint stroke moveto
+203.36 41.92 moveto
+203.36 40.80 lineto
+currentpoint stroke moveto
+209.76 41.92 moveto
+209.76 39.52 lineto
+currentpoint stroke moveto
+216.16 41.92 moveto
+216.16 40.80 lineto
+currentpoint stroke moveto
+222.40 41.92 moveto
+222.40 40.80 lineto
+currentpoint stroke moveto
+228.80 41.92 moveto
+228.80 40.80 lineto
+currentpoint stroke moveto
+235.20 41.92 moveto
+235.20 40.80 lineto
+currentpoint stroke moveto
+241.60 41.92 moveto
+241.60 39.52 lineto
+currentpoint stroke moveto
+247.84 41.92 moveto
+247.84 40.80 lineto
+currentpoint stroke moveto
+254.24 41.92 moveto
+254.24 40.80 lineto
+currentpoint stroke moveto
+260.64 41.92 moveto
+260.64 40.80 lineto
+currentpoint stroke moveto
+267.04 41.92 moveto
+267.04 40.80 lineto
+currentpoint stroke moveto
+273.28 41.92 moveto
+273.28 39.52 lineto
+currentpoint stroke moveto
+279.68 41.92 moveto
+279.68 40.80 lineto
+currentpoint stroke moveto
+286.08 41.92 moveto
+286.08 40.80 lineto
+currentpoint stroke moveto
+292.48 41.92 moveto
+292.48 40.80 lineto
+currentpoint stroke moveto
+THIN LINESOLID 0.0000 setgray
+/Arial findfont 6.080000 scalefont setfont
+(-8.00)90.08 41.92 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+100.96 41.92 moveto
+95.52 41.92 lineto
+currentpoint stroke moveto
+(-6.00)90.08 53.76 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+100.96 53.76 moveto
+95.52 53.76 lineto
+currentpoint stroke moveto
+(-4.00)90.08 65.60 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+100.96 65.60 moveto
+95.52 65.60 lineto
+currentpoint stroke moveto
+(-2.00)90.08 77.44 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+100.96 77.44 moveto
+95.52 77.44 lineto
+currentpoint stroke moveto
+(0.00)90.08 89.28 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+100.96 89.28 moveto
+95.52 89.28 lineto
+currentpoint stroke moveto
+(2.00)90.08 101.12 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+100.96 101.12 moveto
+95.52 101.12 lineto
+currentpoint stroke moveto
+(4.00)90.08 112.96 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+100.96 112.96 moveto
+95.52 112.96 lineto
+currentpoint stroke moveto
+(6.00)90.08 124.80 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+100.96 124.80 moveto
+95.52 124.80 lineto
+currentpoint stroke moveto
+THIN LINESOLID 0.0000 setgray
+100.96 89.28 moveto
+305.92 89.28 lineto
+currentpoint stroke moveto
+THIN LINESOLID 0.0000 setgray
+305.92 41.92 moveto
+100.96 41.92 lineto
+100.96 124.80 lineto
+305.92 124.80 lineto
+305.92 41.92 lineto
+currentpoint stroke moveto
+1 THICK LINESOLID 0.0000 0.0000 0.0000 setrgbcolor
+114.40 86.24 moveto
+120.64 86.40 lineto
+127.04 86.72 lineto
+133.44 87.20 lineto
+139.84 86.88 lineto
+146.08 87.04 lineto
+152.48 87.04 lineto
+158.88 86.08 lineto
+165.28 85.92 lineto
+171.52 86.24 lineto
+177.92 86.08 lineto
+184.32 85.60 lineto
+190.72 85.76 lineto
+196.96 85.92 lineto
+203.36 85.60 lineto
+209.76 85.28 lineto
+216.16 85.44 lineto
+222.40 85.44 lineto
+228.80 85.28 lineto
+235.20 85.28 lineto
+241.60 85.12 lineto
+247.84 85.12 lineto
+254.24 84.80 lineto
+260.64 84.80 lineto
+267.04 84.96 lineto
+273.28 84.96 lineto
+279.68 84.80 lineto
+286.08 84.80 lineto
+292.48 84.80 lineto
+currentpoint stroke moveto
+1 THICK LINESOLID 0.0000 0.0000 1.0000 setrgbcolor
+114.40 104.00 moveto
+120.64 109.92 lineto
+127.04 109.92 lineto
+133.44 112.64 lineto
+139.84 115.52 lineto
+146.08 116.32 lineto
+152.48 116.80 lineto
+158.88 118.08 lineto
+165.28 118.40 lineto
+171.52 119.20 lineto
+177.92 119.68 lineto
+184.32 119.84 lineto
+190.72 119.84 lineto
+196.96 120.00 lineto
+203.36 120.16 lineto
+209.76 120.16 lineto
+216.16 120.32 lineto
+222.40 120.48 lineto
+228.80 120.48 lineto
+235.20 120.64 lineto
+241.60 120.64 lineto
+247.84 120.64 lineto
+254.24 120.48 lineto
+260.64 120.64 lineto
+267.04 120.64 lineto
+273.28 120.64 lineto
+279.68 120.64 lineto
+286.08 120.64 lineto
+292.48 120.80 lineto
+currentpoint stroke moveto
+1 THICK LINESOLID 0.0000 0.0000 1.0000 setrgbcolor
+114.40 68.16 moveto
+120.64 61.44 lineto
+127.04 62.08 lineto
+133.44 59.36 lineto
+139.84 56.00 lineto
+146.08 54.88 lineto
+152.48 54.24 lineto
+158.88 52.48 lineto
+165.28 51.36 lineto
+171.52 51.04 lineto
+177.92 50.56 lineto
+184.32 50.08 lineto
+190.72 49.60 lineto
+196.96 48.80 lineto
+203.36 48.32 lineto
+209.76 48.00 lineto
+216.16 47.84 lineto
+222.40 47.52 lineto
+228.80 47.36 lineto
+235.20 47.20 lineto
+241.60 46.88 lineto
+247.84 46.72 lineto
+254.24 46.72 lineto
+260.64 46.40 lineto
+267.04 46.56 lineto
+273.28 46.40 lineto
+279.68 46.24 lineto
+286.08 46.08 lineto
+292.48 45.92 lineto
+currentpoint stroke moveto
+/Arial findfont 6.080000 scalefont setfont
+0 0 0 setrgbcolor 0 setgray
+(0)363.68 34.56 BEGTEXT HCENTER VBOTTOM ENDTEXT
+(5)395.52 34.56 BEGTEXT HCENTER VBOTTOM ENDTEXT
+(10)427.20 34.56 BEGTEXT HCENTER VBOTTOM ENDTEXT
+(15)459.04 34.56 BEGTEXT HCENTER VBOTTOM ENDTEXT
+(20)490.88 34.56 BEGTEXT HCENTER VBOTTOM ENDTEXT
+(25)522.72 34.56 BEGTEXT HCENTER VBOTTOM ENDTEXT
+THIN LINESOLID 0.0000 setgray
+363.68 41.92 moveto
+363.68 39.52 lineto
+currentpoint stroke moveto
+370.08 41.92 moveto
+370.08 40.80 lineto
+currentpoint stroke moveto
+376.32 41.92 moveto
+376.32 40.80 lineto
+currentpoint stroke moveto
+382.72 41.92 moveto
+382.72 40.80 lineto
+currentpoint stroke moveto
+389.12 41.92 moveto
+389.12 40.80 lineto
+currentpoint stroke moveto
+395.52 41.92 moveto
+395.52 39.52 lineto
+currentpoint stroke moveto
+401.76 41.92 moveto
+401.76 40.80 lineto
+currentpoint stroke moveto
+408.16 41.92 moveto
+408.16 40.80 lineto
+currentpoint stroke moveto
+414.56 41.92 moveto
+414.56 40.80 lineto
+currentpoint stroke moveto
+420.96 41.92 moveto
+420.96 40.80 lineto
+currentpoint stroke moveto
+427.20 41.92 moveto
+427.20 39.52 lineto
+currentpoint stroke moveto
+433.60 41.92 moveto
+433.60 40.80 lineto
+currentpoint stroke moveto
+440.00 41.92 moveto
+440.00 40.80 lineto
+currentpoint stroke moveto
+446.40 41.92 moveto
+446.40 40.80 lineto
+currentpoint stroke moveto
+452.64 41.92 moveto
+452.64 40.80 lineto
+currentpoint stroke moveto
+459.04 41.92 moveto
+459.04 39.52 lineto
+currentpoint stroke moveto
+465.44 41.92 moveto
+465.44 40.80 lineto
+currentpoint stroke moveto
+471.84 41.92 moveto
+471.84 40.80 lineto
+currentpoint stroke moveto
+478.08 41.92 moveto
+478.08 40.80 lineto
+currentpoint stroke moveto
+484.48 41.92 moveto
+484.48 40.80 lineto
+currentpoint stroke moveto
+490.88 41.92 moveto
+490.88 39.52 lineto
+currentpoint stroke moveto
+497.28 41.92 moveto
+497.28 40.80 lineto
+currentpoint stroke moveto
+503.68 41.92 moveto
+503.68 40.80 lineto
+currentpoint stroke moveto
+509.92 41.92 moveto
+509.92 40.80 lineto
+currentpoint stroke moveto
+516.32 41.92 moveto
+516.32 40.80 lineto
+currentpoint stroke moveto
+522.72 41.92 moveto
+522.72 39.52 lineto
+currentpoint stroke moveto
+529.12 41.92 moveto
+529.12 40.80 lineto
+currentpoint stroke moveto
+535.36 41.92 moveto
+535.36 40.80 lineto
+currentpoint stroke moveto
+541.76 41.92 moveto
+541.76 40.80 lineto
+currentpoint stroke moveto
+THIN LINESOLID 0.0000 setgray
+/Arial findfont 6.080000 scalefont setfont
+(-8.00)339.52 41.92 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+350.24 41.92 moveto
+344.80 41.92 lineto
+currentpoint stroke moveto
+(-6.00)339.52 53.76 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+350.24 53.76 moveto
+344.80 53.76 lineto
+currentpoint stroke moveto
+(-4.00)339.52 65.60 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+350.24 65.60 moveto
+344.80 65.60 lineto
+currentpoint stroke moveto
+(-2.00)339.52 77.44 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+350.24 77.44 moveto
+344.80 77.44 lineto
+currentpoint stroke moveto
+(0.00)339.52 89.28 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+350.24 89.28 moveto
+344.80 89.28 lineto
+currentpoint stroke moveto
+(2.00)339.52 101.12 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+350.24 101.12 moveto
+344.80 101.12 lineto
+currentpoint stroke moveto
+(4.00)339.52 112.96 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+350.24 112.96 moveto
+344.80 112.96 lineto
+currentpoint stroke moveto
+(6.00)339.52 124.80 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+350.24 124.80 moveto
+344.80 124.80 lineto
+currentpoint stroke moveto
+THIN LINESOLID 0.0000 setgray
+350.24 89.28 moveto
+555.20 89.28 lineto
+currentpoint stroke moveto
+THIN LINESOLID 0.0000 setgray
+555.20 41.92 moveto
+350.24 41.92 lineto
+350.24 124.80 lineto
+555.20 124.80 lineto
+555.20 41.92 lineto
+currentpoint stroke moveto
+1 THICK LINESOLID 0.0000 0.0000 0.0000 setrgbcolor
+363.68 78.72 moveto
+370.08 72.64 lineto
+376.32 76.48 lineto
+382.72 75.68 lineto
+389.12 73.60 lineto
+395.52 74.40 lineto
+401.76 75.04 lineto
+408.16 74.88 lineto
+414.56 75.36 lineto
+420.96 75.84 lineto
+427.20 75.68 lineto
+433.60 75.52 lineto
+440.00 75.52 lineto
+446.40 75.84 lineto
+452.64 75.84 lineto
+459.04 76.00 lineto
+465.44 75.84 lineto
+471.84 76.00 lineto
+478.08 76.00 lineto
+484.48 76.00 lineto
+490.88 76.32 lineto
+497.28 76.32 lineto
+503.68 76.16 lineto
+509.92 76.16 lineto
+516.32 76.32 lineto
+522.72 76.32 lineto
+529.12 76.32 lineto
+535.36 76.32 lineto
+541.76 76.48 lineto
+currentpoint stroke moveto
+1 THICK LINESOLID 0.0000 0.0000 1.0000 setrgbcolor
+363.68 86.40 moveto
+370.08 82.88 lineto
+376.32 87.04 lineto
+382.72 87.20 lineto
+389.12 86.72 lineto
+395.52 88.32 lineto
+401.76 89.12 lineto
+408.16 89.28 lineto
+414.56 89.92 lineto
+420.96 90.72 lineto
+427.20 91.36 lineto
+433.60 91.84 lineto
+440.00 92.16 lineto
+446.40 92.64 lineto
+452.64 93.12 lineto
+459.04 93.44 lineto
+465.44 93.60 lineto
+471.84 93.92 lineto
+478.08 94.08 lineto
+484.48 94.24 lineto
+490.88 94.56 lineto
+497.28 94.72 lineto
+503.68 94.88 lineto
+509.92 95.20 lineto
+516.32 95.36 lineto
+522.72 95.52 lineto
+529.12 95.68 lineto
+535.36 95.84 lineto
+541.76 96.00 lineto
+currentpoint stroke moveto
+1 THICK LINESOLID 0.0000 0.0000 1.0000 setrgbcolor
+363.68 69.60 moveto
+370.08 60.96 lineto
+376.32 64.32 lineto
+382.72 62.24 lineto
+389.12 58.56 lineto
+395.52 59.04 lineto
+401.76 58.72 lineto
+408.16 57.76 lineto
+414.56 57.28 lineto
+420.96 57.28 lineto
+427.20 56.96 lineto
+433.60 56.80 lineto
+440.00 56.48 lineto
+446.40 56.48 lineto
+452.64 56.48 lineto
+459.04 56.48 lineto
+465.44 56.48 lineto
+471.84 56.48 lineto
+478.08 56.48 lineto
+484.48 56.48 lineto
+490.88 56.48 lineto
+497.28 56.48 lineto
+503.68 56.48 lineto
+509.92 56.48 lineto
+516.32 56.48 lineto
+522.72 56.48 lineto
+529.12 56.32 lineto
+535.36 56.32 lineto
+541.76 56.32 lineto
+currentpoint stroke moveto
+showpage
+restore
