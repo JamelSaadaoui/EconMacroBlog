@@ -1,0 +1,86 @@
+*
+* Farrant and Peersman(2006), "Is the Exchange Rate a Shock Absorber or a Source
+* of Shocks? New Empirical Evidence", JMCB, vol 38, no. 4, pp 939-961.
+*
+* Four variable VAR with sign restrictions
+*
+open data "datasetfp.xlsx"
+calendar(q) 1961:1
+data(format=xlsx,org=columns) 1961:01 2003:02 yus yemu yuk yjp yca cpus cpemu cpuk cpjp cpca stus stemu $
+ stuk stjp stca bxemu bxuk bxjp bxca
+*
+compute nsteps=29
+*
+* This needs a large number of draws to get 1000 that achieve all the constraints
+*
+compute varDraws=10000
+compute subDraws=500
+*
+* y = (real) output, cp = consumer prices, st = interest rate,
+* bx is bilateral nominal exchange rate (local currency/US$)
+*
+dec hash[string] longname
+compute longname("uk")="United Kingdom"
+compute longname("emu")="Euro Area"
+compute longname("jp")="Japan"
+compute longname("ca")="Canada"
+*
+source mcsignrestrictions.src
+*
+* Where signs are restricted, it's from steps 1 to 4 (counting 1 as the impact)
+* for the output growth differential, prices and the interest rate differential,
+* and just the impact for the real exchange rate.
+*
+dec SignDesc SupplyDesc(2)
+compute SupplyDesc(1)=||+1,1,4||
+compute SupplyDesc(2)=||-2,1,4||
+dec SignDesc DemandDesc(4)
+compute DemandDesc(1)=||+1,1,4||
+compute DemandDesc(2)=||+2,1,4||
+compute DemandDesc(3)=||+3,1,1||
+compute DemandDesc(4)=||-4,1,4||
+dec SignDesc MonetaryDesc(4)
+compute MonetaryDesc(1)=||+1,1,4||
+compute MonetaryDesc(2)=||+2,1,4||
+compute MonetaryDesc(3)=||-3,1,1||
+compute MonetaryDesc(4)=||+4,1,4||
+dec SignDesc ExchangeDesc(4)
+compute ExchangeDesc(1)=||+1,1,4||
+compute ExchangeDesc(2)=||+2,1,4||
+compute ExchangeDesc(3)=||+3,1,1||
+compute ExchangeDesc(4)=||+4,1,4||
+*
+compute [vect[SignDesc]] SignConstraints=||SupplyDesc,DemandDesc,MonetaryDesc,ExchangeDesc||
+*
+********************************************************************************
+*
+compute nshocks=4,nvar=4
+dec vect[strings] sl(nshocks) vl(nvar)
+compute sl=||"Supply","Demand","Monetary","Exchange"||
+compute vl=||"Y-Y*","P-P*","i-i*","Q"||
+*
+dofor [string] zone = "uk" "emu" "jp" "ca"
+   *
+   * For each zone, compute
+   *   100*log ratio of prices vs US
+   *   100*log real exchange rate
+   *   100*log ratio of output vs US
+   *   interest rate differential vs US
+   *
+   set lp  = 100.0*(log(%s("cp"+zone))-log(cpus))
+   set lrx = 100.0*log(%s("bx"+zone))+lp
+   set ly  = 100.0*(log(%s("y"+zone))-log(yus))
+   set s   = %s("st"+zone)-stus
+   set dp  = lp-lp{1}
+   set drx = lrx-lrx{1}
+   set dy  = ly-ly{1}
+   @varlagselect(lags=8,crit=aic,model=var4) 1974:1 2002:4
+   # dy dp s drx
+   estimate(model=var4) 1974:1 2002:4
+   @MCSignRestrictions(model=var4,nsteps=nsteps,constraints=SignConstraints,$
+       accum=||1,2,4||,ndraws=vardraws,subdraws=subdraws)
+   @MCGraphIRF(model=var4,shocklabels=sl,varlabels=vl,$
+      header="Sign Restrictions, 4 Variable Model, Zone "+longname(zone),$
+        picture="##.##",center=median)
+   @MCFEVDTable(model=var4,shocklabels=sl,varlabels=vl,horizons=||1,4,20||)
+end dofor

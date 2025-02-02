@@ -1,0 +1,148 @@
+*
+* @MCSignRestrict(model=model,constraints=constraints,other options)
+*
+* This does sign restrictions by Monte Carlo methods as described in Uhlig doing
+* outer draws for the VAR coefficients and inner draws for rotations of a factor
+* of the covariance matrix. This builds up the responses in the standard
+* %%RESPONSES array, and you can post-process the output using @MCGraphIRF and
+* similar procedures.
+*
+* The assumption is that the last estimation done before this is an ESTIMATE on
+* the input VAR model.
+*
+* Options:
+*
+*   NKEEP=desired number of accepted draws[1000]
+*
+*   VARDRAWS=outer draws for the VAR (joint coefficients/covariance matrix) [200]
+*   SUBDRAWS=inner draws for rotations given the VAR draw [200]
+*
+*   NSTEP=number of steps of impulse responses [20]
+*
+*   ACCUMULATE=||vector of positions|| (not used)
+*     Indicates which variables (by position in the model) need to be accumulated (integrated)
+*
+*   CONSTRAINTS=VECT[VECT[VECT[INT]]] describing the sign restrictions to be imposed.
+*     Each shock is described as a VECT[VECT[INT]] (which is defined as the new type SignDesc)
+*     Each element in that is a VECT[INT] which has +/- the position in the model, the
+*     start step constrained and the end step constrained, where, in keeping with the
+*     standard notation in the literature, k=1 is the "impact" (step 0 as RATS
+*     describes it).
+*
+*   EXPAND/[NOEXPAND]
+*     Add unmodeled shocks to complete a factorization. (This allows for computing
+*     FEVD).
+*
+*   SPECIAL=FUNCTION[INTEGER](RECT) [not used]
+*     This must be a FUNCTION which returns an extra rejection criterion (
+*     1 = reject) which is applied to an otherwise accepted draw which meets
+*     the desired constraints. It is applied to the "flattened" copy of the
+*     impulse responses.
+*
+newtype SignDesc vect[vect[int]]
+*******************************************************************************
+source uhligfuncssd.src
+*
+procedure MCSignRestrict
+option model   model
+option integer vardraws    200
+option integer subdraws    200
+option integer nkeep       1000
+option integer nstep       20
+option switch  expand      0
+option vect[SignDesc]      constraints
+option vect[int] accum
+option function[integer](rect) special
+*
+local integer nvar
+local rect fxx fwish fsigma ffactor
+local rect betaols betadraw
+local real wishdof
+local symm sigmad
+local integer i j
+local integer accept draw nshocks xshocks
+local vector v ik a(nvar)
+local rect ii vv
+local rect flattened
+*
+declare vect[rect] %%responses(nkeep)
+local rect[series] impulses
+*
+if .not.%defined(model).or..not.%defined(constraints) {
+   disp "###Syntax: @MCSignRestrictions(model=model to analyze,constraints=VECT[VECT[VECT[INT]]] of constraints,other options)"
+   return
+}
+compute nvar=%modelsize(model)
+dim %%responses(nkeep)
+*
+compute fxx    =%decomp(%xx)
+compute fwish  =%decomp(inv(%nobs*%sigma))
+compute betaols=%modelgetcoeffs(model)
+compute wishdof=%nobs-%rows(fxx)
+*
+compute nshocks=%size(constraints)
+*
+infobox(action=define,progress,lower=1,upper=vardraws) "Monte Carlo Integration"
+compute accept=0
+do draw=1,vardraws
+   *
+   * Make a draw from the posterior for the VAR and compute its impulse
+   * responses.
+   *
+   compute sigmad  =%ranwisharti(fwish,wishdof)
+   compute fsigma  =%decomp(sigmad)
+   compute betadraw=betaols+%ranmvkron(fsigma,fxx)
+   compute %modelsetcoeffs(model,betadraw)
+   *
+   impulse(noprint,accum=accum,model=model,factor=fsigma,results=impulses,steps=nstep)
+   do subdraw=1,subdraws
+      compute r=%identity(nvar)
+      do j=1,%size(constraints)
+         compute v=r*%ransphere(nvar+1-j)
+         if UhligAcceptSD(impulses,v,constraints(j))==0
+            goto reject
+         compute ii=%if(j==1,fsigma*v,ii~fsigma*v)
+         compute vv=%if(j==1,v,vv~v)
+         @forcedfactor(force=column) sigmad ii ffactor
+         *
+         * Update the rotation matrix for the next constraint
+         *
+         if j<nvar
+            compute r=inv(fsigma)*%xsubmat(ffactor,1,nvar,%cols(ii)+1,nvar)
+      end do j
+      *
+      * If <<expand>>, append the remaining rotation matrix to complete
+      * a factorization.
+      *
+      if expand.and.nshocks<nvar {
+         compute xshocks=nvar
+         compute vv=vv~r
+      }
+      else
+         compute xshocks=nshocks
+      dim flattened(xshocks*nvar,nstep)
+      ewise flattened(i,j)=(ik=%vec(%xt(impulses,j)*vv)),ik(i)
+      if %defined(special) {
+         if special(flattened)
+            goto reject
+      }
+      *
+      * Meets all restrictions
+      *
+      compute accept=accept+1
+      compute %%responses(accept)=flattened
+      if accept>=nkeep
+         break
+:reject
+   end do subdraw
+   if accept>=nkeep
+      break
+   infobox(current=draw) "Acceptance Percentage: "+%strval(100.0*accept/(draw*subdraws),"##.###")
+   :newdraw
+end do draw
+infobox(action=remove)
+{
+if accept<nkeep
+   messagebox(style=alert) "Only had "+accept+" accepted draws, not the requested "+nkeep
+}
+end

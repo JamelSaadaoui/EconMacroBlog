@@ -1,0 +1,55 @@
+*
+* Farrant and Peersman(2006), "Is the Exchange Rate a Shock Absorber or a Source
+* of Shocks? New Empirical Evidence", JMCB, vol 38, no. 4, pp 939-961.
+*
+open data "datasetfp.xlsx"
+calendar(q) 1961:1
+data(format=xlsx,org=columns) 1961:01 2003:02 yus yemu yuk yjp yca cpus cpemu cpuk cpjp cpca stus stemu $
+ stuk stjp stca bxemu bxuk bxjp bxca
+*
+* CGFactor does a long-run factorization with the 2nd and 3rd shocks having no LR
+* effect on variable 1 and the 3rd shock having no LR effect on variable 2, with
+* positive impacts for all shocks on variable 1.
+*
+function CGFactor sigma model
+type rect CGFactor
+type symm sigma
+type model model
+*
+compute CGFactor=%bqfactor(sigma,%modellagsums(model))
+@ImpactSignFlip CGFactor ||+1,+1,+1||
+end
+*
+compute nsteps=29
+compute ndraws=10000
+*
+* y = (real) output, cp = consumer prices, st = interest rate,
+* bx is bilateral nominal exchange rate (local currency/US$)
+*
+dec hash[string] longname
+compute longname("uk")="United Kingdom"
+compute longname("emu")="Euro Area"
+compute longname("jp")="Japan"
+compute longname("ca")="Canada"
+dofor [string] zone = "uk" "emu" "jp" "ca"
+   *
+   * For each zone, compute
+   *   100*log ratio of prices vs US
+   *   100*log real exchange rate
+   *   100*log ratio of output vs US
+   *
+   set lp  = 100.0*(log(%s("cp"+zone))-log(cpus))
+   set lrx = 100.0*log(%s("bx"+zone))+lp
+   set ly  = 100.0*(log(%s("y"+zone))-log(yus))
+   set dp  = lp-lp{1}
+   set drx = lrx-lrx{1}
+   set dy  = ly-ly{1}
+   @varlagselect(lags=8,crit=aic,model=cgmodel) 1974:1 2002:4
+   # dy drx dp
+   estimate(model=cgmodel) 1974:1 2002:4
+   @MCVARDoDraws(model=cgmodel,ffunction=CGFactor,accum=||1,2,3||,steps=nsteps,draws=ndraws)
+   @MCGraphIRF(model=cgmodel,shocklabels=||"Supply","Demand","Nominal"||,varlabels=||"Y-Y*","Q","P-P*"||,$
+      header="Clarida-Gali Model, Zone "+longname(zone),picture="##.##",center=median)
+   @MCFEVDTable(model=cgmodel,shocklabels=||"Supply","Demand","Nominal"||,$
+       varlabels=||"Y-Y*","Q","P-P*"||,horizons=||1,4,20||)
+end dofor
