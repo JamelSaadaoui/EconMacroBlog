@@ -60,7 +60,7 @@ dofor [string] zone = "jp"
    *   100*log ratio of output vs US
    *
    set lp  = 100.0*(log(%s("cp"+zone))-log(cpus))
-   set lrx = 100.0*log(%s("bx"+zone))+lp
+   set lrx = 100.0*log(%s("bx"+zone))-lp
    set ly  = 100.0*(log(%s("y"+zone))-log(yus))
    set dp  = lp-lp{1}
    set drx = lrx-lrx{1}
