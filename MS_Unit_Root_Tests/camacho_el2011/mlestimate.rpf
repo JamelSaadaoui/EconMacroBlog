@@ -1,0 +1,90 @@
+*
+* Replication file for Camacho(2011), "Markov-switching models and the
+* unit root hypothesis in real U.S. GDP", Economics Letters, vol. 112,
+* 161-164
+*
+open data gdp.txt
+calendar(q) 1947:1
+data(format=prn,nolabels,org=columns) 1947:01 2009:04 date gdp
+*
+set loggdp = 100.0*log(gdp)
+set dlog   = loggdp-loggdp{1}
+*
+* This uses a non-standard trend
+*
+set trend = 1+.1*(t-1)
+*
+@MSRegression(switch=c,nfix=2,regimes=2) loggdp
+# trend loggdp{1} constant
+*
+@MSRegParmSet(parmset=regparms)
+nonlin(parmset=msparms)  p
+*
+compute gstart=1947:2,gend=2009:4
+*
+* @MSRegInitial doesn't do very well with this model. It separates the
+* two regimes by making the intercept in the first lower than the
+* intercept in the second, with the gap set based upon the standard
+* error of the intercept in a non-switching regression. However, because
+* the AR has a near-unit root, the standard error on the constant (and
+* trend) coefficients is extremely high because small changes to the AR
+* coefficient create large changes to the deterministics. Instead, this
+* does the linear regression, then restricts the AR coefficient to be
+* exactly the estimate---this removes that source of uncertainty and
+* thus gets the separation to a more reasonable distance.
+*
+linreg loggdp
+# trend loggdp{1} constant
+restrict(replace,create) 1
+# 2
+# 1.0 %beta(2)
+*
+compute sigsq=%seesq
+compute gammas=||%beta(1),%beta(2)||
+compute betas(1)=%beta(3)-.5*%stderrs(3)
+compute betas(2)=%beta(3)+.5*%stderrs(3)
+*
+* High (2nd) regime is more persistent than the low (1st) regime
+*
+compute p=||.75,.10||
+*
+frml logl = f=%MSRegFVec(t),fpt=%MSProb(t,f),log(fpt)
+@MSFilterInit
+maximize(start=%(%MSRegInitVariances(),pstar=%msinit()),$
+  parmset=regparms+msparms,$
+  method=bfgs,pmethod=simplex,piters=2) logl gstart gend
+*
+@MSSmoothed gstart gend psmooth
+@NBERCycles(down=recession)
+set p1smooth = psmooth(t)(1)
+graph(footer="Smoothed Probabilities of Regime 1",max=1.0,min=0.0,$
+  shading=recession)
+# p1smooth gstart gend
+*
+summarize(title="Average Length of Expansion") 1.0/%beta(7)
+summarize(title="Average Length of Recession") 1.0/(1-%beta(6))
+*
+* Restricted model
+*
+release betas
+*
+@MSRegression(switch=c,nfix=1,regimes=2) dlog
+# dlog{1} constant
+compute gstart=1947:3,gend=2009:4
+@MSRegParmset(parmset=regparms)
+nonlin(parmset=msparms)  p
+@MSRegInitial gstart gend
+@MSFilterInit
+compute p=||.75,.10||
+maximize(start=%(%MSRegInitVariances(),pstar=%msinit()),$
+  parmset=regparms+msparms,$
+  method=bfgs,pmethod=simplex,piters=2) logl gstart gend
+*
+@MSSmoothed gstart gend psmooth
+@NBERCycles(down=recession)
+set p1smooth = psmooth(t)(1)
+graph(footer="Smoothed Probabilities of Regime 1\\Unit Root Model",max=1.0,min=0.0,$
+  shading=recession)
+# p1smooth gstart gend
+summarize(title="Average Length of Expansion") 1.0/%beta(6)
+summarize(title="Average Length of Recession") 1.0/(1-%beta(5))
