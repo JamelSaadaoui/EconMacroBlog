@@ -1,11 +1,11 @@
+OPEN DATA gdp.xls
+CALENDAR(Q) 1947:1
+DATA(FORMAT=XLS,NOLABELS,ORG=COLUMNS,TOP=2) 1947:01 2024:04 GDP
 *
 * Replication file for Camacho(2011), "Markov-switching models and the
 * unit root hypothesis in real U.S. GDP", Economics Letters, vol. 112,
 * 161-164
 *
-open data gdp.txt
-calendar(q) 1947:1
-data(format=prn,nolabels,org=columns) 1947:01 2009:04 date gdp
 *
 set loggdp = 100.0*log(gdp)
 set dlog   = loggdp-loggdp{1}
@@ -14,13 +14,13 @@ set dlog   = loggdp-loggdp{1}
 *
 set trend = 1+.1*(t-1)
 *
-@MSRegression(switch=c,nfix=2,regimes=2) loggdp
+@MSRegression(switch=ch,nfix=2,regimes=2) loggdp
 # trend loggdp{1} constant
 *
 @MSRegParmSet(parmset=regparms)
 nonlin(parmset=msparms)  p
 *
-compute gstart=1947:2,gend=2009:4
+compute gstart=1947:2,gend=2024:4
 *
 * @MSRegInitial doesn't do very well with this model. It separates the
 * two regimes by making the intercept in the first lower than the
@@ -68,9 +68,9 @@ summarize(title="Average Length of Recession") 1.0/(1-%beta(6))
 *
 release betas
 *
-@MSRegression(switch=c,nfix=1,regimes=2) dlog
+@MSRegression(switch=ch,nfix=1,regimes=2) dlog
 # dlog{1} constant
-compute gstart=1947:3,gend=2009:4
+compute gstart=1947:3,gend=2024:4
 @MSRegParmset(parmset=regparms)
 nonlin(parmset=msparms)  p
 @MSRegInitial gstart gend

@@ -1,0 +1,106 @@
+
+Linear Regression - Estimation by Least Squares
+Dependent Variable DLOGY
+Quarterly Data From 1947:02 To 2024:04
+Usable Observations                       311
+Degrees of Freedom                        308
+Centered R^2                        0.0216212
+R-Bar^2                             0.0152680
+Uncentered R^2                      0.3351320
+Mean of Dependent Variable       0.7645533427
+Std Error of Dependent Variable  1.1151891418
+Standard Error of Estimate       1.1066430181
+Sum of Squared Residuals         377.19490099
+Regression F(2,308)                    3.4032
+Significance Level of F             0.0345212
+Log Likelihood                      -471.2966
+Durbin-Watson Statistic                1.7531
+
+    Variable                        Coeff      Std Error      T-Stat      Signif
+************************************************************************************
+1.  TREND                         0.062929954  0.064847293      0.97043  0.33259215
+2.  LOGY{1}                      -0.010289942  0.008394399     -1.22581  0.22120648
+3.  Constant                      8.984065806  6.488719068      1.38457  0.16718714
+
+t(308)=   0.000000 or F(1,308)=   0.000000 with Significance Level 1.00000000
+
+
+Linear Model - Estimation by Restricted Regression
+Dependent Variable DLOGY
+Quarterly Data From 1947:02 To 2024:04
+Usable Observations                       311
+Degrees of Freedom                        309
+Mean of Dependent Variable       0.7645533427
+Std Error of Dependent Variable  1.1151891418
+Standard Error of Estimate       1.1048508825
+Sum of Squared Residuals         377.19490099
+Durbin-Watson Statistic                1.7531
+
+    Variable                        Coeff      Std Error      T-Stat      Signif
+************************************************************************************
+1.  TREND                         0.062929954  0.006978401      9.01782  0.00000000
+2.  LOGY{1}                      -0.010289942  0.000000000      0.00000  0.00000000
+3.  Constant                      8.984065806  0.131697801     68.21728  0.00000000
+
+
+MAXIMIZE - Estimation by BHHH
+NO CONVERGENCE IN 100 ITERATIONS
+LAST CRITERION WAS  0.0001043
+TRY INCREASING ITERS OPTION
+
+Quarterly Data From 1947:02 To 2024:04
+Usable Observations                       311
+Function Value                      -454.0059
+
+    Variable                        Coeff      Std Error      T-Stat      Signif
+************************************************************************************
+1.  GAMMAS(1)                      0.17258630   0.05555268      3.10671  0.00189179
+2.  GAMMAS(2)                     -0.02666860   0.00740120     -3.60328  0.00031423
+3.  BETAS(1)(1)                   19.84393351   5.64208615      3.51713  0.00043625
+4.  BETAS(2)(1)                   22.10727730   5.72820314      3.85937  0.00011368
+5.  SIGSQ                          0.84003314   0.04243655     19.79504  0.00000000
+6.  P(1,1)                         0.63296608   0.13549934      4.67136  0.00000299
+7.  P(1,2)                         0.03637263   0.01847277      1.96899  0.04895463
+
+
+Linear Regression - Estimation by Least Squares
+Dependent Variable DLOGY
+Quarterly Data From 1947:02 To 2024:04
+Usable Observations                       311
+Degrees of Freedom                        309
+Centered R^2                        0.0168480
+R-Bar^2                             0.0136663
+Uncentered R^2                      0.3318884
+Mean of Dependent Variable       0.7645533427
+Std Error of Dependent Variable  1.1151891418
+Standard Error of Estimate       1.1075426702
+Sum of Squared Residuals         379.03508681
+Regression F(1,309)                    5.2953
+Significance Level of F             0.0220490
+Log Likelihood                      -472.0534
+Durbin-Watson Statistic                1.7626
+
+    Variable                        Coeff      Std Error      T-Stat      Signif
+************************************************************************************
+1.  TREND                        -0.016097416  0.006995403     -2.30114  0.02204896
+2.  Constant                      1.031770451  0.132018661      7.81534  0.00000000
+
+
+MAXIMIZE - Estimation by BFGS
+Convergence in    30 Iterations. Final criterion was  0.0000000 <=  0.0000100
+
+Quarterly Data From 1947:02 To 2024:04
+Usable Observations                       311
+Function Value                        NA
+
+    Variable                        Coeff      Std Error      T-Stat      Signif
+************************************************************************************
+1.  GAMMAS(1)                    -0.011024873  0.005958428     -1.85030  0.06427046
+2.  GAMMAS(2)                     0.000000000  0.000000000      0.00000  0.00000000
+3.  BETAS(1)(1)                  -7.937538909  1.005596359     -7.89336  0.00000000
+4.  BETAS(2)(1)                   0.977762308  0.118448999      8.25471  0.00000000
+5.  SIGSQ                         0.969844646  0.069060597     14.04339  0.00000000
+6.  P(1,1)                       -0.000010000  0.180523770 -5.53947e-05  0.99995580
+7.  P(1,2)                        0.002276226  0.001314846      1.73117  0.08342088
+
+Empirical Significance Level       0.78300

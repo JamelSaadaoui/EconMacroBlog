@@ -1,0 +1,762 @@
+%!PS-Adobe-2.0 EPSF-2.0
+%%Creator: WinRATS Pro (32-bit)
+%%CreationDate: Sun Feb  2 01:14:51 PM
+%%BoundingBox: 0 0 580 366
+/RGFHORZ 2 def/RGFVERT -9 def/ROTATE 0 def
+%%
+%% prolog.pst
+%% PostScript prolog for GRAFEDIT
+%%  (c) 1993-2007 Thomas A. Doan. All rights reserved.
+%%
+%%Pages:(atend)
+%%EndComments
+
+save
+
+%
+% Local dictionary - we need a matching end in the postlog
+%
+
+150 dict begin
+
+%
+% Set the origins and orientation
+% PostScript specifies a default user space with the origin at the
+% lower left of the page in <<portrait>> mode. Our user space has the
+% origin at the lower left in <<landscape>> mode, with a printable
+% area of 720 points by 576 points (10" x 8"). We need to translate
+% and rotate (clockwise) to move from our space to PostScript space.
+%
+% In order to center an image on a sheet of paper whose physical size
+% is A points (long dimension) x B points, the translation should be
+%
+% -(A+720)/2 (B-576)/2 translate
+%
+% For Letter size (11" x 8.5")  (792 points x 612 points)
+%  -756 18 translate
+% For A4 size (11.7" x 8.3") (842.4 points x 597.6 points)
+%  -781.2 10.8 translate
+%
+% For EPS import, use -(4th element in %%BoundingBox) 0
+%
+% If RGFHORZ and RGFVERT are not set above to the appropriate values
+% the following line will define them.
+%
+
+/RGFHORZ where {pop} {/RGFHORZ -756 def/RGFVERT 18 def} ifelse
+/ROTATE  where {pop} {/ROTATE  -90 def} ifelse
+
+/USERTODEFAULT {ROTATE rotate RGFHORZ RGFVERT translate} def
+
+%
+% User definable
+%
+
+%
+% Define the possible line widths
+% THIN is a "hairline". 0 gives the minimal width on the device. That's
+% not recommended because it can be almost invisible. r THICK sets the
+% line thickness at r * the value in the definition.
+%
+
+/THIN  {0.125 setlinewidth } def
+/THICK {1.000 mul setlinewidth } def
+
+
+%
+%Define the solid line pattern
+%
+
+/LINESOLID			{[] 0 setdash} def
+
+%
+% Determine the actual height of this font. Used to center strings vertically
+%
+
+/HEIGHT {gsave newpath 0 0 moveto
+	(M) true charpath flattenpath pathbbox
+	exch pop exch sub exch pop
+	grestore
+	} def
+
+%
+%  Define macros to print text in each alignment and orientation
+%  To put out a text string we need to following syntax:
+%
+%  {string} x y BEGTEXT "rotation op" "horiz pos" "vertical pos" ENDTEXT
+%
+
+/BEGTEXT    {moveto gsave currentpoint translate} def
+/ENDTEXT    {rmoveto show grestore} def
+
+/LEFTAXIS   {90 rotate} def
+/RIGHTAXIS  {-90 rotate} def
+/UPSIDEDOWN {180 rotate} def
+
+/HCENTER    {dup stringwidth pop -2 div} def
+/HLEFT      {0} def
+/HRIGHT     {dup stringwidth pop -1 mul} def
+
+/VCENTER    {HEIGHT -2 div} def
+/VTOP       {HEIGHT -1 mul} def
+/VBOTTOM    {0} def
+
+%
+%Define a macro to outline the existing shape in a thin black line
+%
+
+/OUTLINE {[] 0.0 setgray 0 setdash 0.25 setlinewidth stroke } def
+
+%
+%Define a macro to white out a region
+%
+
+/WHITEOUT {gsave 1.000 setgray fill grestore} def
+
+%
+%Define a macro to draw a box
+%
+
+/BOX {newpath
+	3 index 3 index moveto
+	3 index 1 index lineto
+	2 copy lineto
+	1 index 3 index lineto
+	pop pop lineto
+	} def
+
+%
+%Define a macro to draw an arbitrary polygon given 4 points
+%
+
+/POLYGON {newpath
+	moveto lineto lineto lineto
+	closepath
+	} def
+
+%
+%Define a macro to draw a dot
+%
+
+/DOT {1 setlinejoin THIN moveto currentpoint lineto stroke 0 setlinejoin} def
+
+%
+%Define a macro to find the bounding box of the current path
+%aligned on 1 inch centers
+%
+
+/INCHBOX {
+	gsave flattenpath pathbbox
+	72 div ceiling 72 mul 4 1 roll
+	72 div ceiling 72 mul 4 1 roll
+	72 div floor   72 mul 4 1 roll
+	72 div floor   72 mul 4 1 roll
+	grestore } def
+
+%
+%Define a macro to draw vertical rules through the box
+%whose lower left and upper right corners on the stack
+%
+/RULES {
+	mark
+	1 index
+	4 index
+	sub
+	0
+	exch
+	5 index
+	7 index
+	2.25    %this is the gap in points between the lines
+	7 index
+	{ 4 copy exch moveto rlineto stroke pop }
+	newpath
+	for
+	cleartomark
+	} def
+
+%
+%Draw vertical bars through the shape defined by the current path
+%
+/DRAWHATCHING {
+	gsave THIN
+	clip
+	mark
+	INCHBOX
+	RULES
+	cleartomark grestore } def
+
+%
+%Draw crosshatched lines through the shape defined by the current path
+%
+/HATCHCROSS {
+	gsave
+	45 rotate DRAWHATCHING
+	-90 rotate DRAWHATCHING
+	grestore
+} def
+
+%
+% Vertical hatching
+%
+/HATCHVERT {
+	gsave
+    DRAWHATCHING
+    grestore
+} def
+
+
+%
+% Horizontal hatching
+%
+/HATCHHORIZ {
+	gsave
+	-90 rotate DRAWHATCHING
+	grestore
+} def
+
+%
+%Draw upward sloping lines through the shape defined by the current path
+%
+/HATCHUP {
+	gsave
+	-45 rotate DRAWHATCHING
+	grestore
+} def
+
+%
+%Draw downward sloping lines through the shape defined by the current path
+%
+/HATCHDOWN {
+	gsave
+	45 rotate DRAWHATCHING
+	grestore
+} def
+
+%
+%Draw a checker board pattern through the shape defined by the current path
+%
+/HATCHCHECK {
+	gsave
+	DRAWHATCHING
+	-90 rotate DRAWHATCHING
+	grestore
+} def
+
+%
+%  Define graphics symbols
+%   Calling sequence   0 or 90 size x y SYMBOLx
+%
+%  The definitions are based upon points on a radius 1 circle
+%
+
+/SYMBOLIN {
+	gsave translate LINESOLID THIN dup scale rotate newpath
+} def
+
+/SYMBOLOUT {
+	grestore
+} def
+
+USERTODEFAULT
+
+%%EndProlog
+
+%%Page: ? 34078906
+save
+newpath
+/Arial findfont 13.280000 scalefont setfont
+(Smoothed Probabilities of Regime 1)14.40 47.84 BEGTEXT HLEFT VTOP ENDTEXT
+(Unit Root Model)14.40 33.44 BEGTEXT HLEFT VTOP ENDTEXT
+/Arial findfont 12.640000 scalefont setfont
+(1950)111.36 54.88 BEGTEXT HCENTER VBOTTOM ENDTEXT
+(1960)182.88 54.88 BEGTEXT HCENTER VBOTTOM ENDTEXT
+(1970)254.24 54.88 BEGTEXT HCENTER VBOTTOM ENDTEXT
+(1980)325.76 54.88 BEGTEXT HCENTER VBOTTOM ENDTEXT
+(1990)397.28 54.88 BEGTEXT HCENTER VBOTTOM ENDTEXT
+(2000)468.64 54.88 BEGTEXT HCENTER VBOTTOM ENDTEXT
+THIN LINESOLID 0.0000 setgray
+94.40 74.24 moveto
+94.40 71.04 lineto
+currentpoint stroke moveto
+101.44 74.24 moveto
+101.44 71.04 lineto
+currentpoint stroke moveto
+108.64 74.24 moveto
+108.64 67.84 lineto
+currentpoint stroke moveto
+115.84 74.24 moveto
+115.84 71.04 lineto
+currentpoint stroke moveto
+122.88 74.24 moveto
+122.88 71.04 lineto
+currentpoint stroke moveto
+130.08 74.24 moveto
+130.08 71.04 lineto
+currentpoint stroke moveto
+137.28 74.24 moveto
+137.28 71.04 lineto
+currentpoint stroke moveto
+144.32 74.24 moveto
+144.32 71.04 lineto
+currentpoint stroke moveto
+151.52 74.24 moveto
+151.52 71.04 lineto
+currentpoint stroke moveto
+158.72 74.24 moveto
+158.72 71.04 lineto
+currentpoint stroke moveto
+165.76 74.24 moveto
+165.76 71.04 lineto
+currentpoint stroke moveto
+172.96 74.24 moveto
+172.96 71.04 lineto
+currentpoint stroke moveto
+180.16 74.24 moveto
+180.16 67.84 lineto
+currentpoint stroke moveto
+187.20 74.24 moveto
+187.20 71.04 lineto
+currentpoint stroke moveto
+194.40 74.24 moveto
+194.40 71.04 lineto
+currentpoint stroke moveto
+201.60 74.24 moveto
+201.60 71.04 lineto
+currentpoint stroke moveto
+208.64 74.24 moveto
+208.64 71.04 lineto
+currentpoint stroke moveto
+215.84 74.24 moveto
+215.84 71.04 lineto
+currentpoint stroke moveto
+223.04 74.24 moveto
+223.04 71.04 lineto
+currentpoint stroke moveto
+230.24 74.24 moveto
+230.24 71.04 lineto
+currentpoint stroke moveto
+237.28 74.24 moveto
+237.28 71.04 lineto
+currentpoint stroke moveto
+244.48 74.24 moveto
+244.48 71.04 lineto
+currentpoint stroke moveto
+251.68 74.24 moveto
+251.68 67.84 lineto
+currentpoint stroke moveto
+258.72 74.24 moveto
+258.72 71.04 lineto
+currentpoint stroke moveto
+265.92 74.24 moveto
+265.92 71.04 lineto
+currentpoint stroke moveto
+273.12 74.24 moveto
+273.12 71.04 lineto
+currentpoint stroke moveto
+280.16 74.24 moveto
+280.16 71.04 lineto
+currentpoint stroke moveto
+287.36 74.24 moveto
+287.36 71.04 lineto
+currentpoint stroke moveto
+294.56 74.24 moveto
+294.56 71.04 lineto
+currentpoint stroke moveto
+301.60 74.24 moveto
+301.60 71.04 lineto
+currentpoint stroke moveto
+308.80 74.24 moveto
+308.80 71.04 lineto
+currentpoint stroke moveto
+316.00 74.24 moveto
+316.00 71.04 lineto
+currentpoint stroke moveto
+323.04 74.24 moveto
+323.04 67.84 lineto
+currentpoint stroke moveto
+330.24 74.24 moveto
+330.24 71.04 lineto
+currentpoint stroke moveto
+337.44 74.24 moveto
+337.44 71.04 lineto
+currentpoint stroke moveto
+344.48 74.24 moveto
+344.48 71.04 lineto
+currentpoint stroke moveto
+351.68 74.24 moveto
+351.68 71.04 lineto
+currentpoint stroke moveto
+358.88 74.24 moveto
+358.88 71.04 lineto
+currentpoint stroke moveto
+365.92 74.24 moveto
+365.92 71.04 lineto
+currentpoint stroke moveto
+373.12 74.24 moveto
+373.12 71.04 lineto
+currentpoint stroke moveto
+380.32 74.24 moveto
+380.32 71.04 lineto
+currentpoint stroke moveto
+387.36 74.24 moveto
+387.36 71.04 lineto
+currentpoint stroke moveto
+394.56 74.24 moveto
+394.56 67.84 lineto
+currentpoint stroke moveto
+401.76 74.24 moveto
+401.76 71.04 lineto
+currentpoint stroke moveto
+408.80 74.24 moveto
+408.80 71.04 lineto
+currentpoint stroke moveto
+416.00 74.24 moveto
+416.00 71.04 lineto
+currentpoint stroke moveto
+423.20 74.24 moveto
+423.20 71.04 lineto
+currentpoint stroke moveto
+430.24 74.24 moveto
+430.24 71.04 lineto
+currentpoint stroke moveto
+437.44 74.24 moveto
+437.44 71.04 lineto
+currentpoint stroke moveto
+444.64 74.24 moveto
+444.64 71.04 lineto
+currentpoint stroke moveto
+451.68 74.24 moveto
+451.68 71.04 lineto
+currentpoint stroke moveto
+458.88 74.24 moveto
+458.88 71.04 lineto
+currentpoint stroke moveto
+466.08 74.24 moveto
+466.08 67.84 lineto
+currentpoint stroke moveto
+473.12 74.24 moveto
+473.12 71.04 lineto
+currentpoint stroke moveto
+480.32 74.24 moveto
+480.32 71.04 lineto
+currentpoint stroke moveto
+487.52 74.24 moveto
+487.52 71.04 lineto
+currentpoint stroke moveto
+494.56 74.24 moveto
+494.56 71.04 lineto
+currentpoint stroke moveto
+501.76 74.24 moveto
+501.76 71.04 lineto
+currentpoint stroke moveto
+508.96 74.24 moveto
+508.96 71.04 lineto
+currentpoint stroke moveto
+516.00 74.24 moveto
+516.00 71.04 lineto
+currentpoint stroke moveto
+523.20 74.24 moveto
+523.20 71.04 lineto
+currentpoint stroke moveto
+530.40 74.24 moveto
+530.40 71.04 lineto
+currentpoint stroke moveto
+100.64 364.64  107.68 74.24 BOX 0.8980 setgray fill newpath
+132.80 364.64  140.00 74.24 BOX 0.8980 setgray fill newpath
+163.20 364.64  168.48 74.24 BOX 0.8980 setgray fill newpath
+182.88 364.64  188.16 74.24 BOX 0.8980 setgray fill newpath
+250.72 364.64  257.92 74.24 BOX 0.8980 setgray fill newpath
+279.36 364.64  288.16 74.24 BOX 0.8980 setgray fill newpath
+324.00 364.64  327.52 74.24 BOX 0.8980 setgray fill newpath
+334.72 364.64  343.68 74.24 BOX 0.8980 setgray fill newpath
+399.04 364.64  402.56 74.24 BOX 0.8980 setgray fill newpath
+474.08 364.64  479.36 74.24 BOX 0.8980 setgray fill newpath
+522.40 364.64  533.12 74.24 BOX 0.8980 setgray fill newpath
+THIN LINESOLID 0.0000 setgray
+/Arial findfont 12.640000 scalefont setfont
+(0.00)46.40 74.24 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+65.12 74.24 moveto
+55.68 74.24 lineto
+currentpoint stroke moveto
+(0.25)46.40 146.72 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+65.12 146.72 moveto
+55.68 146.72 lineto
+currentpoint stroke moveto
+(0.50)46.40 219.36 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+65.12 219.36 moveto
+55.68 219.36 lineto
+currentpoint stroke moveto
+(0.75)46.40 292.00 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+65.12 292.00 moveto
+55.68 292.00 lineto
+currentpoint stroke moveto
+(1.00)46.40 364.64 BEGTEXT HRIGHT VCENTER ENDTEXT
+THIN LINESOLID 0.0000 setgray
+65.12 364.64 moveto
+55.68 364.64 lineto
+currentpoint stroke moveto
+THIN LINESOLID 0.0000 setgray
+561.44 74.24 moveto
+65.12 74.24 lineto
+65.12 364.64 lineto
+561.44 364.64 lineto
+561.44 74.24 lineto
+currentpoint stroke moveto
+1 THICK LINESOLID 0.0000 0.0000 0.0000 setrgbcolor
+90.72 83.36 moveto
+92.64 74.40 lineto
+94.40 74.56 lineto
+96.16 74.56 lineto
+97.92 86.72 lineto
+99.68 110.08 lineto
+101.44 216.96 lineto
+103.36 101.76 lineto
+105.12 76.80 lineto
+106.88 164.32 lineto
+108.64 74.24 lineto
+110.40 74.24 lineto
+112.16 74.24 lineto
+114.08 75.84 lineto
+115.84 75.36 lineto
+117.60 74.56 lineto
+119.36 74.40 lineto
+121.12 90.72 lineto
+122.88 75.52 lineto
+124.80 84.16 lineto
+126.56 76.00 lineto
+128.32 74.24 lineto
+130.08 75.52 lineto
+131.84 94.72 lineto
+133.60 213.92 lineto
+135.52 262.24 lineto
+137.28 114.40 lineto
+139.04 81.28 lineto
+140.80 74.72 lineto
+142.56 74.24 lineto
+144.32 74.24 lineto
+146.24 75.20 lineto
+148.00 75.20 lineto
+149.76 82.08 lineto
+151.52 102.88 lineto
+153.28 76.16 lineto
+155.04 88.48 lineto
+156.96 74.40 lineto
+158.72 81.44 lineto
+160.48 95.20 lineto
+162.24 82.08 lineto
+164.00 318.40 lineto
+165.76 355.36 lineto
+167.68 76.32 lineto
+169.44 74.24 lineto
+171.20 74.24 lineto
+172.96 74.40 lineto
+174.72 74.40 lineto
+176.48 119.20 lineto
+178.40 80.00 lineto
+180.16 74.40 lineto
+181.92 165.28 lineto
+183.68 113.28 lineto
+185.44 192.80 lineto
+187.20 77.12 lineto
+189.12 74.24 lineto
+190.88 74.72 lineto
+192.64 74.40 lineto
+194.40 74.56 lineto
+196.16 75.84 lineto
+197.92 76.16 lineto
+199.84 80.96 lineto
+201.60 74.56 lineto
+203.36 75.04 lineto
+205.12 74.40 lineto
+206.88 77.92 lineto
+208.64 74.24 lineto
+210.56 76.16 lineto
+212.32 74.88 lineto
+214.08 82.40 lineto
+215.84 74.24 lineto
+217.60 75.52 lineto
+219.36 74.24 lineto
+221.28 74.24 lineto
+223.04 74.40 lineto
+224.80 90.08 lineto
+226.56 76.80 lineto
+228.32 75.84 lineto
+230.24 76.16 lineto
+232.00 85.44 lineto
+233.76 75.52 lineto
+235.52 76.00 lineto
+237.28 74.24 lineto
+239.04 74.72 lineto
+240.96 78.72 lineto
+242.72 78.24 lineto
+244.48 74.56 lineto
+246.24 84.48 lineto
+248.00 78.72 lineto
+249.76 108.64 lineto
+251.68 87.68 lineto
+253.44 79.68 lineto
+255.20 78.40 lineto
+256.96 173.12 lineto
+258.72 74.24 lineto
+260.48 85.60 lineto
+262.40 76.48 lineto
+264.16 80.00 lineto
+265.92 74.24 lineto
+267.68 74.24 lineto
+269.44 77.60 lineto
+271.20 74.40 lineto
+273.12 74.24 lineto
+274.88 80.32 lineto
+276.64 121.92 lineto
+278.40 78.56 lineto
+280.16 162.72 lineto
+281.92 99.04 lineto
+283.84 181.28 lineto
+285.60 140.96 lineto
+287.36 175.68 lineto
+289.12 76.00 lineto
+290.88 74.40 lineto
+292.64 75.04 lineto
+294.56 74.24 lineto
+296.32 79.84 lineto
+298.08 78.08 lineto
+299.84 76.00 lineto
+301.60 74.88 lineto
+303.36 74.24 lineto
+305.28 74.88 lineto
+307.04 97.44 lineto
+308.80 78.72 lineto
+310.56 74.24 lineto
+312.32 83.84 lineto
+314.08 75.20 lineto
+316.00 86.56 lineto
+317.76 81.76 lineto
+319.52 76.16 lineto
+321.28 84.80 lineto
+323.04 107.20 lineto
+324.80 311.20 lineto
+326.72 92.32 lineto
+328.48 74.24 lineto
+330.24 75.04 lineto
+332.00 190.24 lineto
+333.76 82.56 lineto
+335.52 309.12 lineto
+337.44 286.72 lineto
+339.20 81.60 lineto
+340.96 100.48 lineto
+342.72 80.96 lineto
+344.48 74.56 lineto
+346.24 74.24 lineto
+348.16 74.40 lineto
+349.92 74.40 lineto
+351.68 74.40 lineto
+353.44 74.56 lineto
+355.20 76.48 lineto
+356.96 76.16 lineto
+358.88 75.52 lineto
+360.64 75.84 lineto
+362.40 74.56 lineto
+364.16 77.44 lineto
+365.92 75.52 lineto
+367.68 79.04 lineto
+369.60 75.20 lineto
+371.36 78.40 lineto
+373.12 76.80 lineto
+374.88 75.04 lineto
+376.64 75.84 lineto
+378.40 74.40 lineto
+380.32 80.16 lineto
+382.08 74.72 lineto
+383.84 78.72 lineto
+385.60 74.56 lineto
+387.36 76.00 lineto
+389.12 76.48 lineto
+391.04 76.16 lineto
+392.80 80.96 lineto
+394.56 75.20 lineto
+396.32 82.88 lineto
+398.08 99.36 lineto
+399.84 141.44 lineto
+401.76 101.28 lineto
+403.52 76.00 lineto
+405.28 78.40 lineto
+407.04 77.92 lineto
+408.80 74.88 lineto
+410.72 75.36 lineto
+412.48 75.36 lineto
+414.24 75.52 lineto
+416.00 83.04 lineto
+417.76 76.32 lineto
+419.52 77.12 lineto
+421.44 74.56 lineto
+423.20 75.84 lineto
+424.96 74.72 lineto
+426.72 77.76 lineto
+428.48 75.20 lineto
+430.24 82.72 lineto
+432.16 79.68 lineto
+433.92 75.36 lineto
+435.68 76.48 lineto
+437.44 76.32 lineto
+439.20 74.40 lineto
+440.96 76.96 lineto
+442.88 75.20 lineto
+444.64 76.32 lineto
+446.40 74.56 lineto
+448.16 75.20 lineto
+449.92 76.80 lineto
+451.68 75.52 lineto
+453.60 75.68 lineto
+455.36 74.72 lineto
+457.12 74.40 lineto
+458.88 76.80 lineto
+460.64 76.16 lineto
+462.40 74.72 lineto
+464.32 74.56 lineto
+466.08 85.60 lineto
+467.84 74.40 lineto
+469.60 94.72 lineto
+471.36 78.56 lineto
+473.12 95.84 lineto
+475.04 76.96 lineto
+476.80 93.92 lineto
+478.56 77.76 lineto
+480.32 75.52 lineto
+482.08 77.76 lineto
+483.84 78.08 lineto
+485.76 83.68 lineto
+487.52 77.28 lineto
+489.28 75.52 lineto
+491.04 74.40 lineto
+492.80 76.80 lineto
+494.56 76.64 lineto
+496.48 76.32 lineto
+498.24 76.16 lineto
+500.00 75.68 lineto
+501.76 75.52 lineto
+503.52 79.04 lineto
+505.28 75.84 lineto
+507.20 77.44 lineto
+508.96 74.72 lineto
+510.72 82.40 lineto
+512.48 83.36 lineto
+514.24 75.84 lineto
+516.00 79.52 lineto
+517.92 75.52 lineto
+519.68 75.84 lineto
+521.44 79.68 lineto
+523.20 94.72 lineto
+524.96 92.96 lineto
+526.72 223.36 lineto
+528.64 296.80 lineto
+530.40 279.84 lineto
+532.16 96.00 lineto
+533.92 76.64 lineto
+535.68 74.72 lineto
+currentpoint stroke moveto
+showpage
+restore
