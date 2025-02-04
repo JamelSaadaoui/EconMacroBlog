@@ -1,11 +1,11 @@
-OPEN DATA gdp.xls
-CALENDAR(Q) 1947:1
-DATA(FORMAT=XLS,NOLABELS,ORG=COLUMNS,TOP=2) 1947:01 2024:04 GDP
 *
 * Replication file for Camacho(2011), "Markov-switching models and the
 * unit root hypothesis in real U.S. GDP", Economics Letters, vol. 112,
 * 161-164
 *
+OPEN DATA gdp.xls
+CALENDAR(Q) 1947:1
+DATA(FORMAT=XLS,NOLABELS,ORG=COLUMNS,TOP=2) 1947:01 2024:04 GDP
 *
 set loggdp = 100.0*log(gdp)
 set dlog   = loggdp-loggdp{1}

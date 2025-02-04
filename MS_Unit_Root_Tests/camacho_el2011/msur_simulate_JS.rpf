@@ -1,10 +1,11 @@
-OPEN DATA gdp.xls
-CALENDAR(Q) 1947:1
-DATA(FORMAT=XLS,NOLABELS,ORG=COLUMNS,TOP=2) 1947:01 2024:04 GDP
 *
-* Replication file for Camacho, "Markov-switching models and the unit
-* root hypothesis in real U.S. GDP", Economics Letters, vol. 112, 161-164
+* Replication file for Camacho(2011), "Markov-switching models and the
+* unit root hypothesis in real U.S. GDP", Economics Letters, vol. 112,
+* 161-164
 *
+open data gdp.txt
+calendar(q) 1947:1
+data(format=prn,nolabels,org=columns) 1947:01 2009:04 date gdp
 *
 set loggdp = 100.0*log(gdp)
 set dlog   = loggdp-loggdp{1}
@@ -13,16 +14,10 @@ set dlog   = loggdp-loggdp{1}
 *
 set trend = 1+.1*(t-1)
 *
-* It's simpler to run the simulations when we use a different series
-* name, so we can replace it with simulated data easily.
+@MSRegression(switch=c,nfix=2,regimes=2) loggdp
+# trend loggdp{1} constant
 *
-set logy  = loggdp
-set dlogy = dlog
-*
-@MSRegression(switch=c,nfix=2,regimes=2) dlogy
-# trend logy{1} constant
-*
-@MSRegParmset(parmset=regparms)
+@MSRegParmSet(parmset=regparms)
 nonlin(parmset=msparms)  p
 *
 compute gstart=1947:2,gend=2024:4
@@ -38,9 +33,9 @@ compute gstart=1947:2,gend=2024:4
 * exactly the estimate---this removes that source of uncertainty and
 * thus gets the separation to a more reasonable distance.
 *
-linreg dlogy
-# trend logy{1} constant
-restrict(create) 1
+linreg loggdp
+# trend loggdp{1} constant
+restrict(replace,create) 1
 # 2
 # 1.0 %beta(2)
 *
@@ -57,73 +52,40 @@ frml logl = f=%MSRegFVec(t),fpt=%MSProb(t,f),log(fpt)
 @MSFilterInit
 maximize(start=%(%MSRegInitVariances(),pstar=%msinit()),$
   parmset=regparms+msparms,$
-  method=bhhh,pmethod=simplex,piters=2) logl gstart gend
-compute msurstat=%tstats(4)
-*
-* Re-estimate the model under the null of a unit root (the paper seems
-* to describe this wrong).
-*
-nonlin(parmset=forcenull) gammas(2)=0.0
-*
-* This again needs some help with guess values
-*
-linreg dlogy
-# trend constant
-compute sigsq=%seesq
-compute gammas=||%beta(1),0.0||
-compute betas(1)=%beta(2)-.5*%stderrs(2)
-compute betas(2)=%beta(2)+.5*%stderrs(2)
-*
-@MSFilterInit
-maximize(start=%(%MSRegInitVariances(),pstar=%msinit()),$
-  parmset=regparms+msparms+forcenull,$
   method=bfgs,pmethod=simplex,piters=2) logl gstart gend
 *
-* Save information for generating data
+@MSSmoothed gstart gend psmooth
+@NBERCycles(down=recession)
+set p1smooth = psmooth(t)(1)
+graph(footer="Smoothed Probabilities of Regime 1",max=1.0,min=0.0,$
+  shading=recession)
+# p1smooth gstart gend
 *
-compute psave=%mspexpand(p)
-dec vect[vect] betasave(2)
-ewise betasave(i)=betas(i)
-compute gammasave=gammas
-compute sigmasave=sqrt(sigsq)
+summarize(title="Average Length of Expansion") 1.0/%beta(7)
+summarize(title="Average Length of Recession") 1.0/(1-%beta(6))
 *
-compute ndraws=1000
-dec vect simstats(ndraws)
-infobox(action=define,progress,lower=1,upper=ndraws) $
-   "Simulated UR Statistics"
-do draw=1,ndraws
-   gset MSRegime gstart gend   = %ranbranch(%mcergodic(psave))
-   gset MSRegime gstart+1 gend = %ranbranch(%xcol(psave,MSRegime{1}))
-   *
-   * This uses the pre-sample value from the actual data
-   *
-   set logy gstart gend = betasave(MSRegime)(1)+gammasave(1)*trend+$
-        (1+gammasave(2))*logy{1}+%ran(sigmasave)
-   set dlogy gstart gend = logy-logy{1}
-   *
-   * YUNI is a copy of the data used internally by the MSRegression routines
-   *
-   set yuni = dlogy
-   *
-   * The guess values have to be re-done for each simulated data series
-   *
-   linreg(noprint) dlogy
-   # trend logy{1} constant
-   restrict(noprint,create) 1
-   # 2
-   # 1.0 %beta(2)
-   compute sigsq=%seesq
-   compute gammas=||%beta(1),%beta(2)||
-   compute betas(1)=%beta(3)-.5*%stderrs(3)
-   compute betas(2)=%beta(3)+.5*%stderrs(3)
-   compute p=||.75,.10||
-   *
-   maximize(start=%(%MSRegInitVariances(),pstar=%msinit()),$
-     parmset=regparms+msparms,$
-     method=bfgs,pmethod=simplex,piters=2,noprint) logl gstart gend
-   compute simstats(draw)=%tstats(4)
-   infobox(current=draw)
-end do draw
-infobox(action=remove)
-sstats(mean) 1 ndraws simstats(t)>msurstat>>pvalue
-disp "Empirical Significance Level" pvalue
+* Restricted model
+*
+release betas
+*
+@MSRegression(switch=c,nfix=1,regimes=2) dlog
+# dlog{1} constant
+compute gstart=1947:3,gend=2024:4
+@MSRegParmset(parmset=regparms)
+nonlin(parmset=msparms)  p
+@MSRegInitial gstart gend
+@MSFilterInit
+compute p=||.75,.10||
+maximize(start=%(%MSRegInitVariances(),pstar=%msinit()),$
+  parmset=regparms+msparms,$
+  method=bfgs,pmethod=simplex,piters=2) logl gstart gend
+*
+@MSSmoothed gstart gend psmooth
+@NBERCycles(down=recession)
+set p1smooth = psmooth(t)(1)
+graph(footer="Smoothed Probabilities of Regime 1\\Unit Root Model",max=1.0,min=0.0,$
+  shading=recession)
+# p1smooth gstart gend
+summarize(title="Average Length of Expansion") 1.0/%beta(6)
+summarize(title="Average Length of Recession") 1.0/(1-%beta(5))
+*
