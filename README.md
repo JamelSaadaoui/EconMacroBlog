@@ -6,6 +6,7 @@ This repository houses the code and data to accompany the [Jamel Saadaoui's **Ec
 
 |Blog Topic (EconMacro link) |Codes and Data (Github Repository)|Date|
 |:----|:----|:----|
+|[GDM Stata](https://www.jamelsaadaoui.com/global-macro-database/)| ["Global Macro Database"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Global_Macro_Database) | Feburary 5, 2025|
 |[MS URT RATS](https://www.jamelsaadaoui.com/markov-switching-models-and-unit-root-test-using-rats/)| ["Markov-switching models and unit root test using RATS"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/MS_Unit_Root_Tests/camacho_el2011) | Feburary 4, 2025|
 |[SVAR RATS](https://www.jamelsaadaoui.com/svar-with-sign-restriction-using-rats/)| ["SVAR with Sign Restriction using RATS"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/SVAR_Sign_Restriction_with_RATS/farrant_peersman_jmcb2006) | Feburary 2, 2025|
 |[Database](https://www.jamelsaadaoui.com/daily-exchange-rates-from-the-bis/)| ["Daily Exchange Rates from the BIS"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Daily_Exchange_Rates_from_the_BIS) | January 31, 2025|
