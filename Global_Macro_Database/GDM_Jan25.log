@@ -1,0 +1,2824 @@
+--------------------------------------------------------------------------------------------------------------------
+      name:  GDM_Jan25
+       log:  C:\Users\jamel\Dropbox\stata\gmd\GDM_Jan25.log
+  log type:  text
+ opened on:   5 Feb 2025, 07:43:48
+
+. 
+. clear
+
+. 
+. net install GMD, from(http://www.globalmacrodata.com/package)
+checking GMD consistency and verifying not already installed...
+all files already exist and are up to date.
+
+. 
+. global CS1 "nGDP rGDP rGDP_pc inv inv_GDP finv finv_GDP rcons cons cons_GDP imports imports_GDP exports CA CA_GDP 
+> pop govexp govexp_GDP govrev govrev_GDP govtax govtax_GDP govdef govdef_GDP govdebt govdebt_GDP CPI HPI deflator i
+> nfl unemp USDfx REER strate ltrate cbrate M0 M1 M2 M3 M4 BankingCrisis CurrencyCrisis SovDebtCrisis"
+
+. 
+. GMD $CS1, country() version(2025_01)
+Global Macro Database by Müller et. al (2025)
+Website: https://www.globalmacrodata.com/
+
+Final dataset: 56407 observations of 47 variables
+Version: 2025_01
+
+. 
+. des
+
+Contains data from https://www.globalmacrodata.com//GMD_2025_01.dta
+ Observations:        56,407                  
+    Variables:            47                  31 Jan 2025 15:52
+                                              (_dta has notes)
+--------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+countryname     str26   %26s                  Country name
+ISO3            str3    %9s                   ISO3 code
+year            double  %9.0g                 Year
+nGDP            float   %9.0g                 Nominal Gross Domestic Product, in Millions of Local Currency Units
+rGDP            float   %9.0g                 Real Gross Domestic Product, in Millions of Local Currency Units
+rGDP_pc         float   %9.0g                 Real Gross Domestic Product per Capita, in Local Currency Units
+deflator        float   %9.0g                 GDP deflator
+cons            float   %9.0g                 Total Consumption, in Millions of Local Currency Units
+rcons           float   %9.0g                 Real Total Consumption , in Millions of Local Currency Units
+cons_GDP        float   %9.0g                 Total Consumption, in Percent of GDP
+inv             float   %9.0g                 Total Investment, in Millions of Local Currency Units
+inv_GDP         float   %9.0g                 Total Investment, in Percent of GDP
+finv            float   %9.0g                 Fixed Investment, in Millions of Local Currency Units
+finv_GDP        float   %9.0g                 Fixed Investment, in Percent of GDP
+exports         float   %9.0g                 Total Exports, in Millions of Local Currency Units
+imports         float   %9.0g                 Total Imports, in Millions of Local Currency Units
+imports_GDP     float   %9.0g                 Total Imports, in Percent of GDP
+CA              float   %9.0g                 Current Account Balance, in Millions of Local Currency Units
+CA_GDP          float   %9.0g                 Current Account Balance, in Percent of GDP
+USDfx           float   %9.0g                 Exchange Rate against USD
+REER            float   %9.0g                 Real Effective Exchange Rate, Index (2010 = 100)
+govexp          float   %9.0g                 Government Expenditure, in Millions of Local Currency Units
+govexp_GDP      float   %9.0g                 Government Expenditure, in Percent of GDP
+govrev          float   %9.0g                 Government Revenue, in Millions of Local Currency Units
+govrev_GDP      float   %9.0g                 Government Revenue, in Percent of GDP
+govtax          float   %9.0g                 Government Tax Revenue, in Millions of Local Currency Units
+govtax_GDP      float   %9.0g                 Government Tax Revenue, in Percent of GDP
+govdef          float   %9.0g                 Government Deficit, in Millions of Local Currency Units
+govdef_GDP      float   %9.0g                 Government Deficit, in Percent of GDP
+govdebt         float   %9.0g                 Government Debt, in Millions of Local Currency Units
+govdebt_GDP     float   %9.0g                 Government Debt, in Percent of GDP
+HPI             float   %9.0g                 House Price Index, Index (2015 = 100)
+CPI             float   %9.0g                 Consumer Price Index, Index (2010 = 100)
+infl            float   %9.0g                 Inflation Rate, in Percent
+pop             float   %9.0g                 Population in Millions
+unemp           float   %9.0g                 Unemployment Rate, in Percent
+strate          float   %9.0g                 Short-term Interest Rate, in Percent
+ltrate          float   %9.0g                 Long-term Interest Rate, in Percent
+cbrate          float   %9.0g                 Central Bank Policy Rate, in Percent
+M0              float   %9.0g                 M0 Money Supply, in Millions of Local Currency Units
+M1              float   %9.0g                 M1 Money Supply, in Millions of Local Currency Units
+M2              float   %9.0g                 M2 Money Supply, in Millions of Local Currency Units
+M3              float   %9.0g                 M3 Money Supply, in Millions of Local Currency Units
+M4              float   %9.0g                 M4 Money Supply, in Millions of Local Currency Units
+SovDebtCrisis   float   %9.0g                 Sovereign Debt Crisis
+CurrencyCrisis  float   %9.0g                 Currency Crisis
+BankingCrisis   float   %9.0g                 Banking Crisis
+--------------------------------------------------------------------------------------------------------------------
+Sorted by: ISO3  year
+     Note: Dataset has changed since last saved.
+
+. 
+. encode ISO3, generate(cn)
+
+. 
+. xtset cn year
+
+Panel variable: cn (unbalanced)
+ Time variable: year, 1086 to 2030
+         Delta: 1 unit
+
+. 
+. tsfill, full
+
+. 
+. order cn, first
+
+. 
+. decode cn, generate(iso3c)
+
+. 
+. order cn iso3c, first
+
+. 
+. kountry iso3c, from(iso3c)
+
+----------------------------------------
+The command has finished.
+The new variable is named NAMES_STD.
+----------------------------------------
+
+. 
+. rename NAMES_STD country 
+
+. 
+. order cn iso3c country, first
+
+. 
+. drop countryname ISO3
+
+. 
+. xtdescribe
+
+      cn:  1, 2, ..., 243                                    n =        243
+    year:  1086, 1087, ..., 2030                             T =        945
+           Delta(year) = 1 unit
+           Span(year)  = 945 periods
+           (cn*year uniquely identifies each observation)
+
+Distribution of T_i:   min      5%     25%       50%       75%     95%     max
+                       945     945     945       945       945     945     945
+
+     Freq.  Percent    Cum. |  Pattern*
+ ---------------------------+---------------------------------------------------------------------------------------
+> ---------------------
+      243    100.00  100.00 |  9999999999999999999999999999999999999999999999999999999999999999999999999999999999999
+> 99999999999999999999
+ ---------------------------+---------------------------------------------------------------------------------------
+> ---------------------
+      243    100.00         |  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+> XXXXXXXXXXXXXXXXXXXX
+ -------------------------------------------------------------------------------------------------------------------
+> ---------------------
+ *Each column represents 9 periods.
+
+
+. 
+. summ $CS1
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+        nGDP |     19,477    1.98e+08    8.17e+09   1.01e-13   7.17e+11
+        rGDP |     20,974    6.63e+07    7.29e+08   3.045606   1.94e+10
+     rGDP_pc |     20,538    1.99e+07    1.22e+08   2.127904   1.86e+09
+         inv |     15,336    9.09e+07    3.43e+09  -301546.2   2.64e+11
+     inv_GDP |     15,259    23.22189    14.84143  -908.1306    255.037
+-------------+---------------------------------------------------------
+        finv |     14,015    2.03e+07    4.75e+08     -20231   3.84e+10
+    finv_GDP |     13,953    21.90447    10.34467  -4.968716   157.8736
+       rcons |     14,175    4.89e+07    4.73e+08   1.64e-06   1.03e+10
+        cons |     12,760    5.23e+07    1.15e+09   1.96e-10   9.04e+10
+    cons_GDP |     12,696    82.59445     22.5204   8.835807   298.3758
+-------------+---------------------------------------------------------
+     imports |     24,470    2.46e+07    6.50e+08   9.65e-15   4.00e+10
+ imports_GDP |     15,100    42.57324    40.63606   2.03e-11   624.5701
+     exports |     25,150    2.66e+07    7.72e+08   8.48e-15   4.65e+10
+          CA |     12,980     6753149    3.01e+08  -7.62e+08   2.15e+10
+      CA_GDP |     12,986   -2.419042    12.60792   -242.188    314.906
+-------------+---------------------------------------------------------
+         pop |     51,930    13.32227    67.98541   3.77e-06   1523.385
+      govexp |     19,557    3.11e+07    1.18e+09   3.81e-15   1.02e+11
+  govexp_GDP |     14,907    25.77256    22.46286   1.23e-06     594.77
+      govrev |     20,547    2.47e+07    9.45e+08   5.45e-22   8.55e+10
+  govrev_GDP |     14,667    22.77117    15.32084   .0034447    164.054
+-------------+---------------------------------------------------------
+      govtax |     14,138     3622758    5.33e+07   6.48e-14   2.15e+09
+  govtax_GDP |      9,472    14.57864    8.539338   .0000628   152.6961
+      govdef |     13,624    -7402894    2.56e+08  -1.67e+10   6.45e+07
+  govdef_GDP |     13,674   -1.937165    10.52888   -557.499    125.135
+     govdebt |     13,945    1.03e+08    3.42e+09          0   2.55e+11
+-------------+---------------------------------------------------------
+ govdebt_GDP |     14,689    52.45973    51.31307          0    2092.92
+         CPI |     18,659    3.04e+09    2.45e+11   1.73e-15   2.75e+13
+         HPI |      3,517    57.18159     94.8863   2.56e-12   3093.807
+    deflator |     17,474     919.081       27368   2.27e-15    1676309
+        infl |     19,692     5655028    7.54e+08  -99.97137   1.06e+11
+-------------+---------------------------------------------------------
+       unemp |      7,645    7.686186    6.259881          0         70
+       USDfx |     23,109    189.5223     1478.73   3.49e-16      42000
+        REER |     11,525    242.8519    3548.467          0   279940.5
+      strate |      7,383    9.706535    83.74483  -.8191667   6404.965
+      ltrate |      7,747    7.201801    5.928785  -.5238333      209.6
+-------------+---------------------------------------------------------
+      cbrate |      8,730    23.13453    1110.963       -.75   103484.2
+          M0 |     14,443    6.41e+12    7.70e+14      -27.7   9.26e+16
+          M1 |     10,989    1.11e+07    1.38e+08   5.92e-18   4.83e+09
+          M2 |     10,509    4.78e+12    4.90e+14   5.27e-18   5.02e+16
+          M3 |      3,143    5.07e+07    4.10e+08   1.90e-10   7.94e+09
+-------------+---------------------------------------------------------
+          M4 |        288      635671     1975027       .022   1.49e+07
+BankingCri~s |     19,933    .0181608    .1335362          0          1
+CurrencyCr~s |     19,596    .0279139    .1647303          0          1
+SovDebtCri~s |     19,069    .0145786    .1198618          0          1
+
+. 
+. tabstat $CS1, stat(count)
+
+   Stats |      nGDP      rGDP   rGDP_pc       inv   inv_GDP      finv  finv_GDP     rcons      cons  cons_GDP
+---------+----------------------------------------------------------------------------------------------------
+       N |     19477     20974     20538     15336     15259     14015     13953     14175     12760     12696
+--------------------------------------------------------------------------------------------------------------
+
+   Stats |   imports  import~P   exports        CA    CA_GDP       pop    govexp  govexp~P    govrev  govrev~P
+---------+----------------------------------------------------------------------------------------------------
+       N |     24470     15100     25150     12980     12986     51930     19557     14907     20547     14667
+--------------------------------------------------------------------------------------------------------------
+
+   Stats |    govtax  govtax~P    govdef  govdef~P   govdebt  govdeb~P       CPI       HPI  deflator      infl
+---------+----------------------------------------------------------------------------------------------------
+       N |     14138      9472     13624     13674     13945     14689     18659      3517     17474     19692
+--------------------------------------------------------------------------------------------------------------
+
+   Stats |     unemp     USDfx      REER    strate    ltrate    cbrate        M0        M1        M2        M3
+---------+----------------------------------------------------------------------------------------------------
+       N |      7645     23109     11525      7383      7747      8730     14443     10989     10509      3143
+--------------------------------------------------------------------------------------------------------------
+
+   Stats |        M4  Bankin~s  Curren~s  SovDeb~s
+---------+----------------------------------------
+       N |       288     19933     19596     19069
+--------------------------------------------------
+
+. 
+. tabstat $CS1, stat(count) by(cn) save
+
+Summary statistics: N
+Group variable: cn (ISO3 code)
+
+    cn |      nGDP      rGDP   rGDP_pc       inv   inv_GDP      finv  finv_GDP     rcons      cons  cons_GDP
+-------+----------------------------------------------------------------------------------------------------
+   ABW |        60        60        60        54        54        54        54        51        54        54
+   AFG |        64        72        72        64        64        50        50         5        59        59
+   AGO |        61        78        78        60        60        54        54        54        54        54
+   AIA |        54         0         0        51        51        54        54        51        51        51
+   ALB |        80        78        78        60        60        56        56        54        56        56
+   AND |        60        60        60        51        51        54        54        52        52        52
+   ANT |        43         0         0        43        43        43        43         0        43        43
+   ARE |        68        78        78        60        60        54        54        54        54        54
+   ARG |       146       153       153        93        93        91        91       149        66        66
+   ARM |        40        48        48        40        40        34        34        34        34        34
+   ASM |        21         0         0         0         0         0         0         0         0         0
+   ATG |        67        67        67        60        60        54        54        51        51        51
+   AUS |       242       208       208       169       169       165       165       123        66        66
+   AUT |       140       158       158        97        97        66        66       104        66        66
+   AZE |        43        48        48        40        40        34        34        31        34        34
+   BDI |        70        78        78        70        70        64        64        54        64        64
+   BEL |       195       195       195       120       120        66        66       111        66        66
+   BEN |        71        78        78        71        71        64        64        64        65        65
+   BES |         0         0         0         0         0         0         0         0         0         0
+   BFA |        76        78        78        70        70        65        65        59        65        65
+   BGD |        71        78        78        70        70        54        54        64        64        64
+   BGR |       142       101       101        77        77        56        56        54        56        56
+   BHR |        68        78        78        61        61        55        55        54        54        54
+   BHS |        70        70        70        60        60        54        54        54        54        54
+   BIH |        40        76        76        40        40        34        34        34        34        34
+   BLM |         0         0         0         0         0         0         0         0         0         0
+   BLR |        43        49        49        43        43        34        34        34        37        37
+   BLZ |        70        70        70        67        67        61        61        54        55        55
+   BMU |        64         0         0        54        54        54        54        54        54        54
+   BOL |        80       138       138        78        78        74        74        64        64        64
+   BRA |       169       178       178        82        82        78        78       123        66        66
+   BRB |        70        78        78        70        70        64        64        51        63        63
+   BRN |        65        60        60        60        60        54        54        54        54        54
+   BTN |        67        60        60        60        60        54        54        54        54        54
+   BWA |        70        78        78        70        70        59        59        54        64        64
+   CAF |        70        78        78        70        70        54        54        54        64        64
+   CAN |       161       161       161       159       159       156       156       153       100       100
+   CHE |       179       177       177       126       126        66        66       173        66        66
+   CHL |       160       220       220        90        90        86        86       124        66        66
+   CHN |        83        89        89        70        70        72        64        72        72        64
+   CIV |        70        78        78        70        70        65        65        54        65        65
+   CMR |        72        78        78        66        66        64        64        64        59        59
+   COD |        80        78        78        80        80        74        74        54        64        64
+   COG |        73        78        78        70        70        65        65        64        64        64
+   COK |        54         0         0        51        51        54        54        51        51        51
+   COL |       125       158       158       105        84       101        81        99       101        66
+   COM |        70        78        78        60        60        54        54        54        54        54
+   CPV |        70        78        78        60        60        54        54        54        54        54
+   CRI |        94       108       108        80        80        76        76        64        66        66
+   CSK |        43         0         0        48        43        21        21         0        21        21
+   CUB |       118         0         0        69        69        70        70        53        53        53
+   CUW |        24         0         0        16        16        19        19        16        16        16
+   CYM |        54         0         0        53        53        54        54        53        53        53
+   CYP |        80        79        79        76        76        76        76        54        66        66
+   CZE |        50        58        58        50        50        46        46        34        39        39
+   DDR |        40         0         0        40        40         0         0         0         0         0
+   DEU |       180       229       229       166       166       134       134       173        56        56
+   DJI |        60        78        78        60        60        54        54        54        54        54
+   DMA |        70        78        78        60        60        54        54        51        51        51
+   DNK |       215       215       215       195       195       156       156       180       182       182
+   DOM |        83        80        80        70        70        74        74        64        64        64
+   DZA |        80        78        78        77        77        74        74        64        64        64
+   ECU |        91       128       128        80        80        74        74        64        64        64
+   EGY |       140        78        78        77        77        72        72       130        64        64
+   ERI |        34        34        34        33        33        34        34        33        33        33
+   ESH |         0         0         0         0         0         0         0         0         0         0
+   ESP |       180       753       753       180       180       176       176       174       176       176
+   EST |        50        50        50        43        43        39        39        34        39        39
+   ETH |        80        78        78        67        67        61        61        34        55        55
+   FIN |       170       170       170       170       170       152       152       164        66        66
+   FJI |        80        70        70        70        70        74        74        51        63        63
+   FLK |         0         0         0         0         0         0         0         0         0         0
+   FRA |       215       379       379       179       179       151       151       200        66        66
+   FRO |        62         0         0        26        26         0         0         0        26        26
+   FSM |        60        60        60        51        51        54        54        51        51        51
+   GAB |        71        78        78        67        67        61        61        64        55        55
+   GBR |       761       760       332       200       200       167       162       194        71        66
+   GEO |        70        70        70        50        50        34        34        34        44        44
+   GGY |         0         0         0         0         0         0         0         0         0         0
+   GHA |        80       133       133        80        80        74        74        54        64        64
+   GIB |         0         0         0         0         0         0         0         0         0         0
+   GIN |        71        78        78        60        60        54        54        54        54        54
+   GLP |        26         0         0         0         0         0         0         0         0         0
+   GMB |        70        78        78        64        64        54        54        54        58        58
+   GNB |        70        78        78        60        60        55        55        54        55        55
+   GNQ |        70        78        78        68        68        54        54        54        62        62
+   GRC |       191       195       195        84        84        66        66        86        66        66
+   GRD |        67        60        60        60        60        54        54        51        51        51
+   GRL |        54         0         0        52        52        54        54        52        52        52
+   GTM |       107       108       108        78        78        74        74        64        64        64
+   GUF |        23         0         0         0         0         0         0         0         0         0
+   GUM |        21         0         0         0         0         0         0         0         0         0
+   GUY |        78        70        70        78        78        72        72        51        61        61
+   HKG |        70        78        78        70        70        63        63        63        64        64
+   HND |       105       108       108       104       104        98        98        64        74        74
+   HRV |        40        76        76        40        40        36        36        34        36        36
+   HTI |        76        85        85        67        67        69        69        54        59        59
+   HUN |       144       102       102        96        96        66        66        54        66        66
+   IDN |        98       206       206        70        70        75        75        64        66        66
+   IMN |        38         0         0         0         0         0         0         0         0         0
+   IND |       159       145       145        80        80        76        76       105        66        66
+   IRL |       168       108       108        87        87        66        66        54        66        66
+   IRN |        75        78        78        70        70        65        65        64        64        64
+   IRQ |        80        80        80        71        71        74        74        53        54        54
+   ISL |       160       158       158        84        84        81        81        79        66        66
+   ISR |        80        80        80        77        77        76        76        54        66        66
+   ITA |       169       227       227       169       169       165       165       163       165       165
+   JAM |        93        79        79        79        79        74        74        51        61        61
+   JEY |         0         0         0         0         0         0         0         0         0         0
+   JOR |        76        78        78        71        71        65        65        54        61        61
+   JPN |       154       160       160       144       144       157       140       150        66        66
+   KAZ |        43        48        48        41        41        34        34        34        35        35
+   KEN |        80       108       108        70        70        67        67        64        64        64
+   KGZ |        43        48        48        43        43        37        37        34        37        37
+   KHM |        70        78        78        70        70        54        54        54        64        64
+   KIR |        60        60        60        53        53        54        54        53        53        53
+   KNA |        70        70        70        60        60        54        54        51        51        51
+   KOR |       107       115       115        77        77       101       101       113        73        66
+   KWT |        68        78        78        68        68        62        62        53        61        61
+   LAO |        67        78        78        53        53        54        54        51        51        51
+   LBN |        62        72        72        59        59        60        60        53        53        53
+   LBR |        70       183       183        61        61        59        59        51        61        61
+   LBY |        70        78        78        70        70        64        64        54        62        62
+   LCA |        67        78        78        60        60        54        54        51        51        51
+   LIE |        54         0         0        51        51        54        54        51        51        51
+   LKA |        77       152       152        73        73        77        77        64        64        64
+   LSO |        70        78        78        70        70        61        60        64        64        64
+   LTU |        43        48        48        43        43        39        39        34        39        39
+   LUX |        80        78        78        70        70        66        66        54        66        66
+   LVA |        65        65        65        50        50        46        46        34        46        46
+   MAC |        60        60        60        60        60        54        54        53        54        54
+   MAF |         5         0         0         0         0         0         0         0         0         0
+   MAR |        80        78        78        78        78        72        72        64        64        64
+   MCO |        54         0         0        51        51        54        54        51        51        51
+   MDA |        40        50        50        40        40        34        34        34        34        34
+   MDG |        77        78        78        70        70        64        64        64        64        64
+   MDV |        67        60        60        60        60        54        54        54        54        54
+   MEX |       130       135       135        70        70        87        87       124        66        66
+   MHL |        60        60        60        54        54        54        54        54        54        54
+   MKD |        40        76        76        36        36        36        36        34        36        36
+   MLI |        70        78        78        70        70        65        65        57        65        65
+   MLT |        76        78        78        70        70        66        66        54        66        66
+   MMR |        83        83        83        83        83        77        77        51        61        61
+   MNE |        40        76        69        30        30        36        36        34        26        26
+   MNG |        80        78        78        60        60        54        54        54        54        54
+   MNP |        21         0         0         0         0         0         0         0         0         0
+   MOZ |        70        78        78        54        54        54        54        54        54        54
+   MRT |        70        78        78        70        70        63        63        60        64        64
+   MSR |        54         0         0        51        51        54        54        51        51        51
+   MTQ |        35         0         0         0         0         0         0         0         0         0
+   MUS |        80        78        78        80        80        74        74        54        64        64
+   MWI |        76       118       118        76        76        70        70        51        61        61
+   MYS |        80       122       122        80        80        74        74       117        64        64
+   MYT |         0         0         0         0         0         0         0         0         0         0
+   NAM |        70        78        78        60        60        54        54        54        54        54
+   NCL |        59         0         0        51        51        54        54        51        51        51
+   NER |        70        78        78        70        70        65        65        54        65        65
+   NGA |        80       133       133        70        70        54        54        51        61        61
+   NIC |        80       108       108        70        70        64        64        64        64        64
+   NIU |        22         0         0         0         0         0         0         0         0         0
+   NLD |       218       380       380       145       145        66        66       213        66        66
+   NOR |       214       214       214       200       159       141       141       194        66        66
+   NPL |        70        78        78        67        67        61        61        54        59        59
+   NRU |        60        60        60        51        51        54        54        51        51        51
+   NZL |       160       158       158        84        84        80        80       146        66        66
+   OMN |        70        78        78        63        63        57        57        54        57        57
+   PAK |        80        81        81        71        71        66        66        55        65        65
+   PAN |        84       122       122        84        84        78        78        54        64        64
+   PER |       134       229       229        88        88        84        84       128        66        66
+   PHL |        84       120       120        84        84        78        78        78        64        64
+   PLW |        60        60        60        60        60        54        54        54        53        53
+   PNG |        70        70        70        61        61        64        64        60        60        60
+   POL |        80       177       177        60        60        56        56        54        56        56
+   PRI |       101        80        80        85        85        85        85        60        64        64
+   PRK |        54         0         0         0         0         0         0        51        51        51
+   PRT |       188       262       262        77        77        66        66       114        66        66
+   PRY |        81        92        92        70        70        71        71        62        64        64
+   PSE |        54        72        72        54        54        54        54        54        54        54
+   PYF |        59         0         0        53        53        54        54        51        53        53
+   QAT |        67        78        78        53        53        54        54        51        53        53
+   REU |         9         0         0         5         5         5         5         0         5         5
+   ROU |       133       166       166        60        60        56        56        54        56        56
+   RUS |       127       168       168        71        70        64        64       139        64        64
+   RWA |        70        78        78        70        70        59        59        64        64        64
+   SAU |        70        78        78        70        70        62        62        54        64        64
+   SDN |        75        78        78        68        68        68        68        64        64        64
+   SEN |        71        78        78        70        70        65        65        64        65        65
+   SGP |        70       116       116        70        70        64        64       116        64        64
+   SHN |         0         0         0         0         0         0         0         0         0         0
+   SLB |        67        63        63        60        60        54        54        53        53        53
+   SLE |        70        78        78        67        67        61        61        54        60        60
+   SLV |        86       108       108        72        72        73        73        59        64        64
+   SMR |        60        60        60        60        60        54        54        53        53        53
+   SOM |        64         0         0        64        64        54        54        64        64        64
+   SPM |         0         0         0         0         0         0         0         0         0         0
+   SRB |        40        76        76        40        40        36        36        34        36        36
+   SSD |        22        22        22        22        22        16        16        13         8         8
+   STP |        67        78        78        60        60        54        54        51        51        51
+   SUN |        21         0         0        21        21        21        21         0        21        21
+   SUR |        70        70        70        70        70        54        54        51        61        61
+   SVK |        50        46        46        45        45        41        41        34        41        41
+   SVN |        40        76        76        40        40        36        36        34        36        36
+   SWE |       470       730       730       169       169       226       226       224       226       226
+   SWZ |        70        78        78        70        70        56        56        51        61        61
+   SXM |        19         0         0        16        16        19        19        16        16        16
+   SYC |        70        78        78        60        60        54        54        54        54        54
+   SYR |        64        72        72        62        62        71        60        53        63        63
+   TCA |        54         0         0        51        51        54        54        51        51        51
+   TCD |        70        78        78        70        70        54        54        54        64        64
+   TGO |        70        78        78        70        70        62        62        59        65        65
+   THA |        84        78        78        77        77        73        73        54        64        64
+   TJK |        45        48        48        44        44        34        34        33        37        37
+   TKL |         0         0         0         0         0         0         0         0         0         0
+   TKM |        43        48        48        34        34        34        34        31        34        34
+   TLS |        40        40        40        40        40        34        34        34        34        34
+   TON |        60        60        60        54        54        54        54        54        54        54
+   TTO |        80        78        78        71        71        73        73        51        61        61
+   TUN |        70        78        78        70        70        64        64        59        63        63
+   TUR |       105       105       105        70        70        76        76       149        66        66
+   TUV |        60        60        60        51        51        54        54        51        51        51
+   TWN |       129       129       129       129       129        91        91       109       100       100
+   TZA |        75        78        78        75        75        69        69        34        54        54
+   UGA |        80       106       106        75        75        69        69        54        64        64
+   UKR |        70        48        48        41        41        35        35        34        35        35
+   UMI |         0         0         0         0         0         0         0         0         0         0
+   URY |       160       158       158        74        74        68        68        64        64        64
+   USA |       241       241       240       161       161       157       157       190        66        66
+   UZB |        43        49        49        43        43        37        37        34        37        37
+   VAT |         0         0         0         0         0         0         0         0         0         0
+   VCT |        70        70        70        60        60        54        54        51        53        53
+   VEN |       106         0         0        70        70        74        74        98        61        61
+   VGB |        54         0         0        51        51        54        54        51        51        51
+   VIR |        55         0         0         0         0         0         0        21        21        21
+   VNM |        67        78        78        60        60        54        54        54        54        54
+   VUT |        67        60        60        60        60        54        54        53        53        53
+   WLF |         0         0         0         0         0         0         0         0         0         0
+   WSM |        67        60        60        54        54        54        54        54        54        54
+   XKX |        40        40        40        40        40        34        34        34        34        34
+   YEM |        60        78        78        50        41        54        54        32        42        33
+   YUG |        21         0         0        21        21        21        21         0        21        21
+   ZAF |       119       183       183        80        80        76        76        78        66        66
+   ZMB |        84       119       119        70        70        54        54        51        64        64
+   ZWE |       105       103       103        64        64        64        64        54        64        64
+-------+----------------------------------------------------------------------------------------------------
+ Total |     19477     20974     20538     15336     15259     14015     13953     14175     12760     12696
+------------------------------------------------------------------------------------------------------------
+
+    cn |   imports  import~P   exports        CA    CA_GDP       pop    govexp  govexp~P    govrev  govrev~P
+-------+----------------------------------------------------------------------------------------------------
+   ABW |        54        54        54        44        44        80        35        35        35        35
+   AFG |        60        56        60        25        25       231        22        22        22        22
+   AGO |       155        60       155        50        50       231       103        50       129        50
+   AIA |        45        45        45        34        34        71        18         0        18         0
+   ALB |       105        60       105        50        50       231        53        35        54        35
+   AND |        52        52        52        11        11       231        29        29        29        29
+   ANT |        43        43        43         6         6        38         0         0         0         0
+   ARE |        61        60        61        50        50       231        56        39        54        40
+   ARG |       210        70       210        95        95       231       166       166       166       166
+   ARM |        40        40        40        38        38       231        30        30        37        37
+   ASM |        21        21        21         0         0        74         0         0         0         0
+   ATG |        60        60        60        53        53       231        40        40        40        40
+   AUS |       204       159       204       169       169       242       181       130       195       155
+   AUT |       102        70       102        80        80       231       232       130       234       130
+   AZE |        40        40        40        39        39       231        36        36        36        36
+   BDI |        70        70        70        50        50       231        41        50        98        50
+   BEL |       195       149       195       149       149       231       192       188       194       189
+   BEN |       136        70       136        65        65       231       120        65       134        65
+   BES |         0         0         0         0         0        71         0         0         0         0
+   BFA |        70        70        79        62        62       231        84        71        93        70
+   BGD |        70        70        70        60        60       231        57        57        57        57
+   BGR |       148       119       148        63        63       231       107        99       103        61
+   BHR |        69        62        71        55        55       231        56        40        56        40
+   BHS |        60        60        60        54        54       231        56        40        56        40
+   BIH |        40        40        40        32        32       231        32        32        32        32
+   BLM |         0         0         0         0         0       172         0         0         0         0
+   BLR |        40        40        40        38        38       231        38        38        38        38
+   BLZ |        61        61        61        50        50       231        40        40        40        40
+   BMU |        54        54        54        16        16       213         0         0         0         0
+   BOL |       170        70       196        80        80       231       138        80       145        80
+   BRA |       210        70       210        83        83       231       207       169       205       166
+   BRB |       191        63       191        63        63       231       179        36       179        36
+   BRN |       110        60       110        45        45       231        45        45        45        45
+   BTN |        60        60        60        50        50       231        49        49        49        49
+   BWA |        70        70        70        55        55       231        50        50       130        50
+   CAF |        79        70        79        62        62       231        91        64       122        64
+   CAN |       202       160       214       160       160       231       223       160       223       161
+   CHE |       180       145       200       101       101       231       181       159       180       160
+   CHL |       220        70       220        80        80       231       197       220       213       220
+   CHN |       174        70       194        48        48       231       115        48       115        48
+   CIV |       136        70       136        67        67       231       118        70       135        70
+   CMR |       131        65       131        61        61       231       110        62       132        63
+   COD |       134        70       139        50        50       231       102        76       130        40
+   COG |        79        70        79        59        59       231        78        62       129        64
+   COK |        54        54        54         8         8        74        14        14        23        23
+   COL |       192        70       202        84        84       231       123       125       124       125
+   COM |        60        60        60        50        50       231        46        50        46        50
+   CPV |       150        60       150        50        50       231       100        50        87        50
+   CRI |       195        70       200        80        80       231       146        80       145        80
+   CSK |        68         0        68         0         0        91        19         0        21         0
+   CUB |       228        53       228        26        26       231       105        68       160        53
+   CUW |        14        14        14        13        13        74         0         0         0         0
+   CYM |        53        53        53         7         7        74         0         0         0         0
+   CYP |       149        70       149        72        72       231       151        80       151        80
+   CZE |        46        40        46        37        37       231        37        37        37        37
+   DDR |        40         0        40         0         0         0        40        39         0         0
+   DEU |       144       144       144       150       150       233       145       136       153       138
+   DJI |        60        60        60        39        39       231        39        40        54        40
+   DMA |        60        60        60        54        54       231        40        40        40        40
+   DNK |       189       187       213       150       150       296       176       176       177       177
+   DOM |       180        70       210        79        79       231       125        80       125        80
+   DZA |       199        72       199        66        66       231       175        72       200        73
+   ECU |       174        72       202        54        54       231       142        89       149        89
+   EGY |       180        70       180        79        79       231       182        78       184        78
+   ERI |        33        33        33        28        28       231        28        28        28        28
+   ESH |         0         0         0         0         0       210         0         0         0         0
+   ESP |       209       180       209       138       138       754       176       206       176       323
+   EST |        59        40        59        38        38       231        36        36        39        39
+   ETH |        85        69        86        70        70       231        83        70        88        70
+   FIN |       218       160       218       170       170       231       148       148       148       148
+   FJI |       149        63       149        65        65       231       155        80       155        80
+   FLK |         0         0         0         0         0       210         0         0         0         0
+   FRA |       231       160       231       167       167       383       215       329       215       380
+   FRO |        62        62        62        14        14        74         0         0         0         0
+   FSM |        54        54        54        35        35       231        35        35        35        35
+   GAB |        80        70        80        62        62       231        84        61       124        60
+   GBR |       470       470       750       258       258       333       303       303       280       200
+   GEO |        43        43        43        37        37       231        35        35        36        36
+   GGY |         0         0         0         0         0         0         0         0         0         0
+   GHA |       172        70       172        73        73       231       171        79       172        79
+   GIB |         0         0         0         0         0       213         0         0         0         0
+   GIN |       131        60       131        50        50       231        84        50       133        50
+   GLP |       173         0       173         0         0       210         0         0         0         0
+   GMB |       194        64       194        52        52       231        36        50       130        50
+   GNB |       142        60       142        50        50       231        99        50       128        50
+   GNQ |        68        68        68        43        43       231        50        50        50        50
+   GRC |       181       159       181        92        92       231       192       191       183       188
+   GRD |        45        45        45        53        53       231        40        40        40        40
+   GRL |        52        52        52         0         0        74         0         0         0         0
+   GTM |       191        70       210        84        84       231       142       107       145       107
+   GUF |         0         0         0         0         0       210         0         0         0         0
+   GUM |        21        21        21         0         0        74         0         0         0         0
+   GUY |       195        70       195        69        69       231       191        74       191        74
+   HKG |        95        70        95        60        60       231        49        69        49        69
+   HND |       185        70       210        83        83       231       143       105       146       105
+   HRV |        40        40        40        38        38       231        39        39        39        39
+   HTI |       210        65       210        75        75       231       106        91       124        90
+   HUN |       109        60       109        72        72       231       122        71       118        69
+   IDN |        79        70        79        79        79       231       205        98       205        98
+   IMN |         0         0         0         0         0        74         0         0         0         0
+   IND |       207        70       207        82        82       231       229       169       229       169
+   IRL |       108        92       108        92        92       231       108        98       108        98
+   IRN |       180        70       180        71        71       231       110        71       110        71
+   IRQ |       103        54       103        31        31       231        74        51        74        51
+   ISL |       199        85       215        56        56       231       178       129       178       129
+   ISR |        76        70        76        80        80       231        80        80        85        80
+   ITA |       169       160       169       169       169       231       168       168       168       168
+   JAM |       200        72       214        70        70       231       190        93       190        93
+   JEY |         0         0         0         0         0         0         0         0         0         0
+   JOR |        94        68        94        71        71       231        79        71        75        67
+   JPN |       168       153       168       154       154       231       175       154       175       154
+   KAZ |        40        40        40        38        38       231        33        33        36        36
+   KEN |       135        70       135        67        67       231       134        75       134        75
+   KGZ |        40        40        40        38        38       231        35        35        37        37
+   KHM |        77        70        77        38        38       231        56        34        61        34
+   KIR |        60        60        60        51        51       231        40        40        42        42
+   KNA |        45        45        45        50        50       231        50        50        50        50
+   KOR |       142        70       146        77        77       231        78        77        79        77
+   KWT |        69        61        69        55        55       231        64        64        63        63
+   LAO |        82        60        82        50        50       231        30        30        30        30
+   LBN |        74        54        74        44        44       231        34        34        34        34
+   LBR |       170        55       170        39        39       231       174        52       177        55
+   LBY |        92        68        92        70        70       231        53        63        97        63
+   LCA |        45        45        45        51        51       231        45        45        45        45
+   LIE |        45        45        45         0         0       231         0         0         0         0
+   LKA |       164        64       164        77        77       231       212        77       212        77
+   LSO |        70        70        70        55        55       231        51        50       130        50
+   LTU |        62        43        62        37        37       231        38        38        38        38
+   LUX |        70        70        70        35        35       231        58        58        58        58
+   LVA |        59        40        59        38        38       231        36        36        36        36
+   MAC |       119        54       119        28        28       230        88        34        68        34
+   MAF |         0         0         0         0         0        74         0         0         0         0
+   MAR |       126        70       126        75        75       231        88        74       110        78
+   MCO |        45        45        45         0         0       231         0         0         0         0
+   MDA |        40        40        40        38        38       231        35        35        35        35
+   MDG |       138        70       138        61        61       231       102        71       132        72
+   MDV |        60        60        60        52        52       231        40        40        51        50
+   MEX |       234        70       234        51        51       231       205       127       203       127
+   MHL |        54        54        60        33        33       231        33        33        33        33
+   MKD |        40        40        40        38        38       231        33        33        33        33
+   MLI |        70        70        70        65        65       231       101        63       124        63
+   MLT |        70        70        70        59        59       231        57        57        57        57
+   MMR |        73        57        73        80        80       231        85        83        83        81
+   MNE |        30        30        30        29        29       223        28        28        28        28
+   MNG |        60        60        60        49        49       231        49        49        49        49
+   MNP |        21        21        21         0         0        74         0         0         0         0
+   MOZ |       136        60       136        50        50       231       102        50       130        50
+   MRT |        70        70        70        59        59       231        90        51       123        52
+   MSR |        45        45        45        38        38        71        15         0        15         0
+   MTQ |       173         0       173         0         0       210         0         0         0         0
+   MUS |       197        70       197        65        65       231       218        80       218        80
+   MWI |       115        55       121        66        66       231       133        76       134        76
+   MYS |        70        70        70        74        74       231       139        80       135        76
+   MYT |         0         0         0         0         0        71         0         0         0         0
+   NAM |        60        60        60        40        40       231        40        40       126        40
+   NCL |        48        48        48        15        15        74         0         0         0         0
+   NER |       114        70       114        62        62       231       116        70       135        70
+   NGA |       157        63       157        73        73       231       155        79       156        80
+   NIC |       191        70       210        70        70       231       121        68       122        69
+   NIU |        21        21        21        12        12        74         0         0         0         0
+   NLD |       228       147       228       147       147       383       185       302       185       303
+   NOR |       200       200       200       159       159       231       200       200       180       159
+   NPL |        67        59        67        60        60       231        73        68        58        40
+   NRU |        54        54        54        22        22       231        25        25        25        25
+   NZL |       189        70       204        80        80       231       188       154       188       154
+   OMN |        66        63        66        56        56       231        59        40        57        40
+   PAK |        82        70        82        80        80       231        83        80        83        80
+   PAN |       124        72       124        80        80       231       115        84       115        84
+   PER |       206        70       226        86        86       233       153       130       153       130
+   PHL |       142        72       142        84        84       231       125        84        81        84
+   PLW |        60        60        60        30        30       231        30        30        30        30
+   PNG |        69        69        69        54        54       231        55        55        47        47
+   POL |       102        60       102        54        54       234        97        77        52        36
+   PRI |        64        64        64         0         0       219        91        71        91        71
+   PRK |        45        45        45         0         0       231        23         0        19         0
+   PRT |       235       172       235       160       160       265       160       208       160       262
+   PRY |       203        70       203        79        79       231       128        74       130        74
+   PSE |        79        54        79        30        30       231        49        19        44        19
+   PYF |        53        53        53        15        15        74         0         0         0         0
+   QAT |        63        60        61        50        50       231        40        40        40        40
+   REU |       156         0       156         0         0        71         0         0         0         0
+   ROU |       160       123       160        50        50       231       164       130       136        68
+   RUS |       221        41       227        67        67       231       198       112       197       112
+   RWA |        70        70        70        60        60       231        40        50        97        57
+   SAU |        79        70        79        68        68       231        40        40        39        39
+   SDN |       123        70       123        60        60       231       124        75       129        75
+   SEN |       190        70       190        62        62       231       115        68       135        70
+   SGP |        74        70        74        67        67       231       146        67        67        67
+   SHN |         0         0         0         0         0        71         0         0         0         0
+   SLB |        60        60        60        55        55       231        50        50        50        50
+   SLE |       198        66       197        53        53       231       193        66       194        66
+   SLV |       184        70       211        80        80       231       146        85       147        85
+   SMR |        53        53        53        13        13       231        29        28        29        28
+   SOM |        86        64        86        24        30       231         4        17        24        17
+   SPM |         0         0         0         0         0       210         0         0         0         0
+   SRB |        40        40        40        30        30       231        30        30        30        30
+   SSD |         8         8         8        19        19       231        19        19        19        19
+   STP |       128        45       128        56        56       231        90        50        75        50
+   SUN |         0         0         0         0         0       101         0         0         0         0
+   SUR |       177        70       177        53        53       231       139        40        90        40
+   SVK |        43        43        43        37        37       231        35        35        35        35
+   SVN |        40        40        40        38        38       231        38        38        38        38
+   SWE |       230       230       230       169       169       731       308       308       308       308
+   SWZ |        61        61        61        56        56       231        50        50       126        50
+   SXM |        10        10        10        13        13        74         0         0         0         0
+   SYC |        60        60        60        54        54       231        47        50        47        50
+   SYR |       102        63       101        47        47       231        83        43        81        45
+   TCA |        45        45        45         5         5       213         0         0         0         0
+   TCD |        79        70        79        59        59       231        79        55       117        52
+   TGO |       131        70       131        65        65       231       128        69       133        69
+   THA |       180        72       180        84        84       231       138        84       171        84
+   TJK |        40        40        40        38        38       231        32        32        32        32
+   TKL |         0         0         0         0         0        71         0         0         0         0
+   TKM |        40        40        40        39        39       231        33        33        33        33
+   TLS |        69        34        69        30        30       231        59        29        57        30
+   TON |        54        54        54        55        55       231        31        31        31        31
+   TTO |       183        55       183        70        70       231       180        79        48        48
+   TUN |       154        69       154        70        70       231       111        65       130        65
+   TUR |       172        95       192        80        80       231        56        86        56        86
+   TUV |        54        53        54        29        29       231        26        26        26        26
+   TWN |       130        24       130        46        46       231       132       129       116       109
+   TZA |       135        60       135        68        68       231        80        75       126        75
+   UGA |        92        70        92        50        50       231       136        76       136        76
+   UKR |        41        41        41        38        38       231        35        35        35        35
+   UMI |         0         0         0         0         0         0         0         0         0         0
+   URY |       191        70       201        73        73       231       143        75       153        75
+   USA |       230       160       230       239       239       241       239       239       240       239
+   UZB |        40        40        40        38        38       231        38        38        38        38
+   VAT |         0         0         0         0         0       221         0         0         0         0
+   VCT |        53        53        53        52        52       231        50        50        50        50
+   VEN |       196        63       206        56        56       231       156       104       149       104
+   VGB |        45        45        45         0         0        74         0         0         0         0
+   VIR |        21        21        21         0         0       213         0         0         0         0
+   VNM |        66        60        66        50        50       231        32        32        57        32
+   VUT |        54        53        54        50        50       231        40        40        40        40
+   WLF |         0         0         0         0         0        71         0         0         0         0
+   WSM |       126        54       126        53        53       231        38        38        38        38
+   XKX |        40        40        40        30        30        70        30        30        30        30
+   YEM |        64        41        64        40        40       231        40        40        40        40
+   YUG |        21        21        21         0         0        94         0         0         0         0
+   ZAF |       204        70       204       102       102       231       204       119       204       119
+   ZMB |        70        70        70        52        52       231        35        50       108        50
+   ZWE |       122        54       117        39        39       231       125        99       136        28
+-------+----------------------------------------------------------------------------------------------------
+ Total |     24470     15100     25150     12980     12986     51930     19557     14907     20547     14667
+------------------------------------------------------------------------------------------------------------
+
+    cn |    govtax  govtax~P    govdef  govdef~P   govdebt  govdeb~P       CPI       HPI  deflator      infl
+-------+----------------------------------------------------------------------------------------------------
+   ABW |         0         0        35        35        35        35        47         0        60        45
+   AFG |        18        16        22        22        19        19        22         0        64        54
+   AGO |       115        21        50        50        35        35       101         0        61       115
+   AIA |        18         0        18        18        16        16        34         0         0        33
+   ALB |        36        18        35        35        36        36        41         0        78        40
+   AND |         6         0        29        29        29        29        29         0        60        28
+   ANT |        24         6         0         0         6         6        28         0         0         0
+   ARE |        39        25        39        39        57        57        50        22        68        60
+   ARG |        45       130       146       166       146       206       146         0       146       145
+   ARM |        24        24        30        30        37        37        38         0        40        37
+   ASM |         0         0         0         0         0         0         0         0         0         0
+   ATG |        15         0        39        39        40        40        50         0        67        60
+   AUS |       174       134       140       140       176       176       179       155       208       178
+   AUT |       232        90       130       130       130       130       167        39       138       165
+   AZE |        29        29        36        36        37        37        39         0        43        39
+   BDI |        92        45        50        50        66        66        65         0        70        64
+   BEL |       186       141       174       174       185       185       195       142       195       194
+   BEN |       123        59        65        65        60        60        59         0        71        60
+   BES |         0         0         0         0         0         0         0         0         0         0
+   BFA |        86        63        70        70        60        60        72         0        76        71
+   BGD |        39        39        57        57        57        57        76         0        71        75
+   BGR |        99        54        59        59       108       108       111        27       101       120
+   BHR |        48        42        40        40        56        56        65         0        68        64
+   BHS |        50        49        56        56        62        62        64         0        70        63
+   BIH |        21        19        32        32        32        32        34         0        40        35
+   BLM |         0         0         0         0         0         0         0         0         0         0
+   BLR |        32        32        38        38        38        38        38         0        43        60
+   BLZ |        37        37        40        40        54        54        50         0        70        60
+   BMU |         0         0         0         0         0         0         0         0         0         0
+   BOL |        23        23        80        80        64        98        94         0        80        93
+   BRA |       109       122       165       165       150       150       150        24       169       149
+   BRB |        32        32        47        47        60        60        64         0        70        63
+   BRN |        10        10        45        45        45        45        51         0        60        60
+   BTN |        40        41        49        49        48        48        50         0        60        57
+   BWA |       123        43        50        50        58        58        56         0        70        60
+   CAF |       115        29        59        59        60        60        60         0        70        73
+   CAN |       157       155       159       159       161       163       160        98       161       159
+   CHE |       174       139       117       117       150       150       179       124       177       159
+   CHL |       129       151       160       220       160       203       220        23       160       219
+   CHN |        74        31        48        48        48        48        75        20        83        93
+   CIV |       123        64        70        70        60        60        79         0        70        78
+   CMR |       115        40        62        62        60        60        85         0        72        84
+   COD |       123        51        34        34        60        60        85         0        78        83
+   COG |       121        32        62        62        60        60        85         0        72        84
+   COK |        23        23        14        14         0         0        24         0         0        24
+   COL |        95        72       123       123       125       131       142        50       125       134
+   COM |        33        33        50        50        48        48        50         0        70        60
+   CPV |        34        34        50        50        49        49       104         0        70       107
+   CRI |        51        51        80        80        94       132        94         0        94        93
+   CSK |        21         0         0         0         0         0        12         0         0        11
+   CUB |         0         0        48        48        17        17        63         0         0        60
+   CUW |         0         0         0         0         0         0        20         0         0        47
+   CYM |         9         0         0         0         0         0         8         0         0        27
+   CYP |        54        49        79        79        60        60        89        23        79        87
+   CZE |        31        31        35        35        37        55        57        17        50        75
+   DDR |         0         0         0         0         0         0        36         0         0        34
+   DEU |       145       130       132       132       142       142       210       131       180       209
+   DJI |        47        21        40        40        37        37        48         0        60        60
+   DMA |        22         4        40        40        55        55        64         0        70        63
+   DNK |       171       171       175       175       150       150       543       165       215       542
+   DOM |        51        51        80        80        74       107        89         0        80        88
+   DZA |       122        12        70        70        66        66        85         0        78        91
+   ECU |        32        32        89        89        91       116        92         0        91        91
+   EGY |       121        64        78        78       128       152       116         0        78       140
+   ERI |         0         0        28        28        25        25        28         0        34        31
+   ESH |         0         0         0         0         0         0         0         0         0         0
+   ESP |       174       146       176       176       176       176       180        54       180       522
+   EST |        33        33        35        35        35        35        54        20        50        53
+   ETH |        82        42        70        70        60        60        65         0        78        64
+   FIN |       141       141       145       145       116       116       160       120       170       159
+   FJI |        51        50        78        78        60        60        70         0        70        69
+   FLK |         0         0         0         0         0         0         0         0         0         0
+   FRA |       182       166       202       202       137       137       190       155       215       189
+   FRO |         0         0         0         0         0         0         0         0         0         0
+   FSM |        13        18        35        35        35        35        35         0        60        34
+   GAB |       111        24        60        60        60        60        71         0        71        70
+   GBR |       274       194       191       191       331       331       821       180       760       820
+   GEO |        29        29        35        35        35        35        36         0        70        38
+   GGY |         0         0         0         0         0         0         0         0         0         0
+   GHA |       122        44        79        79        78       105        82         0        80       131
+   GIB |         0         0         0         0         0         0         0         0         0         0
+   GIN |       113         4        50        50        40        40        50         0        71        60
+   GLP |         0         0         0         0         0         0        22         0         0         6
+   GMB |       118        17        50        50        57        57        69         0        70       124
+   GNB |       118        41        50        50        44        44        85         0        70        90
+   GNQ |        18        18        50        50        50        50        50         0        70        60
+   GRC |       179       179       129       129       169       169       147        28       189       144
+   GRD |        28         6        40        40        60        60        54         0        60        60
+   GRL |         0         0         0         0         0         0         0         0         0         0
+   GTM |        44        44       102       102       107       108        93         0       107        92
+   GUF |         0         0         0         0         0         0        25         0         0         0
+   GUM |         0         0         0         0         0         0         0         0         0         0
+   GUY |        16        16        74        74        67        67        89         0        70        87
+   HKG |        20        20        69        69        29        29        83        46        70        82
+   HND |        30        28       103       103       105       116        96         0       105        94
+   HRV |        33        33        38        38        37        37        45        50        40        49
+   HTI |         9         9        61        84        67        73        82         0        76        80
+   HUN |       114        62        60        60       100       100       106        35        99       103
+   IDN |        51        48        97        97        79        90       106        23        98       103
+   IMN |         0         0         0         0         0         0         0         0         0         0
+   IND |       150        76       158       168       159       189       111        16       144       109
+   IRL |       102        77        98        98       108       108       109        80       108       107
+   IRN |        62        51        69        69        62        62        92         0        75        91
+   IRQ |        17         9        51        51        26        26        75         0        80        84
+   ISL |       148       123       121       121       122       122       181        25       158       180
+   ISR |        51        51        80        80        58        58        86        50        80        84
+   ITA |       162       162       168       168       169       169       169        98       169       168
+   JAM |        43        43        88        88        67        67        91         0        79        90
+   JEY |         0         0         0         0         0         0         0         0         0         0
+   JOR |        48        49        67        67        61        61        63         0        76        62
+   JPN |       155       137       154       154       154       157       160       107       154       159
+   KAZ |        27        27        33        33        37        37        38         0        43        38
+   KEN |       123        35        75        75        69        96        83         0        80       114
+   KGZ |        31        24        35        35        36        36        38         0        43        38
+   KHM |        22        22        34        34        34        34        44         0        70        48
+   KIR |        14        13        40        40        42        42        50         0        60        50
+   KNA |        28        31        50        50        46        46        51         0        70        60
+   KOR |        70        67        77        77        98        98        79        50       107        78
+   KWT |        42        28        60        60        58        58        58         0        68        60
+   LAO |        15        15        30        30        54        54        50         0        67        60
+   LBN |        29        29        34        34        52        52        71         0        62        78
+   LBR |        58        23        51        51        46        46        57         0        70        64
+   LBY |        89         9        63        63        45        45        66         0        70        65
+   LCA |        32        31        45        45        49        49        65         0        67        64
+   LIE |         0         0         0         0         0         0         0         0         0        12
+   LKA |        53        53        77        77        73       127        86         0        77        85
+   LSO |       123        48        53        53        60        60        57         0        70        60
+   LTU |        32        32        35        35        36        36        57        27        43        65
+   LUX |        54        54        40        40        60        60       102        50        78        99
+   LVA |        30        30        35        35        36        36        59        19        65        56
+   MAC |        28        27        29        29         0         0        78         0        60        75
+   MAF |         0         0         0         0         0         0         0         0         0         0
+   MAR |       103        50        74        74        65        65        91        20        78        90
+   MCO |         0         0         0         0         0         0         0         0         0         0
+   MDA |        28        27        35        35        35        35        39         0        40        38
+   MDG |       123        42        71        71        60        60        90         0        75        88
+   MDV |        45        45        40        40        54        54        50         0        60        60
+   MEX |        99        99       126       126       130       156       130        20       130       129
+   MHL |        13        20        33        33        33        33        27         0        60        28
+   MKD |        17        17        33        33        36        36        39        25        40        48
+   MLI |       118        57        63        63        60        60        59         0        70        60
+   MLT |        51        51        40        40        64        64        80        20        76        79
+   MMR |        41        41        79        79        49        49        94         0        83        92
+   MNE |         3         0        28        28        28        28        31         0        40        30
+   MNG |        32        32        49        49        38        38        40         0        78        39
+   MNP |         0         0         0         0         0         0         0         0         0         0
+   MOZ |       119        13        50        50        31        31        85         0        70        90
+   MRT |       116        32        51        51        60        60        69         0        70        68
+   MSR |        15         0        15        15         0         0        23         0         0        23
+   MTQ |         0         0         0         0         0         0        44         0         0        21
+   MUS |        51        51        80        80        60        60        84         0        78        83
+   MWI |       117        34        76        76        60        60        62         0        76       111
+   MYS |        52        51        75        75        78        79        81        37        80        80
+   MYT |         0         0         0         0         0         0         0         0         0         0
+   NAM |       119        37        40        40        44        44        50         0        70        60
+   NCL |         0         0         0         0         0         0         7         0         0        30
+   NER |       114        64        69        69        60        60        67         0        70        66
+   NGA |       115        11        79        79        62        62        77         0        80       130
+   NIC |        53        52        68        68        60        92        93         0        80        92
+   NIU |         0         0         0         0         0         0        21         0         0        18
+   NLD |       179       153       149       149       209       210       160       155       218       159
+   NOR |       148       139       156       156       144       144       514       206       214       513
+   NPL |        50        50        30        30        60        60        66         0        70        65
+   NRU |        12        12        25        25        21        21        26         0        60        25
+   NZL |       153       152       154       154       160       170       123        63       158       122
+   OMN |        49        31        40        40        59        59        50         0        70        60
+   PAK |        77        74        80        80        79        79        82         0        80        81
+   PAN |        32        32        84        84        84       114        91         0        84        90
+   PER |       123        80       128       128       132       145       117        27       134       116
+   PHL |        52        52        84        84        82        82        91        17        84        89
+   PLW |        13        24        30        30        30        30        30         0        60        29
+   PNG |        38        38        47        47        60        60        59         0        70        60
+   POL |        54        35        36        36        44        44       106        20        80       103
+   PRI |         0         0        66        66        24        24        89         0        80        88
+   PRK |         0         0         0         0         0         0         0         0         0         0
+   PRT |       184       180       147       147       179       179       447        50       188       424
+   PRY |        52        40        73        73        60        60        92         0        81        91
+   PSE |        17        17        19        19        24        24        44         0        54        42
+   PYF |         0         0         0         0         0         0         0         0         0         0
+   QAT |        17         8        40        40        40        40        51         0        67        60
+   REU |         0         0         0         0         0         0        26         0         0         0
+   ROU |       151        54        66        66        77        77        78        16       133        86
+   RUS |       188        72       110       110        69        69        67        24       127        88
+   RWA |        91        19        50        50        60        60        64         0        70        63
+   SAU |        15        13        39        39        41        41        67         9        70        66
+   SDN |       115        23        75        75        42        42        92         0        75        91
+   SEN |       122        62        68        68        60        60        85         0        71        84
+   SGP |        54        53        67        67        67        67        70        27        70        69
+   SHN |         0         0         0         0         0         0         0         0         0        19
+   SLB |        32        33        50        50        55        55        59         0        63        58
+   SLE |       119        24        66        66        60        60        75         0        70       140
+   SLV |        35        27        84        84        86       116        93         0        86        92
+   SMR |        22        21        28        28        29        29        28         0        60        27
+   SOM |        24        11        11        17         0         0        35         0         0        33
+   SPM |         0         0         0         0         0         0         0         0         0         0
+   SRB |        16        16        30        30        30        30        51        25        40        48
+   SSD |         2         0        19        19        19        19        22         0        22        21
+   STP |        24        23        50        50        53        53        85         0        67        90
+   SUN |         0         0         0         0         0         0        19         0         0        17
+   SUR |        21         9        40        40        51        51        76         0        70        75
+   SVK |        29        29        35        35        38        38        40        20        46        44
+   SVN |        32        32        36        36        37        37        50        50        40        49
+   SWE |       163       163       230       230       360       360       740       150       470       739
+   SWZ |       118        43        50        50        60        60        65         0        70        64
+   SXM |         0         0         0         0         0         0        13         0         0        12
+   SYC |        32        29        50        50        56        56        60         0        70        60
+   SYR |        43        29        40        40        41        41        72         0        64        71
+   TCA |         0         0         0         0         0         0         0         0         0        16
+   TCD |       110        31        55        55        60        60        66         0        70        74
+   TGO |       118        61        69        69        60        60        67         0        70        66
+   THA |       125        73        84        84        82       114        87        34        78        85
+   TJK |        23        26        32        32        32        32        38         0        45        37
+   TKL |         0         0         0         0         0         0         0         0         0         0
+   TKM |        10        10        33        33        33        33        38         0        43        37
+   TLS |        13        13        29        29        29        29        30         0        40        29
+   TON |        22        23        31        31        44        44        55         0        60        60
+   TTO |        28        28        42        42        65        65        78         0        78        77
+   TUN |       122        50        65        65        60        60       101         0        70       100
+   TUR |        53        72        83        85       103       167       109        15       103       107
+   TUV |         0         9        26        26        25        25        30         0        60        30
+   TWN |        23        23       104       104        43        43       115         0       129       113
+   TZA |       120        15        75        75        60        60        82         0        75       108
+   UGA |       122        23        76        76        56        56        88         0        80       122
+   UKR |        24        24        35        35        38        38        38         0        48        60
+   UMI |         0         0         0         0         0         0         0         0         0         0
+   URY |       123       126        75        75       136       136       101         0       158       100
+   USA |       234       233       238       238       240       240       256       135       241       255
+   UZB |        12        12        38        38        33        33        38         0        43        38
+   VAT |         0         0         0         0         0         0         0         0         0         0
+   VCT |        40        40        50        50        60        60        56         0        70        60
+   VEN |        93        48       104       104       104       110       126         0         0       125
+   VGB |         0         0         0         0         0         0         0         0         0         9
+   VIR |         0         0         0         0         0         0         0         0         0         0
+   VNM |        18        18        32        32        39        39       107         0        67       116
+   VUT |        28        28        39        39        49        49        54         0        60        60
+   WLF |         0         0         0         0         0         0         0         0         0         0
+   WSM |        13        13        38        38        60        60        69         0        60        68
+   XKX |         0         0        30        30        24        24        30         0        40        29
+   YEM |        31        17        40        40        40        40        40         0        60        60
+   YUG |         0         0         0         0         0         0        10         0         0         9
+   ZAF |       122        51       119       119       119       165       135        59       107       134
+   ZMB |       100        49        50        50        54        54        50         0        84        87
+   ZWE |       110        26        99        28        78        78       103         0        99       106
+-------+----------------------------------------------------------------------------------------------------
+ Total |     14138      9472     13624     13674     13945     14689     18659      3517     17474     19692
+------------------------------------------------------------------------------------------------------------
+
+    cn |     unemp     USDfx      REER    strate    ltrate    cbrate        M0        M1        M2        M3
+-------+----------------------------------------------------------------------------------------------------
+   ABW |        39        55         0         0         0        35        38        38        38         0
+   AFG |        13        69        22         0         0         6        52        50        50         0
+   AGO |        11        74        55         7         1        29        58        24        80         0
+   AIA |         6        68         0         0         0        29        19        19        19         0
+   ALB |        50        75        35        15         0        41        27        15        15        12
+   AND |        20         3         0         0         0         0         0         0         0         0
+   ANT |        11        74        64        26        25        23        42        42        42         0
+   ARE |        13        59        45         0         0         0        43        43        43         0
+   ARG |        60       226        65        91        63        78       144        84        84        84
+   ARM |        38        34        34        23        11        25        32        32        32         0
+   ASM |         3       127         0         0         0         0         0         0         0         0
+   ATG |         7        75        55        40         0        29        46        46        46        28
+   AUS |       129       226        66       156       154        73       179       183       101       183
+   AUT |        70        99        90       122        59       135       178        48        45         0
+   AZE |        39        34        35        20         0        32        32        32        17        24
+   BDI |         7        74        59         0         0        40        59        59        59         0
+   BEL |       104       196       148       174       188       203       160       132        47        42
+   BEN |        10       121        55         0         1        28        62        62        62         0
+   BES |         0         0         0         0         0         0         0         0         0         0
+   BFA |        14       121        64         0         4        28        62        62        62         0
+   BGD |        19        65        53        40         3        53        49        46        46         0
+   BGR |        41       142       127        40        22        55        83        18        18        65
+   BHR |        18        59        58        27         0        10        51        51        51         0
+   BHS |        48        85        58        52         0        54        54        54        54        31
+   BIH |        36        35        31         0         0         0        14        14        14         0
+   BLM |         0         0         0         0         0         0         0         0         0         0
+   BLR |        39        35        34         0         0        25        15        15        15         0
+   BLZ |        40        75        55        46         0        47        47        47        33        33
+   BMU |         6        85         0         0         0         0         0         0         0         0
+   BOL |        58       204        64        29         0        64       153        72        72        32
+   BRA |        46       226        66        78        94        78       194       170       170        29
+   BRB |        54        75        58        56         0        46        54        54        43        11
+   BRN |        30        75        45         0         0         0        21        21        21         0
+   BTN |        24        74        55        24         0         0        37        37        37         0
+   BWA |        16        74        55         0         6        48        33        43        41         0
+   CAF |         0       121        44         0         0        23        65        63        60         0
+   CAN |       114       226        66        92       154        91       155        74        62        53
+   CHE |       117       225       156       189       144       146       139       153        67       141
+   CHL |        55       226        66       161        89        79       163       114       163        38
+   CHN |        78       216        66        46        10        36       120        72        72        24
+   CIV |        11       121        64        17         3        25        62        62        62         0
+   CMR |         9       121        56         0         0        27       103        63        63         0
+   COD |         4        74        61         0         0        18        95        46        46         0
+   COG |         3       121        55         0         0        23        65        63        63         0
+   COK |         9        24         0         0         0         0        24        24        24         0
+   COL |        52       208        65        50        47        96       100        75        73        41
+   COM |         5        74        55         0         0        24        41        41        41         0
+   CPV |        50        74        55        11         0        23        90        47        47         0
+   CRI |        50       215        66        43         6        61       104        75        75        22
+   CSK |         0        59        63        12         0         0        19         0         0         0
+   CUB |        19       200         0         0         0         0        16        16        16         0
+   CUW |         7        20         0         0         0         0         0         0         0         0
+   CYM |        15        75         0         0         0         0         0         0         0         0
+   CYP |        55        75        65        25        27        25        51        50        50         0
+   CZE |        40        36        66        33        24        34        16        32        16        32
+   DDR |         0        24         0         0         0         0        40         0         0         0
+   DEU |       137       156       136       206       696       209       157       133       140         0
+   DJI |         1        75        55         0         0         0        39        39        39         0
+   DMA |         5        75        59        40         0        29        46        46        46        28
+   DNK |       156       235       156       151       210       207       192       150       151        54
+   DOM |        39       204        64        31         0        20        86        73        73        22
+   DZA |        40        75        56        11         0        29        99        60        60         0
+   ECU |        46       225        64        38         0        62       108        75        75         0
+   EGY |        55        74        64        33         0        72       110        69        65         0
+   ERI |         0        68        32         0         0         0        14        24        21         0
+   ESH |         0         0         0         0         0         0         0         0         0         0
+   ESP |        94       205       153       156       552       153       150       143       122       142
+   EST |        41        55        36        42        17        27        32        20        20         0
+   ETH |         8        74        59        31        18        11        61        71        61         0
+   FIN |        99       166       154       156       145        76       198       151       151         0
+   FJI |        45        74        55        33         9        33        59        59        50        20
+   FLK |         0        36         0         0         0         0         0         0         0         0
+   FRA |       118       226       156       156       637       222       204       149       149        55
+   FRO |        13        67         0         0         0         0         0         0         0         0
+   FSM |         3        85         0         0         0         0         0         0         0         0
+   GAB |         3       121        62         0         0        24        65        63        63         0
+   GBR |       270       235       156       331       714       332       269       101       173        37
+   GEO |        34        34        70        20         0        16        25        25        14        20
+   GGY |         0        67         0         0         0         0         0         0         0         0
+   GHA |        14        74        60        29         3        60        64        69        67         0
+   GIB |         0        75         0         0         0         0         0         0         0         0
+   GIN |         6       118        55         3         0        34        31        31        31         0
+   GLP |        14        49         0         0         0         0         0         0         0         0
+   GMB |         7        74        63        31         0        47        48        55        52         0
+   GNB |         5        74        55         0         0        21        38        38        38         0
+   GNQ |         1        67        55         0         0        27        38        38        38         0
+   GRC |        70       171       125        70        80       170       160        51        48        98
+   GRD |        13        75        48        16         0        29        51        51        51        28
+   GRL |         7        67         0         0         0         0         0         0         0         0
+   GTM |        22       224        64        27         0        19       109        75        75        22
+   GUF |        14        49         0         0         0         0         0         0         0         0
+   GUM |        15       127         0         0         0         0         0         0         0         0
+   GUY |         6        74        55        51         0        58        68        68        56        33
+   HKG |        55        99        56        34         0        33        29        29        30         0
+   HND |        51       224        64        26         0        19        87        75        75        22
+   HRV |        39        36        36        26        18        34        16        16        16         0
+   HTI |         5       224        64        26         0        25        73        73        73        33
+   HUN |        50        96        90       101        25        94        52        41        27        33
+   IDN |        51        60        66        63        12        36       129        71        67        33
+   IMN |         5        67         0         0         0         0         0         0         0         0
+   IND |        11       203        66        76        71       101       162        76        74        73
+   IRL |        70       226       103       104       102        84       177        99        99         0
+   IRN |        41       163        64         0         0        32       112        67        69         0
+   IRQ |         8        92        34         7         0        14        52        34        34         0
+   ISL |        66       177        66        66        70       101       122       137        57       105
+   ISR |        59        78        66        42        27        33        60        75        62         0
+   ITA |       104       165       149       164       714       141       154       160       160        16
+   JAM |        51       213        64        62         0        25        85        70        70        30
+   JEY |         6        67         0         0         0         0         0         0         0         0
+   JOR |        41        75        55         0         0        57        66        66        66         0
+   JPN |       102       169        66       135       154       107       156       156       156         0
+   KAZ |        39        34        34        22         0        28        28        28        16        24
+   KEN |         8        74        64        19         0        21        73        53        51         0
+   KGZ |        36        34        34        29         6        30        26        26        26         0
+   KHM |        21        70        38         0         0         0        46        27        27         0
+   KIR |         6        74        19         0         0         0         0         0         0         0
+   KNA |         3        75        45        40         0        29        42        42        42        28
+   KOR |        75       158        66        49        51        62        74        76        76        43
+   KWT |        22        75        52         0         0        47        50        51        51         0
+   LAO |        11        67        44        14         0        20        31        31        31         0
+   LBN |         5        73        55        39         0        55        78        68        54         0
+   LBR |         7        73        26         0         0         0        42        42        42         0
+   LBY |         1        74        60        21         0        48        66        64        59         0
+   LCA |        25        75        59        16         0        29        46        46        46        28
+   LIE |         8         0         0         0         0         0         0         0         0         0
+   LKA |        34        75        64        35         7        39       131        76        76         0
+   LSO |         6        74        51        16         0        43        29        39        37         0
+   LTU |        40        55        38        44        23        26        28        16        16         0
+   LUX |        70        76        66        66        51        73         0         0         0         0
+   LVA |        40        55        38        44        23        27        28        16        16         0
+   MAC |        39        57         0         0         0         0        57        25        25         0
+   MAF |         0         0         0         0         0         0         0         0         0         0
+   MAR |        44        74        65         0        11        49       104        67        67        40
+   MCO |         2       100         0         0         0         0         0         0         0         0
+   MDA |        37        34        34        13         8        24        18        18        18         0
+   MDG |        11        74        60        17         0         0        97        61        61         0
+   MDV |        11        74        55        18         0        23        44        45        45         0
+   MEX |        50       226        66        48        22        36       108       119       119       120
+   MHL |        15        24         0         0         0         0         0         0         0         0
+   MKD |        48        35        35         0         0        32        16        16        16         0
+   MLI |        15       121        55         0         1        25        62        62        62         0
+   MLT |        47       214        65        29        24        22         0         0         0         0
+   MMR |         9        74         0         0         1        30        76        75        72         0
+   MNE |        22        34         0         0         0         0         0         0         0         0
+   MNG |        31        54        34         6         0        22        29        29        29         0
+   MNP |         4         0         0         0         0         0         0         0         0         0
+   MOZ |         4        74        44        10         0        23        75        35        81         0
+   MRT |         5        74        55        19         0        54        61        61        61         0
+   MSR |        18        68         0         0         0        29        26        26        26         0
+   MTQ |        15        49         0         0         0         0         0         0         0         0
+   MUS |        48        75        61         8         7        18       132        63        61         0
+   MWI |         7        74        55        34         0        12        52        54        52         0
+   MYS |        50        98        65        48        17        30       120        74        74        24
+   MYT |         0         0         0         0         0         0         0         0         0         0
+   NAM |        12        64        55        18         0        32        19        29        27         0
+   NCL |         9        74         0         0         0         0         0         0         0         0
+   NER |        11       121        61         0         2        25        62        62        62         0
+   NGA |        15        73        64        33         0        20        79        68        66         0
+   NIC |        50       224        55        24         0        32       122        75        75        22
+   NIU |         8        24         0         0         0         0         0         0         0         0
+   NLD |       160       226       156       156       624       212       196       148       148         4
+   NOR |       122       207       156       206       201       208       202        73       151        30
+   NPL |        13        72        60        43        28        48        65        65        65         0
+   NRU |         6        74         0         0         0         0         0         0         0         0
+   NZL |        72       226        66        64        91        92       150        72        72        46
+   OMN |         7        75        44         0         0        32        37        39        39         0
+   PAK |        59        74        64        71        56        74        73        73        73        13
+   PAN |        60       119        64        18         0         0        60        75        75        21
+   PER |        61       226        66        50        29        94       109        75        75        31
+   PHL |        60        80        65        48        14        52       111        72        72        20
+   PLW |         9        20         0         0         0         0         0         0         0         0
+   PNG |        25        74        53        30         4        22        47        47        38        20
+   POL |        40        76        94        46        25        53        97        44        30        33
+   PRI |        50       127         0         0         0         0         0         0         0         0
+   PRK |         0        37         0         0         0         0         0         0         0         0
+   PRT |        77       226       147       146       200       130       169       167       151         0
+   PRY |        47       224        64        32         0        32       106        75        71        33
+   PSE |        31        50         0         0         0         0        17         0         0         0
+   PYF |         2        75         0         0         0         0         0         0         0         0
+   QAT |        18        59        45         0         0        22        43        45        45         0
+   REU |        15        49         0         0         0         0         0         0         0         0
+   ROU |        45       151       126        69        19        75       102        36        36        65
+   RUS |        38       164        79        25        53        68        65        28         0        27
+   RWA |        13        74        58         6         0        25        43        55        53         0
+   SAU |        26        73        62         8         0        26        58        58        58         0
+   SDN |        50        73        64         0         0         0        61        69        67         0
+   SEN |        11       121        57        17         4        25        62        62        62         0
+   SGP |        50        75        65        42        22        35        60        60        60        24
+   SHN |         0        36         0         0         0         0         0         0         0         0
+   SLB |         3        74        53        22        28         0        42        42        42        20
+   SLE |         4        74        55        48         0        40        55        61        59         0
+   SLV |        47       224        64        28         0        56       123        75        75         0
+   SMR |        48        53         0         0         0         0         0         0         0         0
+   SOM |         1        50         0         0         0        21        30        40        40         0
+   SPM |         0        49         0         0         0         0         0         0         0         0
+   SRB |        35        35        31        42         0        64        49        12        12         0
+   SSD |         1        13         0         0         0         0         0         8         6         0
+   STP |        39        74        44         0         0        35        28        28        28         0
+   SUN |         0        39         0         0         0         0         0         0         0         0
+   SUR |        42        74        64        25         0        63        56        56        56        17
+   SVK |        37        36        66        31        24        27        16        16        16         0
+   SVN |        39        36        36        28        22        27         0         0         0         0
+   SWE |       119       226       156       156       156       130       394       152        61       204
+   SWZ |         7        74        59        35         0        47        35        45        43         0
+   SXM |         0        20         0         0         0         0         0         0         0         0
+   SYC |        36        74        54        30        20         4        38        48        46         0
+   SYR |        32        73        60         0         0         2        91        58        58         0
+   TCA |         8        50         0         0         0         0         0         0         0         0
+   TCD |         3       121        55         0         0        23        65        63        63         0
+   TGO |         9       121        58         0         4        25        96        62        62         0
+   THA |        45       164        65        44        10        65       117        72        72         0
+   TJK |        31        34        34        10         0        23        23        23        23         0
+   TKL |         0         0         0         0         0         0         0         0         0         0
+   TKM |        24        35        34         0         0         0         5         5         0        24
+   TLS |        11        85         0         0         0         0         0         0         0         0
+   TON |        12        74        49         0         0         0        35        35        35         0
+   TTO |        51        75        64        59         0        58        86        72        72        29
+   TUN |        35        74        55         0         0         0        78        61        60         0
+   TUR |        70       224        66        52        55        94        87        89        77        59
+   TUV |         7        24         0         0         0         0         0         0         0         0
+   TWN |        50       154        65        16         0         0       118        70        70         0
+   TZA |        18        72        59        16         0        21        45        53        51         0
+   UGA |        15        74        55        17         0        36        40        48        51         0
+   UKR |        35        35        36         0         0        13        17        17        17         0
+   UMI |         0       127         0         0         0         0         0         0         0         0
+   URY |        55       205        64        47        34        42       123        75        74        25
+   USA |       140       226        66       195       239        76       198        76        76       153
+   UZB |        30        35        34         6         0        11        20        20        20         0
+   VAT |         0         0         0         0         0         0         0         0         0         0
+   VCT |         4        75        55        40         0        29        46        46        46        28
+   VEN |        46       222        64        39        15        75       110        71        71         0
+   VGB |         0        50         0         0         0         0         0         0         0         0
+   VIR |         0       107         0         0         0         0         0         0         0         0
+   VNM |        40        54        44        20         0        28        93        31        31         0
+   VUT |         5        74        55         0        20        25        46        46        33         0
+   WLF |         6         0         0         0         0         0         0         0         0         0
+   WSM |        11        74        63         0         0         0        53        59        59         0
+   XKX |        13        22         0         0         0         0         0         0         0         0
+   YEM |        10        45        34        18         0         8        48        24        24         0
+   YUG |         0        42         0        12         0         0         0         0         0         0
+   ZAF |        50       126        66       101        87        96       144        75        72        59
+   ZMB |        19        74        55        31         0        52        43        53        51         0
+   ZWE |        13        58         0        20         0         6        81        44        30         0
+-------+----------------------------------------------------------------------------------------------------
+ Total |      7645     23109     11525      7383      7747      8730     14443     10989     10509      3143
+------------------------------------------------------------------------------------------------------------
+
+    cn |        M4  Bankin~s  Curren~s  SovDeb~s
+-------+----------------------------------------
+   ABW |         0         0         0         0
+   AFG |         0         0         0         0
+   AGO |         0       218       219       218
+   AIA |         0         0         0         0
+   ALB |         0        48        48        48
+   AND |         0         0         0         0
+   ANT |         0         0         0         0
+   ARE |         0         0         0         0
+   ARG |         0       218       218       218
+   ARM |         0        48        48        48
+   ASM |         0         0         0         0
+   ATG |         0         0         0         0
+   AUS |         0       221       217       217
+   AUT |         0       218       218       218
+   AZE |         0        48        49        48
+   BDI |         0        48        48        48
+   BEL |         0       221       218       218
+   BEN |         0        48        48        48
+   BES |         0         0         0         0
+   BFA |         0        48        48        48
+   BGD |         0        48        48        48
+   BGR |         0        48        48        48
+   BHR |         0         0         0         0
+   BHS |         0         0         0         0
+   BIH |         0        48        48        48
+   BLM |         0         0         0         0
+   BLR |         0        48        49        48
+   BLZ |         0        48        48        51
+   BMU |         0         0         0         0
+   BOL |         0       218       218       218
+   BRA |         0       218       219       218
+   BRB |         0         0         0         0
+   BRN |         0         0         0         0
+   BTN |         0         0         0         0
+   BWA |         0        48        48        48
+   CAF |         0       218       218       218
+   CAN |         0       221       217       217
+   CHE |         0       151       218        48
+   CHL |         0       218       218       218
+   CHN |         0       218       218       218
+   CIV |         0       218       218       218
+   CMR |         0        48        48        48
+   COD |         0        48        50        48
+   COG |         0        48        48        48
+   COK |         0         0         0         0
+   COL |         0       218       218       218
+   COM |         0        48        48        48
+   CPV |         0        48        48        48
+   CRI |         0       218       218       218
+   CSK |         0       117         0         0
+   CUB |         0         0         0         0
+   CUW |         0         0         0         0
+   CYM |         0         0         0         0
+   CYP |         0        48        48        48
+   CZE |         0        53        48        48
+   DDR |         0         0         0         0
+   DEU |         0       221       218       218
+   DJI |         0        48        48        48
+   DMA |         0        48        48        48
+   DNK |         0       221       218       218
+   DOM |         0       218       218       218
+   DZA |         0       218       218       218
+   ECU |         0       218       218       218
+   EGY |         0       218       220       218
+   ERI |         0        48        48        48
+   ESH |         0         0         0         0
+   ESP |         0       221       218       218
+   EST |         0        48        48        48
+   ETH |         0        48        48        48
+   FIN |         0       221       218       218
+   FJI |         0        48        48        48
+   FLK |         0         0         0         0
+   FRA |         0       221       218       217
+   FRO |         0         0         0         0
+   FSM |         0         0         0         0
+   GAB |         0        48        48        48
+   GBR |       151       221       218       218
+   GEO |         0        48        48        48
+   GGY |         0         0         0         0
+   GHA |         0       218       218       218
+   GIB |         0         0         0         0
+   GIN |         0        48        48        48
+   GLP |         0         0         0         0
+   GMB |         0        48        48        48
+   GNB |         0        48        48        48
+   GNQ |         0        48        48        48
+   GRC |         0       218       218       218
+   GRD |         0        48        48        49
+   GRL |         0         0         0         0
+   GTM |         0       218       218       218
+   GUF |         0         0         0         0
+   GUM |         0         0         0         0
+   GUY |         0        48        48        48
+   HKG |         0       135         0         0
+   HND |         0       218       218       218
+   HRV |         0        48        48        48
+   HTI |         0        48        48        48
+   HUN |         0       218       218       218
+   IDN |         0       218       218       217
+   IMN |         0         0         0         0
+   IND |         0       218       218       218
+   IRL |         0       146       218        48
+   IRN |         0        48        48        48
+   IRQ |         0         0         0         0
+   ISL |         0       218       218        48
+   ISR |         0       136        48        48
+   ITA |         0       221       218       218
+   JAM |         0        48        48        48
+   JEY |         0         0         0         0
+   JOR |         0        48        48        48
+   JPN |         0       221       218       218
+   KAZ |         0        48        49        48
+   KEN |         0       218       218       218
+   KGZ |         0        48        48        48
+   KHM |         0        48        48        48
+   KIR |         0         0         0         0
+   KNA |         0        48        48        48
+   KOR |         0       218       218       218
+   KWT |         0        48        48        48
+   LAO |         0         0         0         0
+   LBN |         0        48        48        48
+   LBR |         0        48        48        48
+   LBY |         0        48        48        48
+   LCA |         0         0         0         0
+   LIE |         0         0         0         0
+   LKA |         0       218       218       218
+   LSO |         0        48        49        48
+   LTU |         0        48        48        48
+   LUX |         0       136        48        48
+   LVA |         0        48        48        48
+   MAC |         0         0         0         0
+   MAF |         0         0         0         0
+   MAR |         0       218       218       217
+   MCO |         0         0         0         0
+   MDA |         0        48        48        48
+   MDG |         0        48        48        48
+   MDV |         0        48        48        48
+   MEX |        97       218       218       218
+   MHL |         0         0         0         0
+   MKD |         0        48        48        48
+   MLI |         0        48        48        48
+   MLT |         0         0         0         0
+   MMR |         0       218       218       218
+   MNE |         0         0         0         0
+   MNG |         0        48        48        48
+   MNP |         0         0         0         0
+   MOZ |         0        48        49        48
+   MRT |         0        48        48        48
+   MSR |         0         0         0         0
+   MTQ |         0         0         0         0
+   MUS |         0       215       217       216
+   MWI |         0        48        48        48
+   MYS |         0       218       218       218
+   MYT |         0         0         0         0
+   NAM |         0        48        49        48
+   NCL |         0        48        48        48
+   NER |         0        48        48        48
+   NGA |         0       218       220       218
+   NIC |         0       218       218       218
+   NIU |         0         0         0         0
+   NLD |         0       221       218       218
+   NOR |         0       221       218       218
+   NPL |         0        48        48        48
+   NRU |         0         0         0         0
+   NZL |         0       218       218       218
+   OMN |         0         0         0         0
+   PAK |         0        48        48        48
+   PAN |         0       218       218       218
+   PER |         0       218       218       218
+   PHL |        19       218       218       218
+   PLW |         0         0         0         0
+   PNG |         0        48        48        48
+   POL |         0       218       218       218
+   PRI |         0         0         0         0
+   PRK |         0         0         0         0
+   PRT |         0       221       218       218
+   PRY |         0       218       218       218
+   PSE |         0         0         0         0
+   PYF |         0         0         0         0
+   QAT |         0         0         0         0
+   REU |         0         0         0         0
+   ROU |         0       218       218       218
+   RUS |         0       218       218       218
+   RWA |         0        48        48        48
+   SAU |         0         0         0         0
+   SDN |         0        48        48        48
+   SEN |         0        48        48        48
+   SGP |         0       217       217       217
+   SHN |         0         0         0         0
+   SLB |         0         0         0         0
+   SLE |         0        48        48        48
+   SLV |         0       218       218       218
+   SMR |         0         0         0         0
+   SOM |         0         0         0         0
+   SPM |         0         0         0         0
+   SRB |         0        48        48        48
+   SSD |         0        48        49        48
+   STP |         0        48        48        48
+   SUN |         0        16         0         0
+   SUR |         0        48        50        48
+   SVK |         0        48        48        48
+   SVN |         0        48        48        48
+   SWE |         0       221       218       218
+   SWZ |         0        48        49        48
+   SXM |         0         0         0         0
+   SYC |         0        48        48        48
+   SYR |         0        48        48        48
+   TCA |         0         0         0         0
+   TCD |         0        48        48        48
+   TGO |         0        48        48        48
+   THA |         0       218       218       218
+   TJK |        21        48        49        48
+   TKL |         0         0         0         0
+   TKM |         0        48        48        48
+   TLS |         0         0         0         0
+   TON |         0         0         0         0
+   TTO |         0        48        48        48
+   TUN |         0       218       218       218
+   TUR |         0       218       218       218
+   TUV |         0         0         0         0
+   TWN |         0       217       217       217
+   TZA |         0        48        48        48
+   UGA |         0        48        48        48
+   UKR |         0        48        48        49
+   UMI |         0         0         0         0
+   URY |         0       218       218       218
+   USA |         0       221       218       218
+   UZB |         0        48        48        48
+   VAT |         0         0         0         0
+   VCT |         0         0         0         0
+   VEN |         0       218       218       221
+   VGB |         0         0         0         0
+   VIR |         0         0         0         0
+   VNM |         0        48        48        48
+   VUT |         0         0         0         0
+   WLF |         0         0         0         0
+   WSM |         0         0         0         0
+   XKX |         0         0         0         0
+   YEM |         0        48        48        48
+   YUG |         0         0         0         0
+   ZAF |         0       218       219       218
+   ZMB |         0       218       219       218
+   ZWE |         0       218       218       218
+-------+----------------------------------------
+ Total |       288     19933     19596     19069
+------------------------------------------------
+
+. return list
+
+macros:
+            r(name243) : "ZWE"
+            r(name242) : "ZMB"
+            r(name241) : "ZAF"
+            r(name240) : "YUG"
+            r(name239) : "YEM"
+            r(name238) : "XKX"
+            r(name237) : "WSM"
+            r(name236) : "WLF"
+            r(name235) : "VUT"
+            r(name234) : "VNM"
+            r(name233) : "VIR"
+            r(name232) : "VGB"
+            r(name231) : "VEN"
+            r(name230) : "VCT"
+            r(name229) : "VAT"
+            r(name228) : "UZB"
+            r(name227) : "USA"
+            r(name226) : "URY"
+            r(name225) : "UMI"
+            r(name224) : "UKR"
+            r(name223) : "UGA"
+            r(name222) : "TZA"
+            r(name221) : "TWN"
+            r(name220) : "TUV"
+            r(name219) : "TUR"
+            r(name218) : "TUN"
+            r(name217) : "TTO"
+            r(name216) : "TON"
+            r(name215) : "TLS"
+            r(name214) : "TKM"
+            r(name213) : "TKL"
+            r(name212) : "TJK"
+            r(name211) : "THA"
+            r(name210) : "TGO"
+            r(name209) : "TCD"
+            r(name208) : "TCA"
+            r(name207) : "SYR"
+            r(name206) : "SYC"
+            r(name205) : "SXM"
+            r(name204) : "SWZ"
+            r(name203) : "SWE"
+            r(name202) : "SVN"
+            r(name201) : "SVK"
+            r(name200) : "SUR"
+            r(name199) : "SUN"
+            r(name198) : "STP"
+            r(name197) : "SSD"
+            r(name196) : "SRB"
+            r(name195) : "SPM"
+            r(name194) : "SOM"
+            r(name193) : "SMR"
+            r(name192) : "SLV"
+            r(name191) : "SLE"
+            r(name190) : "SLB"
+            r(name189) : "SHN"
+            r(name188) : "SGP"
+            r(name187) : "SEN"
+            r(name186) : "SDN"
+            r(name185) : "SAU"
+            r(name184) : "RWA"
+            r(name183) : "RUS"
+            r(name182) : "ROU"
+            r(name181) : "REU"
+            r(name180) : "QAT"
+            r(name179) : "PYF"
+            r(name178) : "PSE"
+            r(name177) : "PRY"
+            r(name176) : "PRT"
+            r(name175) : "PRK"
+            r(name174) : "PRI"
+            r(name173) : "POL"
+            r(name172) : "PNG"
+            r(name171) : "PLW"
+            r(name170) : "PHL"
+            r(name169) : "PER"
+            r(name168) : "PAN"
+            r(name167) : "PAK"
+            r(name166) : "OMN"
+            r(name165) : "NZL"
+            r(name164) : "NRU"
+            r(name163) : "NPL"
+            r(name162) : "NOR"
+            r(name161) : "NLD"
+            r(name160) : "NIU"
+            r(name159) : "NIC"
+            r(name158) : "NGA"
+            r(name157) : "NER"
+            r(name156) : "NCL"
+            r(name155) : "NAM"
+            r(name154) : "MYT"
+            r(name153) : "MYS"
+            r(name152) : "MWI"
+            r(name151) : "MUS"
+            r(name150) : "MTQ"
+            r(name149) : "MSR"
+            r(name148) : "MRT"
+            r(name147) : "MOZ"
+            r(name146) : "MNP"
+            r(name145) : "MNG"
+            r(name144) : "MNE"
+            r(name143) : "MMR"
+            r(name142) : "MLT"
+            r(name141) : "MLI"
+            r(name140) : "MKD"
+            r(name139) : "MHL"
+            r(name138) : "MEX"
+            r(name137) : "MDV"
+            r(name136) : "MDG"
+            r(name135) : "MDA"
+            r(name134) : "MCO"
+            r(name133) : "MAR"
+            r(name132) : "MAF"
+            r(name131) : "MAC"
+            r(name130) : "LVA"
+            r(name129) : "LUX"
+            r(name128) : "LTU"
+            r(name127) : "LSO"
+            r(name126) : "LKA"
+            r(name125) : "LIE"
+            r(name124) : "LCA"
+            r(name123) : "LBY"
+            r(name122) : "LBR"
+            r(name121) : "LBN"
+            r(name120) : "LAO"
+            r(name119) : "KWT"
+            r(name118) : "KOR"
+            r(name117) : "KNA"
+            r(name116) : "KIR"
+            r(name115) : "KHM"
+            r(name114) : "KGZ"
+            r(name113) : "KEN"
+            r(name112) : "KAZ"
+            r(name111) : "JPN"
+            r(name110) : "JOR"
+            r(name109) : "JEY"
+            r(name108) : "JAM"
+            r(name107) : "ITA"
+            r(name106) : "ISR"
+            r(name105) : "ISL"
+            r(name104) : "IRQ"
+            r(name103) : "IRN"
+            r(name102) : "IRL"
+            r(name101) : "IND"
+            r(name100) : "IMN"
+             r(name99) : "IDN"
+             r(name98) : "HUN"
+             r(name97) : "HTI"
+             r(name96) : "HRV"
+             r(name95) : "HND"
+             r(name94) : "HKG"
+             r(name93) : "GUY"
+             r(name92) : "GUM"
+             r(name91) : "GUF"
+             r(name90) : "GTM"
+             r(name89) : "GRL"
+             r(name88) : "GRD"
+             r(name87) : "GRC"
+             r(name86) : "GNQ"
+             r(name85) : "GNB"
+             r(name84) : "GMB"
+             r(name83) : "GLP"
+             r(name82) : "GIN"
+             r(name81) : "GIB"
+             r(name80) : "GHA"
+             r(name79) : "GGY"
+             r(name78) : "GEO"
+             r(name77) : "GBR"
+             r(name76) : "GAB"
+             r(name75) : "FSM"
+             r(name74) : "FRO"
+             r(name73) : "FRA"
+             r(name72) : "FLK"
+             r(name71) : "FJI"
+             r(name70) : "FIN"
+             r(name69) : "ETH"
+             r(name68) : "EST"
+             r(name67) : "ESP"
+             r(name66) : "ESH"
+             r(name65) : "ERI"
+             r(name64) : "EGY"
+             r(name63) : "ECU"
+             r(name62) : "DZA"
+             r(name61) : "DOM"
+             r(name60) : "DNK"
+             r(name59) : "DMA"
+             r(name58) : "DJI"
+             r(name57) : "DEU"
+             r(name56) : "DDR"
+             r(name55) : "CZE"
+             r(name54) : "CYP"
+             r(name53) : "CYM"
+             r(name52) : "CUW"
+             r(name51) : "CUB"
+             r(name50) : "CSK"
+             r(name49) : "CRI"
+             r(name48) : "CPV"
+             r(name47) : "COM"
+             r(name46) : "COL"
+             r(name45) : "COK"
+             r(name44) : "COG"
+             r(name43) : "COD"
+             r(name42) : "CMR"
+             r(name41) : "CIV"
+             r(name40) : "CHN"
+             r(name39) : "CHL"
+             r(name38) : "CHE"
+             r(name37) : "CAN"
+             r(name36) : "CAF"
+             r(name35) : "BWA"
+             r(name34) : "BTN"
+             r(name33) : "BRN"
+             r(name32) : "BRB"
+             r(name31) : "BRA"
+             r(name30) : "BOL"
+             r(name29) : "BMU"
+             r(name28) : "BLZ"
+             r(name27) : "BLR"
+             r(name26) : "BLM"
+             r(name25) : "BIH"
+             r(name24) : "BHS"
+             r(name23) : "BHR"
+             r(name22) : "BGR"
+             r(name21) : "BGD"
+             r(name20) : "BFA"
+             r(name19) : "BES"
+             r(name18) : "BEN"
+             r(name17) : "BEL"
+             r(name16) : "BDI"
+             r(name15) : "AZE"
+             r(name14) : "AUT"
+             r(name13) : "AUS"
+             r(name12) : "ATG"
+             r(name11) : "ASM"
+             r(name10) : "ARM"
+              r(name9) : "ARG"
+              r(name8) : "ARE"
+              r(name7) : "ANT"
+              r(name6) : "AND"
+              r(name5) : "ALB"
+              r(name4) : "AIA"
+              r(name3) : "AGO"
+              r(name2) : "AFG"
+              r(name1) : "ABW"
+
+matrices:
+            r(Stat243) :  1 x 44
+            r(Stat242) :  1 x 44
+            r(Stat241) :  1 x 44
+            r(Stat240) :  1 x 44
+            r(Stat239) :  1 x 44
+            r(Stat238) :  1 x 44
+            r(Stat237) :  1 x 44
+            r(Stat236) :  1 x 44
+            r(Stat235) :  1 x 44
+            r(Stat234) :  1 x 44
+            r(Stat233) :  1 x 44
+            r(Stat232) :  1 x 44
+            r(Stat231) :  1 x 44
+            r(Stat230) :  1 x 44
+            r(Stat229) :  1 x 44
+            r(Stat228) :  1 x 44
+            r(Stat227) :  1 x 44
+            r(Stat226) :  1 x 44
+            r(Stat225) :  1 x 44
+            r(Stat224) :  1 x 44
+            r(Stat223) :  1 x 44
+            r(Stat222) :  1 x 44
+            r(Stat221) :  1 x 44
+            r(Stat220) :  1 x 44
+            r(Stat219) :  1 x 44
+            r(Stat218) :  1 x 44
+            r(Stat217) :  1 x 44
+            r(Stat216) :  1 x 44
+            r(Stat215) :  1 x 44
+            r(Stat214) :  1 x 44
+            r(Stat213) :  1 x 44
+            r(Stat212) :  1 x 44
+            r(Stat211) :  1 x 44
+            r(Stat210) :  1 x 44
+            r(Stat209) :  1 x 44
+            r(Stat208) :  1 x 44
+            r(Stat207) :  1 x 44
+            r(Stat206) :  1 x 44
+            r(Stat205) :  1 x 44
+            r(Stat204) :  1 x 44
+            r(Stat203) :  1 x 44
+            r(Stat202) :  1 x 44
+            r(Stat201) :  1 x 44
+            r(Stat200) :  1 x 44
+            r(Stat199) :  1 x 44
+            r(Stat198) :  1 x 44
+            r(Stat197) :  1 x 44
+            r(Stat196) :  1 x 44
+            r(Stat195) :  1 x 44
+            r(Stat194) :  1 x 44
+            r(Stat193) :  1 x 44
+            r(Stat192) :  1 x 44
+            r(Stat191) :  1 x 44
+            r(Stat190) :  1 x 44
+            r(Stat189) :  1 x 44
+            r(Stat188) :  1 x 44
+            r(Stat187) :  1 x 44
+            r(Stat186) :  1 x 44
+            r(Stat185) :  1 x 44
+            r(Stat184) :  1 x 44
+            r(Stat183) :  1 x 44
+            r(Stat182) :  1 x 44
+            r(Stat181) :  1 x 44
+            r(Stat180) :  1 x 44
+            r(Stat179) :  1 x 44
+            r(Stat178) :  1 x 44
+            r(Stat177) :  1 x 44
+            r(Stat176) :  1 x 44
+            r(Stat175) :  1 x 44
+            r(Stat174) :  1 x 44
+            r(Stat173) :  1 x 44
+            r(Stat172) :  1 x 44
+            r(Stat171) :  1 x 44
+            r(Stat170) :  1 x 44
+            r(Stat169) :  1 x 44
+            r(Stat168) :  1 x 44
+            r(Stat167) :  1 x 44
+            r(Stat166) :  1 x 44
+            r(Stat165) :  1 x 44
+            r(Stat164) :  1 x 44
+            r(Stat163) :  1 x 44
+            r(Stat162) :  1 x 44
+            r(Stat161) :  1 x 44
+            r(Stat160) :  1 x 44
+            r(Stat159) :  1 x 44
+            r(Stat158) :  1 x 44
+            r(Stat157) :  1 x 44
+            r(Stat156) :  1 x 44
+            r(Stat155) :  1 x 44
+            r(Stat154) :  1 x 44
+            r(Stat153) :  1 x 44
+            r(Stat152) :  1 x 44
+            r(Stat151) :  1 x 44
+            r(Stat150) :  1 x 44
+            r(Stat149) :  1 x 44
+            r(Stat148) :  1 x 44
+            r(Stat147) :  1 x 44
+            r(Stat146) :  1 x 44
+            r(Stat145) :  1 x 44
+            r(Stat144) :  1 x 44
+            r(Stat143) :  1 x 44
+            r(Stat142) :  1 x 44
+            r(Stat141) :  1 x 44
+            r(Stat140) :  1 x 44
+            r(Stat139) :  1 x 44
+            r(Stat138) :  1 x 44
+            r(Stat137) :  1 x 44
+            r(Stat136) :  1 x 44
+            r(Stat135) :  1 x 44
+            r(Stat134) :  1 x 44
+            r(Stat133) :  1 x 44
+            r(Stat132) :  1 x 44
+            r(Stat131) :  1 x 44
+            r(Stat130) :  1 x 44
+            r(Stat129) :  1 x 44
+            r(Stat128) :  1 x 44
+            r(Stat127) :  1 x 44
+            r(Stat126) :  1 x 44
+            r(Stat125) :  1 x 44
+            r(Stat124) :  1 x 44
+            r(Stat123) :  1 x 44
+            r(Stat122) :  1 x 44
+            r(Stat121) :  1 x 44
+            r(Stat120) :  1 x 44
+            r(Stat119) :  1 x 44
+            r(Stat118) :  1 x 44
+            r(Stat117) :  1 x 44
+            r(Stat116) :  1 x 44
+            r(Stat115) :  1 x 44
+            r(Stat114) :  1 x 44
+            r(Stat113) :  1 x 44
+            r(Stat112) :  1 x 44
+            r(Stat111) :  1 x 44
+            r(Stat110) :  1 x 44
+            r(Stat109) :  1 x 44
+            r(Stat108) :  1 x 44
+            r(Stat107) :  1 x 44
+            r(Stat106) :  1 x 44
+            r(Stat105) :  1 x 44
+            r(Stat104) :  1 x 44
+            r(Stat103) :  1 x 44
+            r(Stat102) :  1 x 44
+            r(Stat101) :  1 x 44
+            r(Stat100) :  1 x 44
+             r(Stat99) :  1 x 44
+             r(Stat98) :  1 x 44
+             r(Stat97) :  1 x 44
+             r(Stat96) :  1 x 44
+             r(Stat95) :  1 x 44
+             r(Stat94) :  1 x 44
+             r(Stat93) :  1 x 44
+             r(Stat92) :  1 x 44
+             r(Stat91) :  1 x 44
+             r(Stat90) :  1 x 44
+             r(Stat89) :  1 x 44
+             r(Stat88) :  1 x 44
+             r(Stat87) :  1 x 44
+             r(Stat86) :  1 x 44
+             r(Stat85) :  1 x 44
+             r(Stat84) :  1 x 44
+             r(Stat83) :  1 x 44
+             r(Stat82) :  1 x 44
+             r(Stat81) :  1 x 44
+             r(Stat80) :  1 x 44
+             r(Stat79) :  1 x 44
+             r(Stat78) :  1 x 44
+             r(Stat77) :  1 x 44
+             r(Stat76) :  1 x 44
+             r(Stat75) :  1 x 44
+             r(Stat74) :  1 x 44
+             r(Stat73) :  1 x 44
+             r(Stat72) :  1 x 44
+             r(Stat71) :  1 x 44
+             r(Stat70) :  1 x 44
+             r(Stat69) :  1 x 44
+             r(Stat68) :  1 x 44
+             r(Stat67) :  1 x 44
+             r(Stat66) :  1 x 44
+             r(Stat65) :  1 x 44
+             r(Stat64) :  1 x 44
+             r(Stat63) :  1 x 44
+             r(Stat62) :  1 x 44
+             r(Stat61) :  1 x 44
+             r(Stat60) :  1 x 44
+             r(Stat59) :  1 x 44
+             r(Stat58) :  1 x 44
+             r(Stat57) :  1 x 44
+             r(Stat56) :  1 x 44
+             r(Stat55) :  1 x 44
+             r(Stat54) :  1 x 44
+             r(Stat53) :  1 x 44
+             r(Stat52) :  1 x 44
+             r(Stat51) :  1 x 44
+             r(Stat50) :  1 x 44
+             r(Stat49) :  1 x 44
+             r(Stat48) :  1 x 44
+             r(Stat47) :  1 x 44
+             r(Stat46) :  1 x 44
+             r(Stat45) :  1 x 44
+             r(Stat44) :  1 x 44
+             r(Stat43) :  1 x 44
+             r(Stat42) :  1 x 44
+             r(Stat41) :  1 x 44
+             r(Stat40) :  1 x 44
+             r(Stat39) :  1 x 44
+             r(Stat38) :  1 x 44
+             r(Stat37) :  1 x 44
+             r(Stat36) :  1 x 44
+             r(Stat35) :  1 x 44
+             r(Stat34) :  1 x 44
+             r(Stat33) :  1 x 44
+             r(Stat32) :  1 x 44
+             r(Stat31) :  1 x 44
+             r(Stat30) :  1 x 44
+             r(Stat29) :  1 x 44
+             r(Stat28) :  1 x 44
+             r(Stat27) :  1 x 44
+             r(Stat26) :  1 x 44
+             r(Stat25) :  1 x 44
+             r(Stat24) :  1 x 44
+             r(Stat23) :  1 x 44
+             r(Stat22) :  1 x 44
+             r(Stat21) :  1 x 44
+             r(Stat20) :  1 x 44
+             r(Stat19) :  1 x 44
+             r(Stat18) :  1 x 44
+             r(Stat17) :  1 x 44
+             r(Stat16) :  1 x 44
+             r(Stat15) :  1 x 44
+             r(Stat14) :  1 x 44
+             r(Stat13) :  1 x 44
+             r(Stat12) :  1 x 44
+             r(Stat11) :  1 x 44
+             r(Stat10) :  1 x 44
+              r(Stat9) :  1 x 44
+              r(Stat8) :  1 x 44
+              r(Stat7) :  1 x 44
+              r(Stat6) :  1 x 44
+              r(Stat5) :  1 x 44
+              r(Stat4) :  1 x 44
+              r(Stat3) :  1 x 44
+              r(Stat2) :  1 x 44
+              r(Stat1) :  1 x 44
+          r(StatTotal) :  1 x 44
+
+. 
+. putexcel set "tabstat", replace sheet(Stats)
+note: file will be replaced when the first putexcel command is issued.
+
+. 
+. putexcel set "tabstat", modify sheet(Stats)
+
+. forvalues v=1(1)243 {
+  2.           putexcel (A`v') = (r(name`v'))
+  3.                   putexcel (B`v') = matrix(r(Stat`v'))
+  4.                 }
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+file tabstat.xlsx saved
+
+. 
+. *https://www.statalist.org/forums/forum/general-stata-discussion/general/1473382-exporting-variable-label-with-put
+> excel
+.                 
+. putexcel set filename, replace
+note: file will be replaced when the first putexcel command is issued.
+
+. local row = 1
+
+. foreach x of varlist $CS1 {
+  2. describe `x'
+  3. local varlabel : var label `x'
+  4. putexcel A`row' = ("`varlabel'")
+  5. local row = `row'+1
+  6. }
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+nGDP            float   %9.0g                 Nominal Gross Domestic Product, in Millions of Local Currency Units
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+rGDP            float   %9.0g                 Real Gross Domestic Product, in Millions of Local Currency Units
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+rGDP_pc         float   %9.0g                 Real Gross Domestic Product per Capita, in Local Currency Units
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+inv             float   %9.0g                 Total Investment, in Millions of Local Currency Units
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+inv_GDP         float   %9.0g                 Total Investment, in Percent of GDP
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+finv            float   %9.0g                 Fixed Investment, in Millions of Local Currency Units
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+finv_GDP        float   %9.0g                 Fixed Investment, in Percent of GDP
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+rcons           float   %9.0g                 Real Total Consumption , in Millions of Local Currency Units
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+cons            float   %9.0g                 Total Consumption, in Millions of Local Currency Units
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+cons_GDP        float   %9.0g                 Total Consumption, in Percent of GDP
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+imports         float   %9.0g                 Total Imports, in Millions of Local Currency Units
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+imports_GDP     float   %9.0g                 Total Imports, in Percent of GDP
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+exports         float   %9.0g                 Total Exports, in Millions of Local Currency Units
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+CA              float   %9.0g                 Current Account Balance, in Millions of Local Currency Units
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+CA_GDP          float   %9.0g                 Current Account Balance, in Percent of GDP
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+pop             float   %9.0g                 Population in Millions
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+govexp          float   %9.0g                 Government Expenditure, in Millions of Local Currency Units
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+govexp_GDP      float   %9.0g                 Government Expenditure, in Percent of GDP
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+govrev          float   %9.0g                 Government Revenue, in Millions of Local Currency Units
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+govrev_GDP      float   %9.0g                 Government Revenue, in Percent of GDP
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+govtax          float   %9.0g                 Government Tax Revenue, in Millions of Local Currency Units
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+govtax_GDP      float   %9.0g                 Government Tax Revenue, in Percent of GDP
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+govdef          float   %9.0g                 Government Deficit, in Millions of Local Currency Units
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+govdef_GDP      float   %9.0g                 Government Deficit, in Percent of GDP
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+govdebt         float   %9.0g                 Government Debt, in Millions of Local Currency Units
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+govdebt_GDP     float   %9.0g                 Government Debt, in Percent of GDP
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+CPI             float   %9.0g                 Consumer Price Index, Index (2010 = 100)
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+HPI             float   %9.0g                 House Price Index, Index (2015 = 100)
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+deflator        float   %9.0g                 GDP deflator
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+infl            float   %9.0g                 Inflation Rate, in Percent
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+unemp           float   %9.0g                 Unemployment Rate, in Percent
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+USDfx           float   %9.0g                 Exchange Rate against USD
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+REER            float   %9.0g                 Real Effective Exchange Rate, Index (2010 = 100)
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+strate          float   %9.0g                 Short-term Interest Rate, in Percent
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+ltrate          float   %9.0g                 Long-term Interest Rate, in Percent
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+cbrate          float   %9.0g                 Central Bank Policy Rate, in Percent
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+M0              float   %9.0g                 M0 Money Supply, in Millions of Local Currency Units
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+M1              float   %9.0g                 M1 Money Supply, in Millions of Local Currency Units
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+M2              float   %9.0g                 M2 Money Supply, in Millions of Local Currency Units
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+M3              float   %9.0g                 M3 Money Supply, in Millions of Local Currency Units
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+M4              float   %9.0g                 M4 Money Supply, in Millions of Local Currency Units
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+BankingCrisis   float   %9.0g                 Banking Crisis
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+CurrencyCrisis  float   %9.0g                 Currency Crisis
+file filename.xlsx saved
+
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+--------------------------------------------------------------------------------------------------------------------
+SovDebtCrisis   float   %9.0g                 Sovereign Debt Crisis
+file filename.xlsx saved
+
+. 
+. gen LREER=log(REER)
+(218,111 missing values generated)
+
+. gen LrGDP_pc=log(rGDP_pc)
+(209,097 missing values generated)
+
+. 
+. areg CA_GDP L5.LREER L5.LrGDP_pc, absorb(cn year) rob
+
+Halperin APM for regression coefficients:
+
+Dependent variable:
+Iteration 1:  Maximum absolute difference =     .7693
+Iteration 2:  Maximum absolute difference =     .1648
+Iteration 3:  Maximum absolute difference =   .005923
+Iteration 4:  Maximum absolute difference = .00006496
+Iteration 5:  Maximum absolute difference = 1.123e-06
+Iteration 6:  Maximum absolute difference = 1.200e-08
+Iteration 7:  Maximum absolute difference = 1.337e-10
+
+Independent variables:
+Iteration 1:  Maximum absolute difference =     .6989
+Iteration 2:  Maximum absolute difference =    .03564
+Iteration 3:  Maximum absolute difference =   .001236
+Iteration 4:  Maximum absolute difference = .00001948
+Iteration 5:  Maximum absolute difference = 2.101e-07
+Iteration 6:  Maximum absolute difference = 2.200e-09
+
+Linear regression, absorbing indicators                 Number of obs = 10,391
+                                                        F(2, 10058)   =  20.79
+                                                        Prob > F      = 0.0000
+                                                        R-squared     = 0.3459
+                                                        Adj R-squared = 0.3243
+                                                        Root MSE      = 8.5052
+--------------------------
+Absorbed variable | Levels
+------------------+-------
+               cn |    177
+             year |    155
+--------------------------
+
+------------------------------------------------------------------------------
+             |               Robust
+      CA_GDP | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+       LREER |
+         L5. |     .39744   .1644523     2.42   0.016     .0750806    .7197993
+             |
+    LrGDP_pc |
+         L5. |   2.794059   .4678697     5.97   0.000     1.876941    3.711177
+             |
+       _cons |  -35.28477   5.235201    -6.74   0.000    -45.54681   -25.02273
+------------------------------------------------------------------------------
+
+. 
+. log close _all
+      name:  GDM_Jan25
+       log:  C:\Users\jamel\Dropbox\stata\gmd\GDM_Jan25.log
+  log type:  text
+ closed on:   5 Feb 2025, 07:44:41
+--------------------------------------------------------------------------------------------------------------------
