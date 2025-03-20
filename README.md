@@ -56,7 +56,7 @@ This repository houses the code and data to accompany the [Jamel Saadaoui's **Ec
 
 ## Contacts
 [Jamel Saadaoui](mailto:jamelsaadaoui@gmail.com)  
-[Paris 8 University](https://www.jamelsaadaoui.com/)
+[University of Paris 8](https://www.jamelsaadaoui.com/)
 
 [![alt text][1.1]][1]
 [![alt text][2.1]][2]
