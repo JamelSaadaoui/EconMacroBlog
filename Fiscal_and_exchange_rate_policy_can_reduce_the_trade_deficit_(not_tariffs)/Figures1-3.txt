@@ -1,0 +1,520 @@
+--------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\jamel\Downloads\2025-02-24gagnon\Figures1-3.txt
+  log type:  text
+ opened on:  30 Mar 2025, 20:43:27
+
+. 
+. import excel using "WDI Tariff 20250214.xlsx", sheet("Data") firstrow clear
+(24 vars, 10,855 obs)
+
+. 
+. destring CABP GDPD EXGD IMGD IMMERD EXMERD FISCP TARS TARW TARMS TARMW COSTDOC COSTBOR TIMEDOC TIMEBOR NODAD RESG 
+> RESXG NXGD NXGSD, replace force
+CABP: contains nonnumeric characters; replaced as double
+(3523 missing values generated)
+GDPD: contains nonnumeric characters; replaced as double
+(1273 missing values generated)
+EXGD: contains nonnumeric characters; replaced as double
+(3459 missing values generated)
+IMGD: contains nonnumeric characters; replaced as double
+(3459 missing values generated)
+IMMERD: contains nonnumeric characters; replaced as double
+(1600 missing values generated)
+EXMERD: contains nonnumeric characters; replaced as double
+(1562 missing values generated)
+FISCP: contains nonnumeric characters; replaced as double
+(6601 missing values generated)
+TARS: contains nonnumeric characters; replaced as double
+(7088 missing values generated)
+TARW: contains nonnumeric characters; replaced as double
+(7088 missing values generated)
+TARMS: contains nonnumeric characters; replaced as double
+(7088 missing values generated)
+TARMW: contains nonnumeric characters; replaced as double
+(7088 missing values generated)
+COSTDOC: contains nonnumeric characters; replaced as double
+(9733 missing values generated)
+COSTBOR: contains nonnumeric characters; replaced as double
+(9733 missing values generated)
+TIMEDOC: contains nonnumeric characters; replaced as double
+(9733 missing values generated)
+TIMEBOR: contains nonnumeric characters; replaced as double
+(9733 missing values generated)
+NODAD: contains nonnumeric characters; replaced as double
+(3469 missing values generated)
+RESG: contains nonnumeric characters; replaced as double
+(3183 missing values generated)
+RESXG: contains nonnumeric characters; replaced as double
+(3183 missing values generated)
+NXGD: contains nonnumeric characters; replaced as double
+(3459 missing values generated)
+NXGSD: contains nonnumeric characters; replaced as double
+(3459 missing values generated)
+
+. drop if YEAR==.
+(5 observations deleted)
+
+. encode CODE, gen(CTRY)
+
+. sort CTRY YEAR
+
+. xtset CTRY YEAR
+
+Panel variable: CTRY (strongly balanced)
+ Time variable: YEAR, 1974 to 2023
+         Delta: 1 unit
+
+. 
+. *Get the imfcode
+. *ssc install kountry
+. kountry CODE, from(iso3c) to(imfn)
+
+--------------------------------------------
+You are converting from iso3c to imfn....
+--------------------------------------------
+
+--------------------------------------
+The command has finished.
+The new variable is named _IMFN_.
+--------------------------------------
+
+. rename _IMFN_ imfcode
+
+. 
+. *Create US variable to make marker a different color
+. gen USCOLOR = 0
+
+. replace USCOLOR = 1 if CODE=="USA"
+(50 real changes made)
+
+. 
+. *Create net exports and change in reserves as percent of GDP
+. gen NXGP = 100*NXGD/GDPD
+(3,527 missing values generated)
+
+. gen DRESP = 100*(D.RESXG/GDPD)
+(3,472 missing values generated)
+
+. 
+. *Create 10-year moving averages
+. tssmooth ma NXGPMA10 = NXGP if L9.NXGP~=., window(9 1 0)
+The smoother applied was
+     by CTRY : (1/10)*[x(t-9) + x(t-8) + x(t-7) + x(t-6) + x(t-5) + x(t-4) + x(t-3) + x(t-2) + x(t-1) + ...;
+     x(t)= NXGP
+Note: Missing values are given a weight of zero in the smoother.
+
+. tssmooth ma CABPMA10 = CABP if L9.CABP~=., window(9 1 0)
+The smoother applied was
+     by CTRY : (1/10)*[x(t-9) + x(t-8) + x(t-7) + x(t-6) + x(t-5) + x(t-4) + x(t-3) + x(t-2) + x(t-1) + ...;
+     x(t)= CABP
+Note: Missing values are given a weight of zero in the smoother.
+
+. tssmooth ma TARSMA10 = TARS if L9.TARS~=., window(9 1 0)
+The smoother applied was
+     by CTRY : (1/10)*[x(t-9) + x(t-8) + x(t-7) + x(t-6) + x(t-5) + x(t-4) + x(t-3) + x(t-2) + x(t-1) + ...;
+     x(t)= TARS
+Note: Missing values are given a weight of zero in the smoother.
+
+. tssmooth ma TARWMA10 = TARW if L9.TARW~=., window(9 1 0)
+The smoother applied was
+     by CTRY : (1/10)*[x(t-9) + x(t-8) + x(t-7) + x(t-6) + x(t-5) + x(t-4) + x(t-3) + x(t-2) + x(t-1) + ...;
+     x(t)= TARW
+Note: Missing values are given a weight of zero in the smoother.
+
+. tssmooth ma DRESPMA10 = DRESP if L9.DRESP~=., window(9 1 0)
+The smoother applied was
+     by CTRY : (1/10)*[x(t-9) + x(t-8) + x(t-7) + x(t-6) + x(t-5) + x(t-4) + x(t-3) + x(t-2) + x(t-1) + ...;
+     x(t)= DRESP
+Note: Missing values are given a weight of zero in the smoother.
+
+. tssmooth ma FISCPMA10 = FISCP if L9.FISCP~=., window(9 1 0)
+The smoother applied was
+     by CTRY : (1/10)*[x(t-9) + x(t-8) + x(t-7) + x(t-6) + x(t-5) + x(t-4) + x(t-3) + x(t-2) + x(t-1) + ...;
+     x(t)= FISCP
+Note: Missing values are given a weight of zero in the smoother.
+
+. 
+. *Create 20-year averages
+. gen NXGPMA20 = (NXGPMA10+L10.NXGPMA10)/2
+(7,032 missing values generated)
+
+. gen CABPMA20 = (CABPMA10+L10.CABPMA10)/2
+(7,033 missing values generated)
+
+. gen TARSMA20 = (TARSMA10+L10.TARSMA10)/2
+(9,511 missing values generated)
+
+. gen TARWMA20 = (TARWMA10+L10.TARWMA10)/2
+(9,511 missing values generated)
+
+. gen DRESPMA20 = (DRESPMA10+L10.DRESPMA10)/2
+(6,705 missing values generated)
+
+. gen FISCPMA20 = (FISCPMA10+L10.FISCPMA10)/2
+(8,960 missing values generated)
+
+. 
+. label variable CABPMA20 "Current account balance, percent of GDP"
+
+. label variable NXGPMA20 "Net exports of goods, percent of GDP"
+
+. label variable TARSMA20 "Average tariff rate"
+
+. label variable TARWMA20 "Effective tariff rate"
+
+. label variable FISCPMA20 "Fiscal balance, percent of GDP"
+
+. label variable DRESPMA20 "Annual change in foreign exchange reserves, percent of GDP"
+
+. 
+. *Inspect the data
+. sum NXGPMA20 CABPMA20 TARSMA20 TARWMA20 DRESPMA20 FISCPMA20
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+    NXGPMA20 |      3,818   -6.361008    15.94468  -131.5866   40.82322
+    CABPMA20 |      3,817   -2.776228    6.520911  -37.23192   34.22204
+    TARSMA20 |      1,339    8.360474    5.265758          0     30.625
+    TARWMA20 |      1,339    6.611735    6.254227          0       81.3
+   DRESPMA20 |      4,145     1.31468     1.66518  -5.756409   22.69975
+-------------+---------------------------------------------------------
+   FISCPMA20 |      1,890   -2.135882    3.925694  -37.90882   18.62668
+
+. xtsum NXGPMA20 CABPMA20 TARSMA20 TARWMA20 DRESPMA20 FISCPMA20
+
+Variable         |      Mean   Std. dev.       Min        Max |    Observations
+-----------------+--------------------------------------------+----------------
+NXGPMA20 overall | -6.361008   15.94468  -131.5866   40.82322 |     N =    3818
+         between |             15.90273  -76.48657   35.27782 |     n =     167
+         within  |             4.372575  -61.46107   32.25134 | T-bar = 22.8623
+                 |                                            |
+CABPMA20 overall | -2.776228   6.520911  -37.23192   34.22204 |     N =    3817
+         between |             6.900523  -22.74832   32.99542 |     n =     167
+         within  |             2.925856  -17.39616   25.30268 | T-bar = 22.8563
+                 |                                            |
+TARSMA20 overall |  8.360474   5.265758          0     30.625 |     N =    1339
+         between |              5.29168          0      30.33 |     n =     154
+         within  |             1.127418   1.658722   15.52656 | T-bar = 8.69481
+                 |                                            |
+TARWMA20 overall |  6.611735   6.254227          0       81.3 |     N =    1339
+         between |             5.745089          0   52.12893 |     n =     154
+         within  |             1.576478  -8.759414   35.78281 | T-bar = 8.69481
+                 |                                            |
+DRESP~20 overall |   1.31468    1.66518  -5.756409   22.69975 |     N =    4145
+         between |             1.544453  -.0240039   11.51102 |     n =     169
+         within  |             1.034364  -5.860049   17.32191 | T-bar = 24.5266
+                 |                                            |
+FISCP~20 overall | -2.135882   3.925694  -37.90882   18.62668 |     N =    1890
+         between |             4.114283  -23.86023   13.61192 |     n =     111
+         within  |             1.412709  -16.18447   7.572017 | T-bar =  17.027
+
+. xtdes
+
+    CTRY:  1, 2, ..., 217                                    n =        217
+    YEAR:  1974, 1975, ..., 2023                             T =         50
+           Delta(YEAR) = 1 unit
+           Span(YEAR)  = 50 periods
+           (CTRY*YEAR uniquely identifies each observation)
+
+Distribution of T_i:   min      5%     25%       50%       75%     95%     max
+                        50      50      50        50        50      50      50
+
+     Freq.  Percent    Cum. |  Pattern
+ ---------------------------+----------------------------------------------------
+      217    100.00  100.00 |  11111111111111111111111111111111111111111111111111
+ ---------------------------+----------------------------------------------------
+      217    100.00         |  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+. 
+. *Regress balances on tariffs, with and without outliers
+. *Create fitted values
+. reg NXGPMA20 TARSMA20 if YEAR==2022&TARSMA20<25
+
+      Source |       SS           df       MS      Number of obs   =       136
+-------------+----------------------------------   F(1, 134)       =      2.24
+       Model |  525.346068         1  525.346068   Prob > F        =    0.1373
+    Residual |  31494.8364       134  235.036093   R-squared       =    0.0164
+-------------+----------------------------------   Adj R-squared   =    0.0091
+       Total |  32020.1825       135  237.186537   Root MSE        =    15.331
+
+------------------------------------------------------------------------------
+    NXGPMA20 | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    TARSMA20 |  -.4255397   .2846326    -1.50   0.137    -.9884934     .137414
+       _cons |  -2.568779   2.461743    -1.04   0.299    -7.437678     2.30012
+------------------------------------------------------------------------------
+
+. reg NXGPMA20 TARSMA20 if YEAR==2022
+
+      Source |       SS           df       MS      Number of obs   =       137
+-------------+----------------------------------   F(1, 135)       =      3.03
+       Model |  708.385113         1  708.385113   Prob > F        =    0.0838
+    Residual |  31511.5275       135  233.418722   R-squared       =    0.0220
+-------------+----------------------------------   Adj R-squared   =    0.0147
+       Total |  32219.9126       136  236.911122   Root MSE        =    15.278
+
+------------------------------------------------------------------------------
+    NXGPMA20 | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    TARSMA20 |  -.4550928    .261236    -1.74   0.084    -.9717373    .0615517
+       _cons |  -2.380241    2.34976    -1.01   0.313    -7.027344    2.266861
+------------------------------------------------------------------------------
+
+. predict NXGPSP
+(option xb assumed; fitted values)
+(9,511 missing values generated)
+
+. reg NXGPMA20 TARWMA20 if YEAR==2022&TARWMA20<25
+
+      Source |       SS           df       MS      Number of obs   =       136
+-------------+----------------------------------   F(1, 134)       =      5.52
+       Model |  1259.75782         1  1259.75782   Prob > F        =    0.0203
+    Residual |  30579.9689       134  228.208723   R-squared       =    0.0396
+-------------+----------------------------------   Adj R-squared   =    0.0324
+       Total |  31839.7268       135  235.849828   Root MSE        =    15.107
+
+------------------------------------------------------------------------------
+    NXGPMA20 | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    TARWMA20 |  -.7366033   .3135135    -2.35   0.020    -1.356678   -.1165282
+       _cons |  -1.565357   2.165033    -0.72   0.471    -5.847415      2.7167
+------------------------------------------------------------------------------
+
+. reg NXGPMA20 TARWMA20 if YEAR==2022
+
+      Source |       SS           df       MS      Number of obs   =       137
+-------------+----------------------------------   F(1, 135)       =      6.67
+       Model |  1516.19739         1  1516.19739   Prob > F        =    0.0109
+    Residual |  30703.7152       135  227.434928   R-squared       =    0.0471
+-------------+----------------------------------   Adj R-squared   =    0.0400
+       Total |  32219.9126       136  236.911122   Root MSE        =    15.081
+
+------------------------------------------------------------------------------
+    NXGPMA20 | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    TARWMA20 |  -.5741393   .2223658    -2.58   0.011     -1.01391   -.1343682
+       _cons |  -2.406412   1.836133    -1.31   0.192    -6.037718    1.224894
+------------------------------------------------------------------------------
+
+. predict NXGPWP
+(option xb assumed; fitted values)
+(9,511 missing values generated)
+
+. reg CABPMA20 TARSMA20 if YEAR==2022&TARSMA20<25
+
+      Source |       SS           df       MS      Number of obs   =       136
+-------------+----------------------------------   F(1, 134)       =     10.62
+       Model |  591.704418         1  591.704418   Prob > F        =    0.0014
+    Residual |  7464.46849       134  55.7049888   R-squared       =    0.0734
+-------------+----------------------------------   Adj R-squared   =    0.0665
+       Total |  8056.17291       135  59.6753549   Root MSE        =    7.4636
+
+------------------------------------------------------------------------------
+    CABPMA20 | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    TARSMA20 |  -.4516165   .1385685    -3.26   0.001    -.7256808   -.1775522
+       _cons |    1.61437   1.198457     1.35   0.180    -.7559701    3.984709
+------------------------------------------------------------------------------
+
+. reg CABPMA20 TARSMA20 if YEAR==2022
+
+      Source |       SS           df       MS      Number of obs   =       137
+-------------+----------------------------------   F(1, 135)       =     12.27
+       Model |  678.745525         1  678.745525   Prob > F        =    0.0006
+    Residual |  7465.19042       135  55.2977068   R-squared       =    0.0833
+-------------+----------------------------------   Adj R-squared   =    0.0766
+       Total |  8143.93595       136  59.8818819   Root MSE        =    7.4362
+
+------------------------------------------------------------------------------
+    CABPMA20 | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    TARSMA20 |  -.4454703   .1271507    -3.50   0.001    -.6969352   -.1940053
+       _cons |   1.575159   1.143692     1.38   0.171    -.6867127    3.837031
+------------------------------------------------------------------------------
+
+. predict CABPSP
+(option xb assumed; fitted values)
+(9,511 missing values generated)
+
+. reg CABPMA20 TARWMA20 if YEAR==2022&TARWMA20<25
+
+      Source |       SS           df       MS      Number of obs   =       136
+-------------+----------------------------------   F(1, 134)       =     14.43
+       Model |  791.648512         1  791.648512   Prob > F        =    0.0002
+    Residual |  7349.80312       134   54.849277   R-squared       =    0.0972
+-------------+----------------------------------   Adj R-squared   =    0.0905
+       Total |  8141.45163       135  60.3070491   Root MSE        =     7.406
+
+------------------------------------------------------------------------------
+    CABPMA20 | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    TARWMA20 |   -.583924   .1537006    -3.80   0.000     -.887917    -.279931
+       _cons |   1.462805   1.061412     1.38   0.170    -.6364818    3.562092
+------------------------------------------------------------------------------
+
+. reg CABPMA20 TARWMA20 if YEAR==2022
+
+      Source |       SS           df       MS      Number of obs   =       137
+-------------+----------------------------------   F(1, 135)       =      6.18
+       Model |  356.489832         1  356.489832   Prob > F        =    0.0141
+    Residual |  7787.44611       135   57.684786   R-squared       =    0.0438
+-------------+----------------------------------   Adj R-squared   =    0.0367
+       Total |  8143.93595       136  59.8818819   Root MSE        =    7.5951
+
+------------------------------------------------------------------------------
+    CABPMA20 | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+    TARWMA20 |   -.278396   .1119876    -2.49   0.014    -.4998731   -.0569189
+       _cons |  -.1188722   .9247114    -0.13   0.898    -1.947667    1.709922
+------------------------------------------------------------------------------
+
+. predict CABPWP
+(option xb assumed; fitted values)
+(9,511 missing values generated)
+
+. 
+. gen CODEALT=CODE if imfcode==111 
+(10,800 missing values generated)
+
+. 
+. *FIGURE ONE
+. scatter CABPMA20 TARSMA20 if YEAR==2022, colorvar(USCOLOR) clegend(off) || line CABPSP TARSMA20 if YEAR==2022, yti
+> tle("Current account balance, percent of GDP") legend(off) saving("FIGURE1.gph",replace) name(FIGURE1, replace) ||
+>  (scatter CABPMA20 TARSMA20 if YEAR == 2022, msymbol(none) mlabel(CODEALT) mlabpos(6) mlabcolor(black))
+file FIGURE1.gph saved
+
+. scatter CABPMA20 TARWMA20 if YEAR==2022, colorvar(USCOLOR) clegend(off) || line CABPWP TARWMA20 if YEAR==2022, yti
+> tle("Current account balance, percent of GDP") legend(off) saving("CABWMA20.gph",replace) name(CABWMA20, replace)
+file CABWMA20.gph saved
+
+. scatter NXGPMA20 TARSMA20 if YEAR==2022, colorvar(USCOLOR) clegend(off) || line NXGPSP TARSMA20 if YEAR==2022, yti
+> tle("Net exports of goods, percent of GDP") legend(off) saving("NXGSMA20.gph",replace) name(NXGSMA20, replace)
+file NXGSMA20.gph saved
+
+. scatter NXGPMA20 TARWMA20 if YEAR==2022, colorvar(USCOLOR) clegend(off) || line NXGPWP TARWMA20 if YEAR==2022, yti
+> tle("Net exports of goods, percent of GDP") legend(off) saving("NXGWMA20.gph",replace) name(NXGWMA20, replace)
+file NXGWMA20.gph saved
+
+. 
+. *Regress trade balances on fiscal balance and on change in reserves
+. *Create fitted values
+. reg NXGPMA20 FISCPMA20 if YEAR==2022
+
+      Source |       SS           df       MS      Number of obs   =        93
+-------------+----------------------------------   F(1, 91)        =     13.19
+       Model |  2594.23388         1  2594.23388   Prob > F        =    0.0005
+    Residual |  17901.7807        91  196.722865   R-squared       =    0.1266
+-------------+----------------------------------   Adj R-squared   =    0.1170
+       Total |  20496.0146        92  222.782768   Root MSE        =    14.026
+
+------------------------------------------------------------------------------
+    NXGPMA20 | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+   FISCPMA20 |   1.425544   .3925576     3.63   0.000     .6457762    2.205311
+       _cons |  -3.503583   1.668132    -2.10   0.038    -6.817123   -.1900431
+------------------------------------------------------------------------------
+
+. predict NXGPFP
+(option xb assumed; fitted values)
+(8,960 missing values generated)
+
+. reg NXGPMA20 DRESPMA20 if YEAR==2022
+
+      Source |       SS           df       MS      Number of obs   =       145
+-------------+----------------------------------   F(1, 143)       =      0.03
+       Model |  9.28505951         1  9.28505951   Prob > F        =    0.8551
+    Residual |  39646.5684       143   277.24873   R-squared       =    0.0002
+-------------+----------------------------------   Adj R-squared   =   -0.0068
+       Total |  39655.8534       144  275.387871   Root MSE        =    16.651
+
+------------------------------------------------------------------------------
+    NXGPMA20 | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+   DRESPMA20 |  -.1939528   1.059835    -0.18   0.855    -2.288921    1.901016
+       _cons |  -6.869178   2.054149    -3.34   0.001     -10.9296   -2.808757
+------------------------------------------------------------------------------
+
+. predict NXGPRP
+(option xb assumed; fitted values)
+(6,705 missing values generated)
+
+. reg CABPMA20 FISCPMA20 if YEAR==2022
+
+      Source |       SS           df       MS      Number of obs   =        93
+-------------+----------------------------------   F(1, 91)        =     35.52
+       Model |  1418.31466         1  1418.31466   Prob > F        =    0.0000
+    Residual |  3633.97214        91  39.9337598   R-squared       =    0.2807
+-------------+----------------------------------   Adj R-squared   =    0.2728
+       Total |   5052.2868        92  54.9161609   Root MSE        =    6.3193
+
+------------------------------------------------------------------------------
+    CABPMA20 | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+   FISCPMA20 |   1.054052   .1768667     5.96   0.000     .7027285    1.405376
+       _cons |   .3555912   .7515764     0.47   0.637    -1.137323    1.848506
+------------------------------------------------------------------------------
+
+. predict CABPFP
+(option xb assumed; fitted values)
+(8,960 missing values generated)
+
+. reg CABPMA20 DRESPMA20 if YEAR==2022
+
+      Source |       SS           df       MS      Number of obs   =       145
+-------------+----------------------------------   F(1, 143)       =      8.72
+       Model |  568.279892         1  568.279892   Prob > F        =    0.0037
+    Residual |  9314.54512       143  65.1366792   R-squared       =    0.0575
+-------------+----------------------------------   Adj R-squared   =    0.0509
+       Total |  9882.82501       144  68.6307292   Root MSE        =    8.0707
+
+------------------------------------------------------------------------------
+    CABPMA20 | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+   DRESPMA20 |   1.517347   .5137082     2.95   0.004     .5019037     2.53279
+       _cons |  -4.351977   .9956577    -4.37   0.000    -6.320086   -2.383868
+------------------------------------------------------------------------------
+
+. predict CABPRP
+(option xb assumed; fitted values)
+(6,705 missing values generated)
+
+. 
+. *FIGURE TWO
+. scatter CABPMA20 FISCPMA20 if YEAR==2022, colorvar(USCOLOR) clegend(off) || line CABPFP FISCPMA20 if YEAR==2022, y
+> title("Current account balance, percent of GDP") legend(off) saving("FIGURE2.gph",replace) name(FIGURE2, replace) 
+> || (scatter CABPMA20 FISCPMA20 if YEAR == 2022, msymbol(none) mlabel(CODEALT) mlabpos(6) mlabcolor(black))
+file FIGURE2.gph saved
+
+. scatter NXGPMA20 FISCPMA20 if YEAR==2022, colorvar(USCOLOR) clegend(off) || line NXGPFP FISCPMA20 if YEAR==2022, y
+> title("Net exports of goods, percent of GDP") legend(off) saving("NXGFMA20.gph",replace) name(NXGFMA20, replace)
+file NXGFMA20.gph saved
+
+. 
+. *Drop observations not in figure because they distort the x-axis range
+. cap drop if DRESPMA20>10
+
+. 
+. scatter NXGPMA20 DRESPMA20 if YEAR==2022, colorvar(USCOLOR) clegend(off) || line NXGPRP DRESPMA20 if YEAR==2022, y
+> title("Net exports of goods, percent of GDP") legend(off) saving("NXGRMA20.gph",replace) name(NXGRMA20, replace)
+file NXGRMA20.gph saved
+
+. *FIGURE THREE
+. scatter CABPMA20 DRESPMA20 if YEAR==2022, colorvar(USCOLOR) clegend(off) || line CABPRP DRESPMA20 if YEAR==2022, y
+> title("Current account balance, percent of GDP") legend(off) saving("FIGURE3.gph",replace) name(FIGURE3, replace) 
+> || (scatter CABPMA20 DRESPMA20 if YEAR == 2022, msymbol(none) mlabel(CODEALT) mlabpos(6) mlabcolor(black))
+file FIGURE3.gph saved
+
+. 
+. graph close _all
+
+. 
+. graph replay FIGURE*, noclose
+
+. 
+. log close
+      name:  <unnamed>
+       log:  C:\Users\jamel\Downloads\2025-02-24gagnon\Figures1-3.txt
+  log type:  text
+ closed on:  30 Mar 2025, 20:43:49
+--------------------------------------------------------------------------------------------------------------------
