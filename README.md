@@ -6,6 +6,7 @@ This repository houses the code and data to accompany the [Jamel Saadaoui's **Ec
 
 |Blog Topic (EconMacro link) |Codes and Data (Github Repository)|Date|
 |:----|:----|:----|
+|[Tariffs Stata](https://www.jamelsaadaoui.com/fiscal-and-exchange-rate-policy-can-reduce-the-trade-deficit-not-tariffs/)| ["Fiscal and exchange rate policy can reduce the trade deficit (not tariffs)"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Fiscal_and_exchange_rate_policy_can_reduce_the_trade_deficit_(not_tariffs)) | March 30, 2025|
 |[SVAR Excel](https://www.jamelsaadaoui.com/how-to-svar-with-excel/)| ["How to SVAR with Excel!"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/HowtoSVARwithExcel) | March 30, 2025|
 |[GDM Stata](https://www.jamelsaadaoui.com/global-macro-database/)| ["Global Macro Database"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Global_Macro_Database) | Feburary 5, 2025|
 |[MS URT RATS](https://www.jamelsaadaoui.com/markov-switching-models-and-unit-root-test-using-rats/)| ["Markov-switching models and unit root test using RATS"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/MS_Unit_Root_Tests/camacho_el2011) | Feburary 4, 2025|
