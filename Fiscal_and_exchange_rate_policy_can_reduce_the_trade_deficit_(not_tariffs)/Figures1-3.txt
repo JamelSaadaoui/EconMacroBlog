@@ -3,7 +3,7 @@
        log:  C:\Users\jamel\Documents\GitHub\EconMacroBlog\Fiscal_and_exchange_rate_policy_can_reduce_the_trade_defi
 > cit_(not_tariffs)\Figures1-3.txt
   log type:  text
- opened on:   3 Apr 2025, 08:24:47
+ opened on:   3 Apr 2025, 09:03:12
 
 . 
 . import excel using "WDI Tariff 20250214.xlsx", sheet("Data") firstrow clear
@@ -156,138 +156,23 @@ Note: Missing values are given a weight of zero in the smoother.
 (8,960 missing values generated)
 
 . 
-end of do-file
-
-. xtdes
-
-    CTRY:  1, 2, ..., 217                                    n =        217
-    YEAR:  1974, 1975, ..., 2023                             T =         50
-           Delta(YEAR) = 1 unit
-           Span(YEAR)  = 50 periods
-           (CTRY*YEAR uniquely identifies each observation)
-
-Distribution of T_i:   min      5%     25%       50%       75%     95%     max
-                        50      50      50        50        50      50      50
-
-     Freq.  Percent    Cum. |  Pattern
- ---------------------------+----------------------------------------------------
-      217    100.00  100.00 |  11111111111111111111111111111111111111111111111111
- ---------------------------+----------------------------------------------------
-      217    100.00         |  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-
-. do "C:\Users\jamel\AppData\Local\Temp\STD52c0_00000a.tmp"
-
-. xtline TARS TARMS TARSMA10 TARSMA20 if CODE=="USA"
+. xtline TARS TARSMA10 TARSMA20 if CODE=="USA" & TARS!=. ///
+> , byopts(note("")) scheme(s1color)
 
 . 
 end of do-file
 
-. do "C:\Users\jamel\AppData\Local\Temp\STD52c0_00000b.tmp"
+. do "C:\Users\jamel\AppData\Local\Temp\STD7d7c_000001.tmp"
 
-. xtline TARS TARMS TARSMA10 TARSMA20 if CODE=="USA", note("")
-
-. 
-end of do-file
-
-. do "C:\Users\jamel\AppData\Local\Temp\STD52c0_00000c.tmp"
-
-. xtline TARS TARMS TARSMA10 TARSMA20 if CODE=="USA", text("")
+. xtline TARW TARWMA10 TARWMA20 if CODE=="USA" & TARS!=. ///
+> , byopts(note("")) scheme(s1color)
 
 . 
 end of do-file
 
-. graph describe Graph
+. do "C:\Users\jamel\AppData\Local\Temp\STD7d7c_000002.tmp"
 
-Graph stored in memory
-
-        name:  Graph
-      format:  live
-     created:  3 Apr 2025 08:27:22
-      scheme:  s1mono
-        size:  4 x 5.5
-    dta file:  (none)
-     command:  twoway line TARS TARMS TARSMA10 TARSMA20 YEAR if __000001, sort by(CTRY, ) ytitle("") text("")
-
-. do "C:\Users\jamel\AppData\Local\Temp\STD52c0_00000d.tmp"
-
-. line TARS TARMS TARSMA10 TARSMA20 if CODE=="USA", text("")
-
-. 
-end of do-file
-
-. do "C:\Users\jamel\AppData\Local\Temp\STD52c0_00000e.tmp"
-
-. tsline TARS TARMS TARSMA10 TARSMA20 if CODE=="USA", text("")
-
-. 
-end of do-file
-
-. do "C:\Users\jamel\AppData\Local\Temp\STD52c0_00000f.tmp"
-
-. tsline TARS TARMS TARSMA10 TARSMA20 if CODE=="USA", text("Tariffs for USA")
-invalid point,  Tariffs for USA
-r(198);
-
-end of do-file
-
-r(198);
-
-. do "C:\Users\jamel\AppData\Local\Temp\STD52c0_00000g.tmp"
-
-. tsline TARS TARMS TARSMA10 TARSMA20 if CODE=="USA", text("`Tariffs for USA'")
-
-. 
-end of do-file
-
-. do "C:\Users\jamel\AppData\Local\Temp\STD52c0_00000h.tmp"
-
-. tsline TARS TARMS TARSMA10 TARSMA20 if CODE=="USA", note("`Tariffs for USA'")
-
-. 
-end of do-file
-
-. do "C:\Users\jamel\AppData\Local\Temp\STD52c0_00000i.tmp"
-
-. tsline TARS TARMS TARSMA10 TARSMA20 if CODE=="USA" & TARS!=., text("`Tariffs for USA'")
-
-. 
-end of do-file
-
-. do "C:\Users\jamel\AppData\Local\Temp\STD52c0_00000j.tmp"
-
-. xtline TARS TARMS TARSMA10 TARSMA20 if CODE=="USA", by(, note(""))
-option by() not allowed
-r(191);
-
-end of do-file
-
-r(191);
-
-. do "C:\Users\jamel\AppData\Local\Temp\STD52c0_00000k.tmp"
-
-. xtline TARS TARMS TARSMA10 TARSMA20 if CODE=="USA", note("")
-
-. 
-end of do-file
-
-. do "C:\Users\jamel\AppData\Local\Temp\STD52c0_00000l.tmp"
-
-. xtline TARS TARMS TARSMA10 TARSMA20 if CODE=="USA", byopts(note(""))
-
-. 
-end of do-file
-
-. do "C:\Users\jamel\AppData\Local\Temp\STD52c0_00000m.tmp"
-
-. xtline TARS TARMS TARSMA10 TARSMA20 if CODE=="USA" & TARS!=. ///
-> , byopts(note(""))
-
-. 
-end of do-file
-
-. do "C:\Users\jamel\AppData\Local\Temp\STD52c0_00000n.tmp"
-
-. xtline TARS TARMS TARSMA10 TARSMA20 if CODE=="USA" & TARS!=. ///
+. xtline TARWMA10 TARWMA20 if CODE=="USA" & TARS!=. ///
 > , byopts(note("")) scheme(s1color)
 
 . 

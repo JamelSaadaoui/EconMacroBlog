@@ -47,7 +47,10 @@ gen TARWMA20 = (TARWMA10+L10.TARWMA10)/2
 gen DRESPMA20 = (DRESPMA10+L10.DRESPMA10)/2
 gen FISCPMA20 = (FISCPMA10+L10.FISCPMA10)/2
 
-xtline TARS TARMS TARSMA10 TARSMA20 if CODE=="USA" & TARS!=. ///
+xtline TARS TARSMA10 TARSMA20 if CODE=="USA" & TARS!=. ///
+, byopts(note("")) scheme(s1color)
+
+xtline TARWMA10 TARWMA20 if CODE=="USA" & TARS!=. ///
 , byopts(note("")) scheme(s1color)
 
 label variable CABPMA20 "Current account balance, percent of GDP"
