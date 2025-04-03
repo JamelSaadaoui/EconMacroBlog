@@ -1,8 +1,9 @@
 --------------------------------------------------------------------------------------------------------------------
       name:  <unnamed>
-       log:  C:\Users\jamel\Downloads\2025-02-24gagnon\Figures1-3.txt
+       log:  C:\Users\jamel\Documents\GitHub\EconMacroBlog\Fiscal_and_exchange_rate_policy_can_reduce_the_trade_defi
+> cit_(not_tariffs)\Figures1-3.txt
   log type:  text
- opened on:  30 Mar 2025, 20:43:27
+ opened on:   3 Apr 2025, 08:24:47
 
 . 
 . import excel using "WDI Tariff 20250214.xlsx", sheet("Data") firstrow clear
@@ -155,59 +156,7 @@ Note: Missing values are given a weight of zero in the smoother.
 (8,960 missing values generated)
 
 . 
-. label variable CABPMA20 "Current account balance, percent of GDP"
-
-. label variable NXGPMA20 "Net exports of goods, percent of GDP"
-
-. label variable TARSMA20 "Average tariff rate"
-
-. label variable TARWMA20 "Effective tariff rate"
-
-. label variable FISCPMA20 "Fiscal balance, percent of GDP"
-
-. label variable DRESPMA20 "Annual change in foreign exchange reserves, percent of GDP"
-
-. 
-. *Inspect the data
-. sum NXGPMA20 CABPMA20 TARSMA20 TARWMA20 DRESPMA20 FISCPMA20
-
-    Variable |        Obs        Mean    Std. dev.       Min        Max
--------------+---------------------------------------------------------
-    NXGPMA20 |      3,818   -6.361008    15.94468  -131.5866   40.82322
-    CABPMA20 |      3,817   -2.776228    6.520911  -37.23192   34.22204
-    TARSMA20 |      1,339    8.360474    5.265758          0     30.625
-    TARWMA20 |      1,339    6.611735    6.254227          0       81.3
-   DRESPMA20 |      4,145     1.31468     1.66518  -5.756409   22.69975
--------------+---------------------------------------------------------
-   FISCPMA20 |      1,890   -2.135882    3.925694  -37.90882   18.62668
-
-. xtsum NXGPMA20 CABPMA20 TARSMA20 TARWMA20 DRESPMA20 FISCPMA20
-
-Variable         |      Mean   Std. dev.       Min        Max |    Observations
------------------+--------------------------------------------+----------------
-NXGPMA20 overall | -6.361008   15.94468  -131.5866   40.82322 |     N =    3818
-         between |             15.90273  -76.48657   35.27782 |     n =     167
-         within  |             4.372575  -61.46107   32.25134 | T-bar = 22.8623
-                 |                                            |
-CABPMA20 overall | -2.776228   6.520911  -37.23192   34.22204 |     N =    3817
-         between |             6.900523  -22.74832   32.99542 |     n =     167
-         within  |             2.925856  -17.39616   25.30268 | T-bar = 22.8563
-                 |                                            |
-TARSMA20 overall |  8.360474   5.265758          0     30.625 |     N =    1339
-         between |              5.29168          0      30.33 |     n =     154
-         within  |             1.127418   1.658722   15.52656 | T-bar = 8.69481
-                 |                                            |
-TARWMA20 overall |  6.611735   6.254227          0       81.3 |     N =    1339
-         between |             5.745089          0   52.12893 |     n =     154
-         within  |             1.576478  -8.759414   35.78281 | T-bar = 8.69481
-                 |                                            |
-DRESP~20 overall |   1.31468    1.66518  -5.756409   22.69975 |     N =    4145
-         between |             1.544453  -.0240039   11.51102 |     n =     169
-         within  |             1.034364  -5.860049   17.32191 | T-bar = 24.5266
-                 |                                            |
-FISCP~20 overall | -2.135882   3.925694  -37.90882   18.62668 |     N =    1890
-         between |             4.114283  -23.86023   13.61192 |     n =     111
-         within  |             1.412709  -16.18447   7.572017 | T-bar =  17.027
+end of do-file
 
 . xtdes
 
@@ -226,295 +175,122 @@ Distribution of T_i:   min      5%     25%       50%       75%     95%     max
  ---------------------------+----------------------------------------------------
       217    100.00         |  XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
-. 
-. *Regress balances on tariffs, with and without outliers
-. *Create fitted values
-. reg NXGPMA20 TARSMA20 if YEAR==2022&TARSMA20<25
+. do "C:\Users\jamel\AppData\Local\Temp\STD52c0_00000a.tmp"
 
-      Source |       SS           df       MS      Number of obs   =       136
--------------+----------------------------------   F(1, 134)       =      2.24
-       Model |  525.346068         1  525.346068   Prob > F        =    0.1373
-    Residual |  31494.8364       134  235.036093   R-squared       =    0.0164
--------------+----------------------------------   Adj R-squared   =    0.0091
-       Total |  32020.1825       135  237.186537   Root MSE        =    15.331
-
-------------------------------------------------------------------------------
-    NXGPMA20 | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
--------------+----------------------------------------------------------------
-    TARSMA20 |  -.4255397   .2846326    -1.50   0.137    -.9884934     .137414
-       _cons |  -2.568779   2.461743    -1.04   0.299    -7.437678     2.30012
-------------------------------------------------------------------------------
-
-. reg NXGPMA20 TARSMA20 if YEAR==2022
-
-      Source |       SS           df       MS      Number of obs   =       137
--------------+----------------------------------   F(1, 135)       =      3.03
-       Model |  708.385113         1  708.385113   Prob > F        =    0.0838
-    Residual |  31511.5275       135  233.418722   R-squared       =    0.0220
--------------+----------------------------------   Adj R-squared   =    0.0147
-       Total |  32219.9126       136  236.911122   Root MSE        =    15.278
-
-------------------------------------------------------------------------------
-    NXGPMA20 | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
--------------+----------------------------------------------------------------
-    TARSMA20 |  -.4550928    .261236    -1.74   0.084    -.9717373    .0615517
-       _cons |  -2.380241    2.34976    -1.01   0.313    -7.027344    2.266861
-------------------------------------------------------------------------------
-
-. predict NXGPSP
-(option xb assumed; fitted values)
-(9,511 missing values generated)
-
-. reg NXGPMA20 TARWMA20 if YEAR==2022&TARWMA20<25
-
-      Source |       SS           df       MS      Number of obs   =       136
--------------+----------------------------------   F(1, 134)       =      5.52
-       Model |  1259.75782         1  1259.75782   Prob > F        =    0.0203
-    Residual |  30579.9689       134  228.208723   R-squared       =    0.0396
--------------+----------------------------------   Adj R-squared   =    0.0324
-       Total |  31839.7268       135  235.849828   Root MSE        =    15.107
-
-------------------------------------------------------------------------------
-    NXGPMA20 | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
--------------+----------------------------------------------------------------
-    TARWMA20 |  -.7366033   .3135135    -2.35   0.020    -1.356678   -.1165282
-       _cons |  -1.565357   2.165033    -0.72   0.471    -5.847415      2.7167
-------------------------------------------------------------------------------
-
-. reg NXGPMA20 TARWMA20 if YEAR==2022
-
-      Source |       SS           df       MS      Number of obs   =       137
--------------+----------------------------------   F(1, 135)       =      6.67
-       Model |  1516.19739         1  1516.19739   Prob > F        =    0.0109
-    Residual |  30703.7152       135  227.434928   R-squared       =    0.0471
--------------+----------------------------------   Adj R-squared   =    0.0400
-       Total |  32219.9126       136  236.911122   Root MSE        =    15.081
-
-------------------------------------------------------------------------------
-    NXGPMA20 | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
--------------+----------------------------------------------------------------
-    TARWMA20 |  -.5741393   .2223658    -2.58   0.011     -1.01391   -.1343682
-       _cons |  -2.406412   1.836133    -1.31   0.192    -6.037718    1.224894
-------------------------------------------------------------------------------
-
-. predict NXGPWP
-(option xb assumed; fitted values)
-(9,511 missing values generated)
-
-. reg CABPMA20 TARSMA20 if YEAR==2022&TARSMA20<25
-
-      Source |       SS           df       MS      Number of obs   =       136
--------------+----------------------------------   F(1, 134)       =     10.62
-       Model |  591.704418         1  591.704418   Prob > F        =    0.0014
-    Residual |  7464.46849       134  55.7049888   R-squared       =    0.0734
--------------+----------------------------------   Adj R-squared   =    0.0665
-       Total |  8056.17291       135  59.6753549   Root MSE        =    7.4636
-
-------------------------------------------------------------------------------
-    CABPMA20 | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
--------------+----------------------------------------------------------------
-    TARSMA20 |  -.4516165   .1385685    -3.26   0.001    -.7256808   -.1775522
-       _cons |    1.61437   1.198457     1.35   0.180    -.7559701    3.984709
-------------------------------------------------------------------------------
-
-. reg CABPMA20 TARSMA20 if YEAR==2022
-
-      Source |       SS           df       MS      Number of obs   =       137
--------------+----------------------------------   F(1, 135)       =     12.27
-       Model |  678.745525         1  678.745525   Prob > F        =    0.0006
-    Residual |  7465.19042       135  55.2977068   R-squared       =    0.0833
--------------+----------------------------------   Adj R-squared   =    0.0766
-       Total |  8143.93595       136  59.8818819   Root MSE        =    7.4362
-
-------------------------------------------------------------------------------
-    CABPMA20 | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
--------------+----------------------------------------------------------------
-    TARSMA20 |  -.4454703   .1271507    -3.50   0.001    -.6969352   -.1940053
-       _cons |   1.575159   1.143692     1.38   0.171    -.6867127    3.837031
-------------------------------------------------------------------------------
-
-. predict CABPSP
-(option xb assumed; fitted values)
-(9,511 missing values generated)
-
-. reg CABPMA20 TARWMA20 if YEAR==2022&TARWMA20<25
-
-      Source |       SS           df       MS      Number of obs   =       136
--------------+----------------------------------   F(1, 134)       =     14.43
-       Model |  791.648512         1  791.648512   Prob > F        =    0.0002
-    Residual |  7349.80312       134   54.849277   R-squared       =    0.0972
--------------+----------------------------------   Adj R-squared   =    0.0905
-       Total |  8141.45163       135  60.3070491   Root MSE        =     7.406
-
-------------------------------------------------------------------------------
-    CABPMA20 | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
--------------+----------------------------------------------------------------
-    TARWMA20 |   -.583924   .1537006    -3.80   0.000     -.887917    -.279931
-       _cons |   1.462805   1.061412     1.38   0.170    -.6364818    3.562092
-------------------------------------------------------------------------------
-
-. reg CABPMA20 TARWMA20 if YEAR==2022
-
-      Source |       SS           df       MS      Number of obs   =       137
--------------+----------------------------------   F(1, 135)       =      6.18
-       Model |  356.489832         1  356.489832   Prob > F        =    0.0141
-    Residual |  7787.44611       135   57.684786   R-squared       =    0.0438
--------------+----------------------------------   Adj R-squared   =    0.0367
-       Total |  8143.93595       136  59.8818819   Root MSE        =    7.5951
-
-------------------------------------------------------------------------------
-    CABPMA20 | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
--------------+----------------------------------------------------------------
-    TARWMA20 |   -.278396   .1119876    -2.49   0.014    -.4998731   -.0569189
-       _cons |  -.1188722   .9247114    -0.13   0.898    -1.947667    1.709922
-------------------------------------------------------------------------------
-
-. predict CABPWP
-(option xb assumed; fitted values)
-(9,511 missing values generated)
+. xtline TARS TARMS TARSMA10 TARSMA20 if CODE=="USA"
 
 . 
-. gen CODEALT=CODE if imfcode==111 
-(10,800 missing values generated)
+end of do-file
+
+. do "C:\Users\jamel\AppData\Local\Temp\STD52c0_00000b.tmp"
+
+. xtline TARS TARMS TARSMA10 TARSMA20 if CODE=="USA", note("")
 
 . 
-. *FIGURE ONE
-. scatter CABPMA20 TARSMA20 if YEAR==2022, colorvar(USCOLOR) clegend(off) || line CABPSP TARSMA20 if YEAR==2022, yti
-> tle("Current account balance, percent of GDP") legend(off) saving("FIGURE1.gph",replace) name(FIGURE1, replace) ||
->  (scatter CABPMA20 TARSMA20 if YEAR == 2022, msymbol(none) mlabel(CODEALT) mlabpos(6) mlabcolor(black))
-file FIGURE1.gph saved
+end of do-file
 
-. scatter CABPMA20 TARWMA20 if YEAR==2022, colorvar(USCOLOR) clegend(off) || line CABPWP TARWMA20 if YEAR==2022, yti
-> tle("Current account balance, percent of GDP") legend(off) saving("CABWMA20.gph",replace) name(CABWMA20, replace)
-file CABWMA20.gph saved
+. do "C:\Users\jamel\AppData\Local\Temp\STD52c0_00000c.tmp"
 
-. scatter NXGPMA20 TARSMA20 if YEAR==2022, colorvar(USCOLOR) clegend(off) || line NXGPSP TARSMA20 if YEAR==2022, yti
-> tle("Net exports of goods, percent of GDP") legend(off) saving("NXGSMA20.gph",replace) name(NXGSMA20, replace)
-file NXGSMA20.gph saved
-
-. scatter NXGPMA20 TARWMA20 if YEAR==2022, colorvar(USCOLOR) clegend(off) || line NXGPWP TARWMA20 if YEAR==2022, yti
-> tle("Net exports of goods, percent of GDP") legend(off) saving("NXGWMA20.gph",replace) name(NXGWMA20, replace)
-file NXGWMA20.gph saved
+. xtline TARS TARMS TARSMA10 TARSMA20 if CODE=="USA", text("")
 
 . 
-. *Regress trade balances on fiscal balance and on change in reserves
-. *Create fitted values
-. reg NXGPMA20 FISCPMA20 if YEAR==2022
+end of do-file
 
-      Source |       SS           df       MS      Number of obs   =        93
--------------+----------------------------------   F(1, 91)        =     13.19
-       Model |  2594.23388         1  2594.23388   Prob > F        =    0.0005
-    Residual |  17901.7807        91  196.722865   R-squared       =    0.1266
--------------+----------------------------------   Adj R-squared   =    0.1170
-       Total |  20496.0146        92  222.782768   Root MSE        =    14.026
+. graph describe Graph
 
-------------------------------------------------------------------------------
-    NXGPMA20 | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
--------------+----------------------------------------------------------------
-   FISCPMA20 |   1.425544   .3925576     3.63   0.000     .6457762    2.205311
-       _cons |  -3.503583   1.668132    -2.10   0.038    -6.817123   -.1900431
-------------------------------------------------------------------------------
+Graph stored in memory
 
-. predict NXGPFP
-(option xb assumed; fitted values)
-(8,960 missing values generated)
+        name:  Graph
+      format:  live
+     created:  3 Apr 2025 08:27:22
+      scheme:  s1mono
+        size:  4 x 5.5
+    dta file:  (none)
+     command:  twoway line TARS TARMS TARSMA10 TARSMA20 YEAR if __000001, sort by(CTRY, ) ytitle("") text("")
 
-. reg NXGPMA20 DRESPMA20 if YEAR==2022
+. do "C:\Users\jamel\AppData\Local\Temp\STD52c0_00000d.tmp"
 
-      Source |       SS           df       MS      Number of obs   =       145
--------------+----------------------------------   F(1, 143)       =      0.03
-       Model |  9.28505951         1  9.28505951   Prob > F        =    0.8551
-    Residual |  39646.5684       143   277.24873   R-squared       =    0.0002
--------------+----------------------------------   Adj R-squared   =   -0.0068
-       Total |  39655.8534       144  275.387871   Root MSE        =    16.651
-
-------------------------------------------------------------------------------
-    NXGPMA20 | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
--------------+----------------------------------------------------------------
-   DRESPMA20 |  -.1939528   1.059835    -0.18   0.855    -2.288921    1.901016
-       _cons |  -6.869178   2.054149    -3.34   0.001     -10.9296   -2.808757
-------------------------------------------------------------------------------
-
-. predict NXGPRP
-(option xb assumed; fitted values)
-(6,705 missing values generated)
-
-. reg CABPMA20 FISCPMA20 if YEAR==2022
-
-      Source |       SS           df       MS      Number of obs   =        93
--------------+----------------------------------   F(1, 91)        =     35.52
-       Model |  1418.31466         1  1418.31466   Prob > F        =    0.0000
-    Residual |  3633.97214        91  39.9337598   R-squared       =    0.2807
--------------+----------------------------------   Adj R-squared   =    0.2728
-       Total |   5052.2868        92  54.9161609   Root MSE        =    6.3193
-
-------------------------------------------------------------------------------
-    CABPMA20 | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
--------------+----------------------------------------------------------------
-   FISCPMA20 |   1.054052   .1768667     5.96   0.000     .7027285    1.405376
-       _cons |   .3555912   .7515764     0.47   0.637    -1.137323    1.848506
-------------------------------------------------------------------------------
-
-. predict CABPFP
-(option xb assumed; fitted values)
-(8,960 missing values generated)
-
-. reg CABPMA20 DRESPMA20 if YEAR==2022
-
-      Source |       SS           df       MS      Number of obs   =       145
--------------+----------------------------------   F(1, 143)       =      8.72
-       Model |  568.279892         1  568.279892   Prob > F        =    0.0037
-    Residual |  9314.54512       143  65.1366792   R-squared       =    0.0575
--------------+----------------------------------   Adj R-squared   =    0.0509
-       Total |  9882.82501       144  68.6307292   Root MSE        =    8.0707
-
-------------------------------------------------------------------------------
-    CABPMA20 | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
--------------+----------------------------------------------------------------
-   DRESPMA20 |   1.517347   .5137082     2.95   0.004     .5019037     2.53279
-       _cons |  -4.351977   .9956577    -4.37   0.000    -6.320086   -2.383868
-------------------------------------------------------------------------------
-
-. predict CABPRP
-(option xb assumed; fitted values)
-(6,705 missing values generated)
+. line TARS TARMS TARSMA10 TARSMA20 if CODE=="USA", text("")
 
 . 
-. *FIGURE TWO
-. scatter CABPMA20 FISCPMA20 if YEAR==2022, colorvar(USCOLOR) clegend(off) || line CABPFP FISCPMA20 if YEAR==2022, y
-> title("Current account balance, percent of GDP") legend(off) saving("FIGURE2.gph",replace) name(FIGURE2, replace) 
-> || (scatter CABPMA20 FISCPMA20 if YEAR == 2022, msymbol(none) mlabel(CODEALT) mlabpos(6) mlabcolor(black))
-file FIGURE2.gph saved
+end of do-file
 
-. scatter NXGPMA20 FISCPMA20 if YEAR==2022, colorvar(USCOLOR) clegend(off) || line NXGPFP FISCPMA20 if YEAR==2022, y
-> title("Net exports of goods, percent of GDP") legend(off) saving("NXGFMA20.gph",replace) name(NXGFMA20, replace)
-file NXGFMA20.gph saved
+. do "C:\Users\jamel\AppData\Local\Temp\STD52c0_00000e.tmp"
+
+. tsline TARS TARMS TARSMA10 TARSMA20 if CODE=="USA", text("")
 
 . 
-. *Drop observations not in figure because they distort the x-axis range
-. cap drop if DRESPMA20>10
+end of do-file
+
+. do "C:\Users\jamel\AppData\Local\Temp\STD52c0_00000f.tmp"
+
+. tsline TARS TARMS TARSMA10 TARSMA20 if CODE=="USA", text("Tariffs for USA")
+invalid point,  Tariffs for USA
+r(198);
+
+end of do-file
+
+r(198);
+
+. do "C:\Users\jamel\AppData\Local\Temp\STD52c0_00000g.tmp"
+
+. tsline TARS TARMS TARSMA10 TARSMA20 if CODE=="USA", text("`Tariffs for USA'")
 
 . 
-. scatter NXGPMA20 DRESPMA20 if YEAR==2022, colorvar(USCOLOR) clegend(off) || line NXGPRP DRESPMA20 if YEAR==2022, y
-> title("Net exports of goods, percent of GDP") legend(off) saving("NXGRMA20.gph",replace) name(NXGRMA20, replace)
-file NXGRMA20.gph saved
+end of do-file
 
-. *FIGURE THREE
-. scatter CABPMA20 DRESPMA20 if YEAR==2022, colorvar(USCOLOR) clegend(off) || line CABPRP DRESPMA20 if YEAR==2022, y
-> title("Current account balance, percent of GDP") legend(off) saving("FIGURE3.gph",replace) name(FIGURE3, replace) 
-> || (scatter CABPMA20 DRESPMA20 if YEAR == 2022, msymbol(none) mlabel(CODEALT) mlabpos(6) mlabcolor(black))
-file FIGURE3.gph saved
+. do "C:\Users\jamel\AppData\Local\Temp\STD52c0_00000h.tmp"
+
+. tsline TARS TARMS TARSMA10 TARSMA20 if CODE=="USA", note("`Tariffs for USA'")
 
 . 
-. graph close _all
+end of do-file
+
+. do "C:\Users\jamel\AppData\Local\Temp\STD52c0_00000i.tmp"
+
+. tsline TARS TARMS TARSMA10 TARSMA20 if CODE=="USA" & TARS!=., text("`Tariffs for USA'")
 
 . 
-. graph replay FIGURE*, noclose
+end of do-file
+
+. do "C:\Users\jamel\AppData\Local\Temp\STD52c0_00000j.tmp"
+
+. xtline TARS TARMS TARSMA10 TARSMA20 if CODE=="USA", by(, note(""))
+option by() not allowed
+r(191);
+
+end of do-file
+
+r(191);
+
+. do "C:\Users\jamel\AppData\Local\Temp\STD52c0_00000k.tmp"
+
+. xtline TARS TARMS TARSMA10 TARSMA20 if CODE=="USA", note("")
 
 . 
-. log close
-      name:  <unnamed>
-       log:  C:\Users\jamel\Downloads\2025-02-24gagnon\Figures1-3.txt
-  log type:  text
- closed on:  30 Mar 2025, 20:43:49
---------------------------------------------------------------------------------------------------------------------
+end of do-file
+
+. do "C:\Users\jamel\AppData\Local\Temp\STD52c0_00000l.tmp"
+
+. xtline TARS TARMS TARSMA10 TARSMA20 if CODE=="USA", byopts(note(""))
+
+. 
+end of do-file
+
+. do "C:\Users\jamel\AppData\Local\Temp\STD52c0_00000m.tmp"
+
+. xtline TARS TARMS TARSMA10 TARSMA20 if CODE=="USA" & TARS!=. ///
+> , byopts(note(""))
+
+. 
+end of do-file
+
+. do "C:\Users\jamel\AppData\Local\Temp\STD52c0_00000n.tmp"
+
+. xtline TARS TARMS TARSMA10 TARSMA20 if CODE=="USA" & TARS!=. ///
+> , byopts(note("")) scheme(s1color)
+
+. 
+end of do-file
+
+. exit, clear
