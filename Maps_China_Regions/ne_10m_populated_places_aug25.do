@@ -46,8 +46,8 @@ geoframe create towns ///
  
 geoplot ///
  (point towns if ISO_A2 == "CN" ///
-  & POP_MAX>1000000, color(black)) ///
- (label towns NAME if POP_MAX>5000000 & ///
+  & POP2025>10000, color(black)) ///
+ (label towns NAME if POP2025>5000 & ///
   ISO_A2 == "CN", color(red) size(small)) ///
   , legend compass project(orthographic 50 90)
   
@@ -72,8 +72,8 @@ geoframe create towns ///
   
 geoplot ///
  (point towns if iso_a2 == "CN" ///
-  & POP_MAX>1000000, color(black)) ///
- (label towns NAME if POP_MAX>5000000 & ///
+  & POP2025>10000, color(black)) ///
+ (label towns NAME if POP2025>5000 & ///
   iso_a2 == "CN", color(red) size(small)) ///
   , legend compass project(orthographic 50 90)
   
@@ -98,14 +98,14 @@ geoplot ///
    levels(5, quantile weight(GDP_2021))) ///
  (line regions, lwidth(vvthin)) ///
  (point towns if iso_a2 == "CN" ///
-  & POP_MAX>2000000, color(gray)) ///
- (label towns NAME if POP_MAX>5000000 & ///
+  & POP2025>3000, color(gray)) ///
+ (label towns NAME if POP2025>10000 & ///
   iso_a2 == "CN", color(black) size(small)) /// 
   , ///
   legend(position(sw)) ///
   title("GDP per cap. in thousands of Chinese Yuan (2021)") ///
-  note(Dots: Towns with > 2 millions of inhab. ///
-  Names: Towns with > 5 millions of inhab.) project(orthographic 20 60)
+  note(Dots: Towns with > 3 millions of inhab. ///
+  Names: Towns with > 15 millions of inhab.) project(orthographic 20 60)
   
 graph rename Graph map_china_regions_frame_new, replace
 
