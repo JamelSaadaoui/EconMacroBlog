@@ -1,5 +1,8 @@
 **#******** Download the map files *****************************
 
+clear
+clear frames
+
 /*
 
 https://www.naturalearthdata.com/http//www.naturalearthdata.com/download/10m/cultural/ne_10m_populated_places.zip
@@ -72,10 +75,10 @@ geoframe create towns ///
   
 geoplot ///
  (point towns if iso_a2 == "CN" ///
-  & POP2025>10000, color(black)) ///
- (label towns NAME if POP2025>5000 & ///
+  & POP2025>5000, color(black)) ///
+ (label towns NAME if POP2025>10000 & ///
   iso_a2 == "CN", color(red) size(small)) ///
-  , legend compass project(orthographic 50 90)
+  , legend compass project(orthographic 20 60)
   
 geoframe create regions ///
  ne_10m_admin_1_states_provinces.dta, id(_ID) ///
