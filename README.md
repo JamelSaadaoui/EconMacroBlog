@@ -6,6 +6,7 @@ This repository houses the code and data to accompany the [Jamel Saadaoui's **Ec
 
 |Blog Topic (EconMacro link) |Codes and Data (Github Repository)|Date|
 |:----|:----|:----|
+|[Currency Stata](https://www.jamelsaadaoui.com/chi%e1%b9%adu-eichengreen-mehl-global-currencies-database-cemgcd/)| ["Chiṭu-Eichengreen-Mehl Global Currencies Database (CEMGCD)"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Chi%E1%B9%ADu-Eichengreen-Mehl_Global_Currencies_Database_(CEMGCD)) | November 10, 2025|
 |[Tariffs Stata](https://www.jamelsaadaoui.com/fiscal-and-exchange-rate-policy-can-reduce-the-trade-deficit-not-tariffs/)| ["Fiscal and exchange rate policy can reduce the trade deficit (not tariffs)"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Fiscal_and_exchange_rate_policy_can_reduce_the_trade_deficit_(not_tariffs)) | March 30, 2025|
 |[SVAR Excel](https://www.jamelsaadaoui.com/how-to-svar-with-excel/)| ["How to SVAR with Excel!"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/HowtoSVARwithExcel) | March 30, 2025|
 |[GDM Stata](https://www.jamelsaadaoui.com/global-macro-database/)| ["Global Macro Database"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Global_Macro_Database) | Feburary 5, 2025|
