@@ -67,3 +67,5 @@ grc1leg2 ///
     rows(3) cols(3) legendfrom(g_fedfunds_fedfunds) ysize(5) xsize(4) imargin(tiny)
 	
 graph export G2.png, as(png) width(3000)
+
+save data.dta, replace
