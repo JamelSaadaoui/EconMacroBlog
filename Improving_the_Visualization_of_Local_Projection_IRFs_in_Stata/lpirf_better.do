@@ -17,7 +17,7 @@ irf graph oirf, yline(0) ///
     xscale(range(0 24)) byopts(note("") ti(, size(small))) xti("") ///
 	  subtitle("") ysize(4) xsize(4) legend(cols(2))
 
-graph export G1.png, as(png) width(3000)
+graph export G1.png, as(png) width(3000) replace
 	  
 * Loop
 	  
@@ -60,12 +60,17 @@ foreach i of local impvars {
     }
 }
 
+graph save "g_fedfunds_fedfunds" "G1a.gph", replace
+
+gs_fileinfo G1a.gph
+di r(command)
+
 grc1leg2 ///
     g_fedfunds_fedfunds g_fedfunds_inflation g_fedfunds_ogap ///
     g_inflation_fedfunds g_inflation_inflation g_inflation_ogap ///
     g_ogap_fedfunds g_ogap_inflation g_ogap_ogap, ///
     rows(3) cols(3) legendfrom(g_fedfunds_fedfunds) ysize(5) xsize(4) imargin(tiny)
 	
-graph export G2.png, as(png) width(3000)
+graph export G2.png, as(png) width(3000) replace
 
 save data.dta, replace
