@@ -53,7 +53,6 @@ display as text ///
 * ----------------------------------------------------------------------
 * Pooled estimator: country-demeaned system
 * ----------------------------------------------------------------------
-
 sort country_id year
 
 foreach v of local yraw {
@@ -179,6 +178,19 @@ local pcol    "blue"
 local ivwcol  "red"
 local ewcol   "forest_green"
 
+local ylab_gpr_country ///
+    "-.05 0 .05 .10 .15"
+
+local ylab_gpr_foreign ///
+    "0 .1 .2 .3 .4"
+
+local ylab_inflation ///
+    "-.5 0 .5 1 1.5"
+
+* Explicit labels for GDP to avoid dropped negative values
+local ylab_gdp ///
+    "-1.5 -1 -.5 0 .5 "
+
 twoway ///
     rarea band_q05_gpr_country band_q95_gpr_country ///
         horizon, color(`bandcol'%30) lcolor(`bandcol'%0) || ///
@@ -195,7 +207,7 @@ twoway ///
     xtitle("Year", size(medsmall)) ///
     ytitle("") ///
     xlabel(0(2)$JIE_H, labsize(medsmall) nogrid) ///
-    ylabel(-.05 0 .05 .10 .15, ///
+    ylabel(`ylab_gpr_country', ///
         format(%4.2f) angle(horizontal) ///
         labsize(vsmall) nogrid) ///
     yscale(range(-0.06 0.165)) ///
@@ -224,8 +236,9 @@ twoway ///
     xtitle("Year", size(medsmall)) ///
     ytitle("") ///
     xlabel(0(2)$JIE_H, labsize(medsmall) nogrid) ///
-    ylabel(0(.1).4, format(%3.1f) ///
-        angle(horizontal) labsize(small) nogrid) ///
+    ylabel(`ylab_gpr_foreign', ///
+        format(%4.1f) angle(horizontal) ///
+        labsize(small) nogrid) ///
     yscale(range(-0.02 0.46)) ///
     legend(off) ///
     graphregion(color(white) margin(small)) ///
@@ -248,8 +261,8 @@ twoway ///
     xtitle("Year", size(medsmall)) ///
     ytitle("") ///
     xlabel(0(2)$JIE_H, labsize(medsmall) nogrid) ///
-    ylabel(-.5 0 .5 1 1.5, ///
-        format(%3.1f) angle(horizontal) ///
+    ylabel(`ylab_inflation', ///
+        format(%4.1f) angle(horizontal) ///
         labsize(small) nogrid) ///
     yscale(range(-0.5 1.6)) ///
     legend(off) ///
@@ -273,13 +286,13 @@ twoway ///
     xtitle("Year", size(medsmall)) ///
     ytitle("") ///
     xlabel(0(2)$JIE_H, labsize(medsmall) nogrid) ///
-    ylabel(-1.5(-.5)0.5, ///
+    ylabel(-1.5(.5).5, ///
         format(%3.1f) angle(horizontal) ///
         labsize(small) nogrid) ///
-    yscale(range(-1.85 0.65)) ///
+    yscale(range(-1.5 0.5) noextend) ///
     legend(off) ///
     graphregion(color(white) margin(small)) ///
-    plotregion(color(white) margin(medium)) ///
+    plotregion(color(white) margin(zero)) ///
     name(gr9_gdp_pct, replace)
 
 graph combine ///
