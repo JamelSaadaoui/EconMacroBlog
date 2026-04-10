@@ -1,0 +1,21 @@
+Files in archive:
+
+MANIFEST.txt
+README.md
+code/00_config.do
+code/00_run_all_requested_figures.do
+code/01_prepare_annual_panel.do
+code/02_sample_audit.do
+code/20_figure3_panel_bvar.do
+code/21_figure4_acts_threats.do
+code/22_figure5_global_country.do
+code/23_figure6_narrative.do
+code/24_figure7_units_estimators.do
+code/25_figure9_spillovers.do
+code/lib/jie_bvar_mata.do
+docs/figure_map.md
+docs/implementation_notes.md
+docs/sample_checks.md
+output/README.txt
+raw/datapanelGPR_long.xlsx
+reference/Caldara_JIE_GPR_and_Inflation_2026.pdf

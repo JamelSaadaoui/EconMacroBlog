@@ -1,0 +1,70 @@
+Source file: datapanelGPR.mat
+Panel dimensions in MAT file: 124 years x 44 countries x 19 variables
+Assumed year range: 1900-2023
+
+Countries:
+01. Argentina
+02. Australia
+03. Belgium
+04. Brazil
+05. Canada
+06. Chile
+07. China
+08. Colombia
+09. Denmark
+10. Egypt
+11. Finland
+12. France
+13. Germany
+14. Hong Kong
+15. Hungary
+16. India
+17. Indonesia
+18. Israel
+19. Italy
+20. Japan
+21. Malaysia
+22. Mexico
+23. Netherlands
+24. Norway
+25. Peru
+26. Philippines
+27. Poland
+28. Portugal
+29. Russia
+30. Saudi Arabia
+31. South Africa
+32. South Korea
+33. Spain
+34. Sweden
+35. Switzerland
+36. Taiwan
+37. Thailand
+38. Tunisia
+39. Turkey
+40. Ukraine
+41. United Kingdom
+42. United States
+43. Venezuela
+44. Vietnam
+
+Variable mapping:
+01. gpr_country -> GPR Country
+02. inflation_ppt -> Inflation (ppt)
+03. gdp_pct -> GDP (%)
+04. trade_to_gdp_ppt -> Trade to GDP (ppt)
+05. shortages_index -> Shortages Index
+06. milit_exp_to_gdp_ppt -> Mil. Exp. to GDP (ppt)
+07. debt_to_gdp_ppt -> Debt to GDP (ppt)
+08. money_growth_ppt -> Money Growth (ppt)
+09. govt_exp_to_gdp_ppt -> Govt Exp. to GDP (ppt)
+10. gpa_country -> GPA Country
+11. gpt_country -> GPT Country
+12. st_interest_rate_ppt -> ST Interest Rate (ppt)
+13. exchange_rate_depreciation_ppt -> Exchange Rate Depreciation (ppt)
+14. gpr_global -> GPR Global
+15. gpr_foreign -> GPR Foreign
+16. gpr_narrative -> GPR Narrative
+17. lt_interest_rate_ppt -> LT Interest Rate (ppt)
+18. inflation_trim_ppt -> Inflation Trim. (ppt)
+19. money_growth_trim_ppt -> Money Growth Trim. (ppt)

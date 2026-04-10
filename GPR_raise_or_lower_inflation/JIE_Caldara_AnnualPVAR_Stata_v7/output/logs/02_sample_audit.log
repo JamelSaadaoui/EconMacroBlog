@@ -1,0 +1,130 @@
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  _audit
+       log:  C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/logs/02_sample_audit.log
+  log type:  text
+ opened on:  10 Apr 2026, 09:40:04
+
+. 
+. use "$JIE_DER/annual_panel.dta", clear
+
+. sort country_id year
+
+. xtset country_id year
+
+Panel variable: country_id (strongly balanced)
+ Time variable: year, 1900 to 2023
+         Delta: 1 unit
+
+. 
+. local f36  gpr_country inflation_ppt gdp_pct trade_to_gdp_ppt shortages_index milit_exp_to_gdp_ppt debt_to_gdp_ppt money_growth_ppt govt_exp_to_gdp_ppt
+
+. local f46  gpa_country gpt_country inflation_ppt gdp_pct trade_to_gdp_ppt shortages_index milit_exp_to_gdp_ppt debt_to_gdp_ppt money_growth_ppt govt_exp_to_gdp_ppt
+
+. local f56  gpr_global gpr_country inflation_ppt gdp_pct trade_to_gdp_ppt shortages_index milit_exp_to_gdp_ppt debt_to_gdp_ppt money_growth_ppt govt_exp_to_gdp_ppt
+
+. local f66  gpr_narrative gpr_country inflation_ppt gdp_pct trade_to_gdp_ppt shortages_index milit_exp_to_gdp_ppt debt_to_gdp_ppt money_growth_ppt govt_exp_to_gdp_ppt
+
+. local f7   gpr_country inflation_ppt gdp_pct
+
+. local f9   gpr_country gpr_foreign inflation_ppt gdp_pct
+
+. 
+. foreach S in f36 f46 f56 f66 f7 f9 {
+  2.     egen __rowmiss_`S' = rowmiss(``S'')
+  3.     gen byte sample_`S' = (__rowmiss_`S' == 0)
+  4.     drop __rowmiss_`S'
+  5.     count if sample_`S'
+  6.     local N = r(N)
+  7.     qui levelsof country if sample_`S', local(L)
+  8.     local C : word count `L'
+  9.     display as text "`S' raw complete-case observations: `N'"
+ 10.     display as text "`S' countries: `C'"
+ 11. }
+  3,622
+f36 raw complete-case observations: 3622
+f36 countries: 43
+  3,622
+f46 raw complete-case observations: 3622
+f46 countries: 43
+  3,622
+f56 raw complete-case observations: 3622
+f56 countries: 43
+  3,622
+f66 raw complete-case observations: 3622
+f66 countries: 43
+  4,919
+f7 raw complete-case observations: 4919
+f7 countries: 44
+  4,919
+f9 raw complete-case observations: 4919
+f9 countries: 44
+
+. 
+. egen tag_country = tag(country_id)
+
+. 
+. bys country_id: egen T_f7 = total(sample_f7)
+
+. display as text "Countries with at least $JIE_MINOBS observations in Figure 7 system:"
+Countries with at least 60 observations in Figure 7 system:
+
+. levelsof country if tag_country & T_f7 >= $JIE_MINOBS, local(included_f7)
+`"Argentina"' `"Australia"' `"Belgium"' `"Brazil"' `"Canada"' `"Chile"' `"China"' `"Colombia"' `"Denmark"' `"Egypt"' `"Finland"' `"France"' `"Germany"' `"Hong Kong"' `"Hungary"' `"India"' `"Indonesia"' `"Israel"' `"Italy"' `"Japan"' `"Malaysia"' `"Mexico"
+> ' `"Netherlands"' `"Norway"' `"Peru"' `"Philippines"' `"Poland"' `"Portugal"' `"Russia"' `"Saudi Arabia"' `"South Africa"' `"South Korea"' `"Spain"' `"Sweden"' `"Switzerland"' `"Taiwan"' `"Thailand"' `"Tunisia"' `"Turkey"' `"United Kingdom"' `"United St
+> ates"' `"Venezuela"' `"Vietnam"'
+
+. local nincl_f7 : word count `included_f7'
+
+. display as text "Figure 7 included countries: `nincl_f7'"
+Figure 7 included countries: 43
+
+. 
+. display as text "Countries excluded by the $JIE_MINOBS-observation rule in Figure 7 system:"
+Countries excluded by the 60-observation rule in Figure 7 system:
+
+. levelsof country if tag_country & T_f7 < $JIE_MINOBS, local(excluded_f7)
+`"Ukraine"'
+
+. local nexcl_f7 : word count `excluded_f7'
+
+. display as text "Figure 7 excluded countries: `nexcl_f7'"
+Figure 7 excluded countries: 1
+
+. 
+. bys country_id: egen T_f9 = total(sample_f9)
+
+. display as text "Countries with at least $JIE_MINOBS observations in Figure 9 system:"
+Countries with at least 60 observations in Figure 9 system:
+
+. levelsof country if tag_country & T_f9 >= $JIE_MINOBS, local(included_f9)
+`"Argentina"' `"Australia"' `"Belgium"' `"Brazil"' `"Canada"' `"Chile"' `"China"' `"Colombia"' `"Denmark"' `"Egypt"' `"Finland"' `"France"' `"Germany"' `"Hong Kong"' `"Hungary"' `"India"' `"Indonesia"' `"Israel"' `"Italy"' `"Japan"' `"Malaysia"' `"Mexico"
+> ' `"Netherlands"' `"Norway"' `"Peru"' `"Philippines"' `"Poland"' `"Portugal"' `"Russia"' `"Saudi Arabia"' `"South Africa"' `"South Korea"' `"Spain"' `"Sweden"' `"Switzerland"' `"Taiwan"' `"Thailand"' `"Tunisia"' `"Turkey"' `"United Kingdom"' `"United St
+> ates"' `"Venezuela"' `"Vietnam"'
+
+. local nincl_f9 : word count `included_f9'
+
+. display as text "Figure 9 included countries: `nincl_f9'"
+Figure 9 included countries: 43
+
+. 
+. display as text "Countries excluded by the $JIE_MINOBS-observation rule in Figure 9 system:"
+Countries excluded by the 60-observation rule in Figure 9 system:
+
+. levelsof country if tag_country & T_f9 < $JIE_MINOBS, local(excluded_f9)
+`"Ukraine"'
+
+. local nexcl_f9 : word count `excluded_f9'
+
+. display as text "Figure 9 excluded countries: `nexcl_f9'"
+Figure 9 excluded countries: 1
+
+. 
+. drop tag_country T_f7 T_f9
+
+. 
+. log close _audit
+      name:  _audit
+       log:  C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/logs/02_sample_audit.log
+  log type:  text
+ closed on:  10 Apr 2026, 09:40:04
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

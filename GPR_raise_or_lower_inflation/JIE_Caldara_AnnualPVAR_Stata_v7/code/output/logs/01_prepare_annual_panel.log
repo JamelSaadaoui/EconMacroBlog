@@ -1,0 +1,49 @@
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  _prep
+       log:  C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7\code/output/logs/01_prepare_annual_panel.log
+  log type:  text
+ opened on:   8 Apr 2026, 04:06:24
+
+. 
+. local src1 "$JIE_RAW/datapanelGPR_long.xlsx"
+
+. local src2 "$JIE_ROOT/raw/datapanelGPR_long.xlsx"
+
+. 
+. capture confirm file "`src1'"
+
+. if _rc {
+.     capture confirm file "`src2'"
+.     if _rc {
+.         display as error "Could not find datapanelGPR_long.xlsx in:"
+Could not find datapanelGPR_long.xlsx in:
+.         display as error "  `src1'"
+  C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7\code/datapanelGPR_long.xlsx
+.         display as error "  `src2'"
+  C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7\code/raw/datapanelGPR_long.xlsx
+.         exit 601
+r(601);
+.     }
+r(601);
+.     local src "`src2'"
+. }
+r(601);
+
+end of do-file
+r(601);
+
+end of do-file
+
+r(601);
+
+. do "C:\Users\jamel\AppData\Local\Temp\STD59a8_000005.tmp"
+
+. version 18.0
+
+. 
+. do "00_config.do"
+
+. version 18.0
+
+. 
+. capture log close _all

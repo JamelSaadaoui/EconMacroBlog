@@ -1,0 +1,3136 @@
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/logs/00_run_all_requested_figures.log
+  log type:  text
+ opened on:  10 Apr 2026, 09:40:04
+
+. 
+. display as text "Preparing annual panel..."
+Preparing annual panel...
+
+. do "$JIE_CODE/01_prepare_annual_panel.do"
+
+. version 18.0
+
+. 
+. capture log close _prep
+
+. log using "$JIE_LOG/01_prepare_annual_panel.log", replace text name(_prep)
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  _prep
+       log:  C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/logs/01_prepare_annual_panel.log
+  log type:  text
+ opened on:  10 Apr 2026, 09:40:04
+
+. 
+. local src1 "$JIE_RAW/datapanelGPR_long.xlsx"
+
+. local src2 "$JIE_ROOT/raw/datapanelGPR_long.xlsx"
+
+. 
+. capture confirm file "`src1'"
+
+. if _rc {
+.     capture confirm file "`src2'"
+.     if _rc {
+.         display as error "Could not find datapanelGPR_long.xlsx in:"
+.         display as error "  `src1'"
+.         display as error "  `src2'"
+.         exit 601
+.     }
+.     local src "`src2'"
+. }
+
+. else {
+.     local src "`src1'"
+. }
+
+. 
+. display as text "Importing `src'"
+Importing C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/raw/datapanelGPR_long.xlsx
+
+. 
+. import excel using "`src'", firstrow clear
+(22 vars, 5,456 obs)
+
+. 
+. compress
+  (0 bytes saved)
+
+. order country_id country year
+
+. sort country_id year
+
+. 
+. capture isid country_id year
+
+. if _rc {
+.     display as error "country_id year is not unique."
+.     exit 459
+. }
+
+. 
+. xtset country_id year
+
+Panel variable: country_id (strongly balanced)
+ Time variable: year, 1900 to 2023
+         Delta: 1 unit
+
+. 
+. label var country_id "Country numeric identifier"
+
+. label var country    "Country name"
+
+. label var year       "Calendar year"
+
+. 
+. save "$JIE_DER/annual_panel.dta", replace
+file C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/derived/annual_panel.dta saved
+
+. 
+. display as result "Saved: $JIE_DER/annual_panel.dta"
+Saved: C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/derived/annual_panel.dta
+
+. 
+. log close _prep
+      name:  _prep
+       log:  C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/logs/01_prepare_annual_panel.log
+  log type:  text
+ closed on:  10 Apr 2026, 09:40:04
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. 
+. display as text "Loading Mata backend..."
+Loading Mata backend...
+
+. do "$JIE_LIB/jie_bvar_mata.do"
+
+. version 18.0
+
+. 
+. mata:
+------------------------------------------------- mata (type end to exit) -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+: mata clear
+
+: 
+: real scalar function jie__quantile(
+>     real colvector x,
+>     real scalar p)
+> {
+>     real scalar n, pos, lo, hi, w
+> 
+>     x = sort(x, 1)
+>     n = rows(x)
+> 
+>     if (n == 0) return(.)
+>     if (n == 1) return(x[1])
+> 
+>     pos = 1 + (n - 1) * p
+>     lo  = floor(pos)
+>     hi  = ceil(pos)
+> 
+>     if (lo == hi) return(x[lo])
+> 
+>     w = pos - lo
+>     return((1 - w) * x[lo] + w * x[hi])
+> }
+
+: 
+: real rowvector function jie__colmeans(real matrix X)
+> {
+>     return(colsum(X) / rows(X))
+> }
+
+: 
+: real rowvector function jie__colvars(real matrix X)
+> {
+>     real rowvector mu
+> 
+>     if (rows(X) <= 1) return(J(1, cols(X), .))
+> 
+>     mu = jie__colmeans(X)
+>     return(colsum((X :- mu) :^ 2) / (rows(X) - 1))
+> }
+
+: 
+: real matrix function jie__build_xy(
+>     real matrix Yall,
+>     real colvector id,
+>     real colvector year,
+>     real colvector sample,
+>     real scalar p)
+> {
+>     real scalar N, K, nvalid, t, l, ok, r, c
+>     real matrix ZX
+> 
+>     N = rows(Yall)
+>     K = cols(Yall)
+> 
+>     nvalid = 0
+>     for (t = p + 1; t <= N; t++) {
+>         ok = (sample[t] == 1)
+>         if (ok) {
+>             for (l = 1; l <= p; l++) {
+>                 if (id[t - l] != id[t]                           |
+>                     (year[t] - year[t - l]) != l                 |
+>                     sample[t - l] != 1) {
+>                     ok = 0
+>                     break
+>                 }
+>             }
+>         }
+>         nvalid = nvalid + ok
+>     }
+> 
+>     ZX = J(nvalid, K + K * p + 1, .)
+> 
+>     r = 1
+>     for (t = p + 1; t <= N; t++) {
+>         ok = (sample[t] == 1)
+>         if (ok) {
+>             for (l = 1; l <= p; l++) {
+>                 if (id[t - l] != id[t]                           |
+>                     (year[t] - year[t - l]) != l                 |
+>                     sample[t - l] != 1) {
+>                     ok = 0
+>                     break
+>                 }
+>             }
+>         }
+> 
+>         if (ok) {
+>             ZX[r, 1..K] = Yall[t, .]
+>             c = K + 1
+>             for (l = 1; l <= p; l++) {
+>                 ZX[r, c..(c + K - 1)] = Yall[t - l, .]
+>                 c = c + K
+>             }
+>             ZX[r, cols(ZX)] = 1
+>             r = r + 1
+>         }
+>     }
+> 
+>     return(ZX)
+> }
+
+: 
+: real matrix function jie__rwishart(
+>     real matrix V,
+>     real scalar df)
+> {
+>     real scalar K, i
+>     real matrix A, C
+> 
+>     K = rows(V)
+>     A = J(K, K, 0)
+> 
+>     for (i = 1; i <= K; i++) {
+>         A[i, i] = sqrt(rchi2(1, 1, df - i + 1))
+>         if (i < K) {
+>             A[(i + 1)..K, i] = rnormal(K - i, 1, 0, 1)
+>         }
+>     }
+> 
+>     C = cholesky(V)
+>     return(C * A * A' * C')
+> }
+
+: 
+: real matrix function jie__riwishart(
+>     real matrix S,
+>     real scalar df)
+> {
+>     real matrix Winv
+> 
+>     S = 0.5 :* (S + S')
+>     Winv = jie__rwishart(invsym(S), df)
+> 
+>     return(invsym(Winv))
+> }
+
+: 
+: real matrix function jie__companion(
+>     real matrix B,
+>     real scalar K,
+>     real scalar p)
+> {
+>     real scalar l
+>     real matrix F
+> 
+>     F = J(K * p, K * p, 0)
+> 
+>     for (l = 1; l <= p; l++) {
+>         F[1..K, ((l - 1) * K + 1)..(l * K)] =
+>             B[((l - 1) * K + 1)..(l * K), .]'
+>     }
+> 
+>     if (p > 1) {
+>         F[(K + 1)..(K * p), 1..(K * (p - 1))] = I(K * (p - 1))
+>     }
+> 
+>     return(F)
+> }
+
+: 
+: real scalar function jie__get_scale(
+>     real colvector state,
+>     real scalar K,
+>     real scalar scale_idx)
+> {
+>     real scalar den
+> 
+>     if (scale_idx <= 0) return(1)
+> 
+>     if (scale_idx > K) {
+>         errprintf("scale_idx out of range in jie__get_scale().\n")
+>         exit(3301)
+>     }
+> 
+>     den = state[scale_idx, 1]
+> 
+>     if (missing(den) | abs(den) < 1e-12) {
+>         den = 1
+>     }
+> 
+>     return(den)
+> }
+
+: 
+: real matrix function jie__oirf(
+>     real matrix B,
+>     real matrix Sigma,
+>     real scalar K,
+>     real scalar p,
+>     real scalar H,
+>     real scalar shock_idx,
+>     real scalar scale_idx)
+> {
+>     real scalar h, scale
+>     real matrix F, P, irf
+>     real colvector state
+> 
+>     F = jie__companion(B, K, p)
+>     P = cholesky(0.5 :* (Sigma + Sigma'))
+> 
+>     state = J(K * p, 1, 0)
+>     state[1..K, 1] = P[, shock_idx]
+> 
+>     scale = jie__get_scale(state, K, scale_idx)
+> 
+>     irf = J(H + 1, K, .)
+>     irf[1, .] = (state[1..K, 1] :/ scale)'
+> 
+>     for (h = 1; h <= H; h++) {
+>         state = F * state
+>         irf[h + 1, .] = (state[1..K, 1] :/ scale)'
+>     }
+> 
+>     return(irf)
+> }
+
+: 
+: real matrix function jie__bvar_draws_from_xy(
+>     real matrix Y,
+>     real matrix X,
+>     real scalar p,
+>     real scalar H,
+>     real scalar ndraws,
+>     real scalar shock_idx,
+>     real scalar scale_idx)
+> {
+>     real scalar T, K, m, nu, d, h, j, idx
+>     real matrix XtX, Vb, Bhat, E, S, Cb
+>     real matrix Sigma, Cs, Z, B, irf, draws
+> 
+>     T = rows(Y)
+>     K = cols(Y)
+>     m = cols(X)
+>     nu = T - m
+> 
+>     if (T <= m | nu <= K - 1) {
+>         errprintf("Not enough effective observations ")
+>         errprintf("for the Jeffreys-prior posterior.\n")
+>         exit(3499)
+>     }
+> 
+>     XtX  = quadcross(X, X)
+>     Vb   = invsym(XtX)
+>     Bhat = Vb * quadcross(X, Y)
+>     E    = Y - X * Bhat
+>     S    = quadcross(E, E)
+>     S    = 0.5 :* (S + S')
+> 
+>     Cb = cholesky(Vb)
+> 
+>     draws = J(ndraws, (H + 1) * K, .)
+> 
+>     for (d = 1; d <= ndraws; d++) {
+>         Sigma = jie__riwishart(S, nu)
+>         Cs    = cholesky(0.5 :* (Sigma + Sigma'))
+>         Z     = rnormal(m, K, 0, 1)
+>         B     = Bhat + Cb * Z * Cs'
+>         irf   = jie__oirf(B, Sigma, K, p, H, shock_idx, scale_idx)
+> 
+>         idx = 1
+>         for (h = 1; h <= H + 1; h++) {
+>             for (j = 1; j <= K; j++) {
+>                 draws[d, idx] = irf[h, j]
+>                 idx = idx + 1
+>             }
+>         }
+>     }
+> 
+>     return(draws)
+> }
+
+: 
+: void function jie__summarize_draws(
+>     real matrix draws,
+>     real scalar H,
+>     real scalar K,
+>     string scalar mat_q05,
+>     string scalar mat_q50,
+>     string scalar mat_q95,
+>     string scalar mat_mean,
+>     string scalar mat_var)
+> {
+>     real scalar h, j, idx
+>     real rowvector mu, va
+>     real matrix q05, q50, q95, meanm, varm
+> 
+>     q05   = J(H + 1, K, .)
+>     q50   = J(H + 1, K, .)
+>     q95   = J(H + 1, K, .)
+>     meanm = J(H + 1, K, .)
+>     varm  = J(H + 1, K, .)
+> 
+>     mu = jie__colmeans(draws)
+>     va = jie__colvars(draws)
+> 
+>     idx = 1
+>     for (h = 1; h <= H + 1; h++) {
+>         for (j = 1; j <= K; j++) {
+>             q05[h, j]   = jie__quantile(draws[, idx], 0.05)
+>             q50[h, j]   = jie__quantile(draws[, idx], 0.50)
+>             q95[h, j]   = jie__quantile(draws[, idx], 0.95)
+>             meanm[h, j] = mu[idx]
+>             varm[h, j]  = va[idx]
+>             idx = idx + 1
+>         }
+>     }
+> 
+>     st_matrix(mat_q05, q05)
+>     st_matrix(mat_q50, q50)
+>     st_matrix(mat_q95, q95)
+>     st_matrix(mat_mean, meanm)
+>     st_matrix(mat_var, varm)
+> }
+
+: 
+: void function jie_bvar_pooled_summary(
+>     string scalar yvars,
+>     string scalar panelvar,
+>     string scalar timevar,
+>     string scalar samplevar,
+>     real scalar p,
+>     real scalar H,
+>     real scalar ndraws,
+>     real scalar shock_idx,
+>     real scalar scale_idx,
+>     string scalar mat_q05,
+>     string scalar mat_q50,
+>     string scalar mat_q95,
+>     string scalar mat_mean,
+>     string scalar mat_var,
+>     string scalar scalar_neff)
+> {
+>     string rowvector vars
+>     real matrix Yall, ZX, Y, X, draws
+>     real colvector id, year, sample
+>     real scalar K
+> 
+>     vars   = tokens(yvars)
+>     Yall   = st_data(., vars)
+>     id     = st_data(., panelvar)
+>     year   = st_data(., timevar)
+>     sample = st_data(., samplevar)
+> 
+>     K  = cols(Yall)
+>     ZX = jie__build_xy(Yall, id, year, sample, p)
+>     Y  = ZX[, 1..K]
+>     X  = ZX[, (K + 1)..cols(ZX)]
+> 
+>     draws = jie__bvar_draws_from_xy(
+>         Y, X, p, H, ndraws, shock_idx, scale_idx)
+> 
+>     jie__summarize_draws(
+>         draws, H, K, mat_q05, mat_q50, mat_q95, mat_mean, mat_var)
+> 
+>     st_numscalar(scalar_neff, rows(Y))
+> }
+
+: 
+: void function jie_bvar_units_aggregate(
+>     string scalar yvars,
+>     string scalar panelvar,
+>     string scalar timevar,
+>     string scalar samplevar,
+>     real scalar minobs,
+>     real scalar p,
+>     real scalar H,
+>     real scalar ndraws,
+>     real scalar shock_idx,
+>     real scalar scale_idx,
+>     string scalar mat_ivw,
+>     string scalar mat_ew,
+>     string scalar mat_q05,
+>     string scalar mat_q95,
+>     string scalar scalar_ncountry)
+> {
+>     string rowvector vars
+>     real matrix Yall, ZX, Y, X, draws, all_draws
+>     real matrix mean_store, var_store, ivw, ew, q05, q95
+>     real colvector id, year, sample, w, agg
+>     real scalar N, K, cells, start, stop, i, j, h, idx
+>     real scalar Ti, ncountry, cstart, cend, sw
+> 
+>     vars   = tokens(yvars)
+>     Yall   = st_data(., vars)
+>     id     = st_data(., panelvar)
+>     year   = st_data(., timevar)
+>     sample = st_data(., samplevar)
+> 
+>     N     = rows(id)
+>     K     = cols(Yall)
+>     cells = (H + 1) * K
+> 
+>     ncountry = 0
+>     start = 1
+>     while (start <= N) {
+>         stop = start
+>         while (stop <= N) {
+>             if (id[stop] != id[start]) break
+>             stop++
+>         }
+>         stop = stop - 1
+> 
+>         Ti = sum(sample[start..stop])
+>         if (Ti >= minobs) ncountry = ncountry + 1
+> 
+>         start = stop + 1
+>     }
+> 
+>     if (ncountry == 0) {
+>         errprintf("No countries satisfy ")
+>         errprintf("the minimum-observation rule.\n")
+>         exit(3499)
+>     }
+> 
+>     all_draws  = J(ndraws, cells * ncountry, .)
+>     mean_store = J(ncountry, cells, .)
+>     var_store  = J(ncountry, cells, .)
+> 
+>     i = 0
+>     start = 1
+>     while (start <= N) {
+>         stop = start
+>         while (stop <= N) {
+>             if (id[stop] != id[start]) break
+>             stop++
+>         }
+>         stop = stop - 1
+> 
+>         Ti = sum(sample[start..stop])
+> 
+>         if (Ti >= minobs) {
+>             i = i + 1
+> 
+>             ZX = jie__build_xy(
+>                 Yall[start..stop, .],
+>                 id[start..stop],
+>                 year[start..stop],
+>                 sample[start..stop],
+>                 p)
+> 
+>             Y = ZX[, 1..K]
+>             X = ZX[, (K + 1)..cols(ZX)]
+> 
+>             draws = jie__bvar_draws_from_xy(
+>                 Y, X, p, H, ndraws, shock_idx, scale_idx)
+> 
+>             mean_store[i, .] = jie__colmeans(draws)
+>             var_store[i, .]  = jie__colvars(draws)
+> 
+>             cstart = (i - 1) * cells + 1
+>             cend   = i * cells
+>             all_draws[, cstart..cend] = draws
+>         }
+> 
+>         start = stop + 1
+>     }
+> 
+>     ivw = J(H + 1, K, .)
+>     ew  = J(H + 1, K, .)
+>     q05 = J(H + 1, K, .)
+>     q95 = J(H + 1, K, .)
+> 
+>     idx = 1
+>     for (h = 1; h <= H + 1; h++) {
+>         for (j = 1; j <= K; j++) {
+>             w = J(ncountry, 1, 0)
+> 
+>             for (i = 1; i <= ncountry; i++) {
+>                 if (var_store[i, idx] > 0 & var_store[i, idx] < .) {
+>                     w[i] = 1 / var_store[i, idx]
+>                 }
+>             }
+> 
+>             sw = sum(w)
+>             if (sw <= 0) {
+>                 w = J(ncountry, 1, 1 / ncountry)
+>             }
+>             else {
+>                 w = w / sw
+>             }
+> 
+>             ivw[h, j] = w' * mean_store[, idx]
+>             ew[h, j]  = sum(mean_store[, idx]) / ncountry
+> 
+>             agg = J(ndraws, 1, 0)
+>             for (i = 1; i <= ncountry; i++) {
+>                 cstart = (i - 1) * cells + idx
+>                 agg = agg + w[i] * all_draws[, cstart]
+>             }
+> 
+>             q05[h, j] = jie__quantile(agg, 0.05)
+>             q95[h, j] = jie__quantile(agg, 0.95)
+> 
+>             idx = idx + 1
+>         }
+>     }
+> 
+>     st_matrix(mat_ivw, ivw)
+>     st_matrix(mat_ew, ew)
+>     st_matrix(mat_q05, q05)
+>     st_matrix(mat_q95, q95)
+>     st_numscalar(scalar_ncountry, ncountry)
+> }
+
+: 
+: end
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. 
+. display as text "Running sample audit..."
+Running sample audit...
+
+. do "$JIE_CODE/02_sample_audit.do"
+
+. version 18.0
+
+. 
+. capture log close _audit
+
+. log using "$JIE_LOG/02_sample_audit.log", replace text name(_audit)
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  _audit
+       log:  C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/logs/02_sample_audit.log
+  log type:  text
+ opened on:  10 Apr 2026, 09:40:04
+
+. 
+. use "$JIE_DER/annual_panel.dta", clear
+
+. sort country_id year
+
+. xtset country_id year
+
+Panel variable: country_id (strongly balanced)
+ Time variable: year, 1900 to 2023
+         Delta: 1 unit
+
+. 
+. local f36  gpr_country inflation_ppt gdp_pct trade_to_gdp_ppt shortages_index milit_exp_to_gdp_ppt debt_to_gdp_ppt money_growth_ppt govt_exp_to_gdp_ppt
+
+. local f46  gpa_country gpt_country inflation_ppt gdp_pct trade_to_gdp_ppt shortages_index milit_exp_to_gdp_ppt debt_to_gdp_ppt money_growth_ppt govt_exp_to_gdp_ppt
+
+. local f56  gpr_global gpr_country inflation_ppt gdp_pct trade_to_gdp_ppt shortages_index milit_exp_to_gdp_ppt debt_to_gdp_ppt money_growth_ppt govt_exp_to_gdp_ppt
+
+. local f66  gpr_narrative gpr_country inflation_ppt gdp_pct trade_to_gdp_ppt shortages_index milit_exp_to_gdp_ppt debt_to_gdp_ppt money_growth_ppt govt_exp_to_gdp_ppt
+
+. local f7   gpr_country inflation_ppt gdp_pct
+
+. local f9   gpr_country gpr_foreign inflation_ppt gdp_pct
+
+. 
+. foreach S in f36 f46 f56 f66 f7 f9 {
+  2.     egen __rowmiss_`S' = rowmiss(``S'')
+  3.     gen byte sample_`S' = (__rowmiss_`S' == 0)
+  4.     drop __rowmiss_`S'
+  5.     count if sample_`S'
+  6.     local N = r(N)
+  7.     qui levelsof country if sample_`S', local(L)
+  8.     local C : word count `L'
+  9.     display as text "`S' raw complete-case observations: `N'"
+ 10.     display as text "`S' countries: `C'"
+ 11. }
+  3,622
+f36 raw complete-case observations: 3622
+f36 countries: 43
+  3,622
+f46 raw complete-case observations: 3622
+f46 countries: 43
+  3,622
+f56 raw complete-case observations: 3622
+f56 countries: 43
+  3,622
+f66 raw complete-case observations: 3622
+f66 countries: 43
+  4,919
+f7 raw complete-case observations: 4919
+f7 countries: 44
+  4,919
+f9 raw complete-case observations: 4919
+f9 countries: 44
+
+. 
+. egen tag_country = tag(country_id)
+
+. 
+. bys country_id: egen T_f7 = total(sample_f7)
+
+. display as text "Countries with at least $JIE_MINOBS observations in Figure 7 system:"
+Countries with at least 60 observations in Figure 7 system:
+
+. levelsof country if tag_country & T_f7 >= $JIE_MINOBS, local(included_f7)
+`"Argentina"' `"Australia"' `"Belgium"' `"Brazil"' `"Canada"' `"Chile"' `"China"' `"Colombia"' `"Denmark"' `"Egypt"' `"Finland"' `"France"' `"Germany"' `"Hong Kong"' `"Hungary"' `"India"' `"Indonesia"' `"Israel"' `"Italy"' `"Japan"' `"Malaysia"' `"Mexico"
+> ' `"Netherlands"' `"Norway"' `"Peru"' `"Philippines"' `"Poland"' `"Portugal"' `"Russia"' `"Saudi Arabia"' `"South Africa"' `"South Korea"' `"Spain"' `"Sweden"' `"Switzerland"' `"Taiwan"' `"Thailand"' `"Tunisia"' `"Turkey"' `"United Kingdom"' `"United St
+> ates"' `"Venezuela"' `"Vietnam"'
+
+. local nincl_f7 : word count `included_f7'
+
+. display as text "Figure 7 included countries: `nincl_f7'"
+Figure 7 included countries: 43
+
+. 
+. display as text "Countries excluded by the $JIE_MINOBS-observation rule in Figure 7 system:"
+Countries excluded by the 60-observation rule in Figure 7 system:
+
+. levelsof country if tag_country & T_f7 < $JIE_MINOBS, local(excluded_f7)
+`"Ukraine"'
+
+. local nexcl_f7 : word count `excluded_f7'
+
+. display as text "Figure 7 excluded countries: `nexcl_f7'"
+Figure 7 excluded countries: 1
+
+. 
+. bys country_id: egen T_f9 = total(sample_f9)
+
+. display as text "Countries with at least $JIE_MINOBS observations in Figure 9 system:"
+Countries with at least 60 observations in Figure 9 system:
+
+. levelsof country if tag_country & T_f9 >= $JIE_MINOBS, local(included_f9)
+`"Argentina"' `"Australia"' `"Belgium"' `"Brazil"' `"Canada"' `"Chile"' `"China"' `"Colombia"' `"Denmark"' `"Egypt"' `"Finland"' `"France"' `"Germany"' `"Hong Kong"' `"Hungary"' `"India"' `"Indonesia"' `"Israel"' `"Italy"' `"Japan"' `"Malaysia"' `"Mexico"
+> ' `"Netherlands"' `"Norway"' `"Peru"' `"Philippines"' `"Poland"' `"Portugal"' `"Russia"' `"Saudi Arabia"' `"South Africa"' `"South Korea"' `"Spain"' `"Sweden"' `"Switzerland"' `"Taiwan"' `"Thailand"' `"Tunisia"' `"Turkey"' `"United Kingdom"' `"United St
+> ates"' `"Venezuela"' `"Vietnam"'
+
+. local nincl_f9 : word count `included_f9'
+
+. display as text "Figure 9 included countries: `nincl_f9'"
+Figure 9 included countries: 43
+
+. 
+. display as text "Countries excluded by the $JIE_MINOBS-observation rule in Figure 9 system:"
+Countries excluded by the 60-observation rule in Figure 9 system:
+
+. levelsof country if tag_country & T_f9 < $JIE_MINOBS, local(excluded_f9)
+`"Ukraine"'
+
+. local nexcl_f9 : word count `excluded_f9'
+
+. display as text "Figure 9 excluded countries: `nexcl_f9'"
+Figure 9 excluded countries: 1
+
+. 
+. drop tag_country T_f7 T_f9
+
+. 
+. log close _audit
+      name:  _audit
+       log:  C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/logs/02_sample_audit.log
+  log type:  text
+ closed on:  10 Apr 2026, 09:40:04
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. 
+. display as text "Building Figure 3..."
+Building Figure 3...
+
+. do "$JIE_CODE/20_figure3_panel_bvar.do"
+
+. version 18.0
+
+. 
+. capture log close _f3
+
+. log using "$JIE_LOG/20_figure3_panel_bvar.log", replace text ///
+>     name(_f3)
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  _f3
+       log:  C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/logs/20_figure3_panel_bvar.log
+  log type:  text
+ opened on:  10 Apr 2026, 09:40:04
+
+. 
+. use "$JIE_DER/annual_panel.dta", clear
+
+. sort country_id year
+
+. xtset country_id year
+
+Panel variable: country_id (strongly balanced)
+ Time variable: year, 1900 to 2023
+         Delta: 1 unit
+
+. 
+. local yraw ///
+>     gpr_country ///
+>     inflation_ppt ///
+>     gdp_pct ///
+>     trade_to_gdp_ppt ///
+>     shortages_index ///
+>     milit_exp_to_gdp_ppt ///
+>     debt_to_gdp_ppt ///
+>     money_growth_ppt ///
+>     govt_exp_to_gdp_ppt
+
+. 
+. egen __rowmiss_f3 = rowmiss(`yraw')
+
+. gen byte sample_f3 = (__rowmiss_f3 == 0)
+
+. drop __rowmiss_f3
+
+. 
+. count if sample_f3
+  3,622
+
+. display as text "Figure 3 raw complete-case observations: " r(N)
+Figure 3 raw complete-case observations: 3622
+
+. 
+. qui levelsof country if sample_f3, local(countries_f3)
+
+. local ncountry : word count `countries_f3'
+
+. display as text "Figure 3 countries: `ncountry'"
+Figure 3 countries: 43
+
+. 
+. foreach v of local yraw {
+  2.     by country_id: egen mean_`v'_f3 = mean(cond(sample_f3, `v', .))
+  3.     gen dm_`v'_f3 = cond(sample_f3, `v' - mean_`v'_f3, .)
+  4. }
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+
+. 
+. local ydm
+
+. foreach v of local yraw {
+  2.     local ydm `ydm' dm_`v'_f3
+  3. }
+
+. 
+. mata: jie_bvar_pooled_summary( ///
+>     "`ydm'", "country_id", "year", "sample_f3", ///
+>     $JIE_P, $JIE_H, $JIE_NDRAWS, 1, 1, ///
+>     "F3_Q05", "F3_Q50", "F3_Q95", ///
+>     "F3_MEAN", "F3_VAR", "F3_Neff" ///
+> )
+
+. 
+. display as text "Figure 3 lag-valid pooled rows: " ///
+>     %9.0g scalar(F3_Neff)
+Figure 3 lag-valid pooled rows:      3564
+
+. 
+. local cn05
+
+. local cn50
+
+. local cn95
+
+. foreach v of local yraw {
+  2.     local cn05 `cn05' q05_`v'
+  3.     local cn50 `cn50' q50_`v'
+  4.     local cn95 `cn95' q95_`v'
+  5. }
+
+. 
+. matrix colnames F3_Q05 = `cn05'
+
+. matrix colnames F3_Q50 = `cn50'
+
+. matrix colnames F3_Q95 = `cn95'
+
+. 
+. preserve
+
+. clear
+
+. set obs `= $JIE_H + 1'
+Number of observations (_N) was 0, now 11.
+
+. gen horizon = _n - 1
+
+. 
+. svmat double F3_Q05, names(col)
+
+. svmat double F3_Q50, names(col)
+
+. svmat double F3_Q95, names(col)
+
+. 
+. replace q05_gdp_pct = 100 * q05_gdp_pct
+(11 real changes made)
+
+. replace q50_gdp_pct = 100 * q50_gdp_pct
+(11 real changes made)
+
+. replace q95_gdp_pct = 100 * q95_gdp_pct
+(11 real changes made)
+
+. 
+. save "$JIE_DER/fig3_irf.dta", replace
+file C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/derived/fig3_irf.dta saved
+
+. export delimited using "$JIE_DER/fig3_irf.csv", replace
+file C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/derived/fig3_irf.csv saved
+
+. 
+. local gtitle_gpr_country          "GPR Country"
+
+. local gtitle_inflation_ppt        "Inflation (ppt)"
+
+. local gtitle_gdp_pct              "GDP (%)"
+
+. local gtitle_trade_to_gdp_ppt     "Trade to GDP (ppt)"
+
+. local gtitle_shortages_index      "Shortages Index"
+
+. local gtitle_milit_exp_to_gdp_ppt "Mil. Exp. to GDP (ppt)"
+
+. local gtitle_debt_to_gdp_ppt      "Debt to GDP (ppt)"
+
+. local gtitle_money_growth_ppt     "Money Growth (ppt)"
+
+. local gtitle_govt_exp_to_gdp_ppt  "Govt Exp to GDP (ppt)"
+
+. 
+. local yset_gpr_country ///
+>     "yscale(range(-0.02 1.05)) ylabel(0 .5 1, nogrid labsize(medsmall))"
+
+. 
+. local yset_inflation_ppt ///
+>     "yscale(range(0 3)) ylabel(0 1 2, nogrid labsize(medsmall))"
+
+. 
+. local yset_gdp_pct ///
+>     "yscale(range(-2.3 0.1)) ylabel(-2 -1.5 -1 -.5 0, nogrid labsize(medsmall))"
+
+. 
+. local yset_trade_to_gdp_ppt ///
+>     "yscale(range(-1.15 0.05) noextend) ylabel(-1 -.5 0, angle(horizontal) nogrid labsize(medsmall))"
+
+. 
+. local yset_shortages_index ///
+>     "yscale(range(0 .5)) ylabel(0 .2 .4, nogrid labsize(medsmall))"
+
+. 
+. local yset_milit_exp_to_gdp_ppt ///
+>     "yscale(range(0 1.4)) ylabel(0 .5 1, nogrid labsize(medsmall))"
+
+. 
+. local yset_debt_to_gdp_ppt ///
+>     "yscale(range(0 4.2)) ylabel(0 1 2 3 4, nogrid labsize(medsmall))"
+
+. 
+. local yset_money_growth_ppt ///
+>     "yscale(range(0 2.2)) ylabel(0 .5 1 1.5 2, nogrid labsize(medsmall))"
+
+. 
+. local yset_govt_exp_to_gdp_ppt ///
+>     "yscale(range(0 1.4)) ylabel(0 .5 1, nogrid labsize(medsmall))"
+
+. 
+. local linecol "blue"
+
+. local bandcol "lavender"
+
+. 
+. local graphs
+
+. foreach v of local yraw {
+  2.     twoway ///
+>         rarea q05_`v' q95_`v' horizon, ///
+>             color(`bandcol'%65) ///
+>             lcolor(`bandcol'%0) || ///
+>         line q50_`v' horizon, ///
+>             lcolor(`linecol') lwidth(medthick) || ///
+>         , ///
+>         title("`gtitle_`v''", size(medium) color(black)) ///
+>         yline(0, lcolor(black%35) lwidth(vthin)) ///
+>         xtitle("Year", size(medsmall)) ///
+>         ytitle("") ///
+>         xlabel(0(2)$JIE_H, labsize(medsmall) nogrid) ///
+>         `yset_`v'' ///
+>         legend(off) ///
+>         graphregion(color(white) margin(small)) ///
+>         plotregion(color(white) margin(tiny)) ///
+>         name(gr3_`v', replace)
+  3. 
+.     local graphs `graphs' gr3_`v'
+  4. }
+
+. 
+. graph combine `graphs', ///
+>     cols(3) ///
+>     imargin(1 1 1 1) ///
+>     graphregion(color(white) margin(2 2 2 2)) ///
+>     name(fig3_combined, replace)
+
+. 
+. graph save "$JIE_FIG/figure3_panel_bvar_journalstyle.gph", replace
+file C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/figures/figure3_panel_bvar_journalstyle.gph saved
+
+. graph export "$JIE_FIG/figure3_panel_bvar_journalstyle.png", ///
+>     width(2400) replace
+file C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/figures/figure3_panel_bvar_journalstyle.png saved as PNG format
+
+. 
+. restore
+
+. log close _f3
+      name:  _f3
+       log:  C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/logs/20_figure3_panel_bvar.log
+  log type:  text
+ closed on:  10 Apr 2026, 09:40:18
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. 
+. display as text "Building Figure 4..."
+Building Figure 4...
+
+. do "$JIE_CODE/21_figure4_acts_threats.do"
+
+. version 18.0
+
+. 
+. capture log close _f4
+
+. log using "$JIE_LOG/21_figure4_acts_threats.log", replace text ///
+>     name(_f4)
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  _f4
+       log:  C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/logs/21_figure4_acts_threats.log
+  log type:  text
+ opened on:  10 Apr 2026, 09:40:18
+
+. 
+. use "$JIE_DER/annual_panel.dta", clear
+
+. sort country_id year
+
+. xtset country_id year
+
+Panel variable: country_id (strongly balanced)
+ Time variable: year, 1900 to 2023
+         Delta: 1 unit
+
+. 
+. local yraw ///
+>     gpa_country ///
+>     gpt_country ///
+>     inflation_ppt ///
+>     gdp_pct ///
+>     trade_to_gdp_ppt ///
+>     shortages_index ///
+>     milit_exp_to_gdp_ppt ///
+>     debt_to_gdp_ppt ///
+>     money_growth_ppt ///
+>     govt_exp_to_gdp_ppt
+
+. 
+. egen __rowmiss_f4 = rowmiss(`yraw')
+
+. gen byte sample_f4 = (__rowmiss_f4 == 0)
+
+. drop __rowmiss_f4
+
+. 
+. count if sample_f4
+  3,622
+
+. display as text "Figure 4 raw complete-case observations: " r(N)
+Figure 4 raw complete-case observations: 3622
+
+. 
+. qui levelsof country if sample_f4, local(countries_f4)
+
+. local ncountry : word count `countries_f4'
+
+. display as text "Figure 4 countries: `ncountry'"
+Figure 4 countries: 43
+
+. 
+. foreach v of local yraw {
+  2.     by country_id: egen mean_`v'_f4 = mean(cond(sample_f4, `v', .))
+  3.     gen dm_`v'_f4 = cond(sample_f4, `v' - mean_`v'_f4, .)
+  4. }
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+
+. 
+. local ydm
+
+. foreach v of local yraw {
+  2.     local ydm `ydm' dm_`v'_f4
+  3. }
+
+. 
+. mata: jie_bvar_pooled_summary( ///
+>     "`ydm'", "country_id", "year", "sample_f4", ///
+>     $JIE_P, $JIE_H, $JIE_NDRAWS, 1, 1, ///
+>     "F4A_Q05", "F4A_Q50", "F4A_Q95", ///
+>     "F4A_MEAN", "F4A_VAR", "F4A_Neff" ///
+> )
+
+. 
+. mata: jie_bvar_pooled_summary( ///
+>     "`ydm'", "country_id", "year", "sample_f4", ///
+>     $JIE_P, $JIE_H, $JIE_NDRAWS, 2, 2, ///
+>     "F4T_Q05", "F4T_Q50", "F4T_Q95", ///
+>     "F4T_MEAN", "F4T_VAR", "F4T_Neff" ///
+> )
+
+. 
+. display as text "Figure 4 lag-valid pooled rows (acts): " ///
+>     %9.0g scalar(F4A_Neff)
+Figure 4 lag-valid pooled rows (acts):      3564
+
+. 
+. display as text "Figure 4 lag-valid pooled rows (threats): " ///
+>     %9.0g scalar(F4T_Neff)
+Figure 4 lag-valid pooled rows (threats):      3564
+
+. 
+. local cnA05
+
+. local cnA50
+
+. local cnA95
+
+. local cnT05
+
+. local cnT50
+
+. local cnT95
+
+. 
+. foreach v of local yraw {
+  2.     local cnA05 `cnA05' acts_q05_`v'
+  3.     local cnA50 `cnA50' acts_q50_`v'
+  4.     local cnA95 `cnA95' acts_q95_`v'
+  5.     local cnT05 `cnT05' threats_q05_`v'
+  6.     local cnT50 `cnT50' threats_q50_`v'
+  7.     local cnT95 `cnT95' threats_q95_`v'
+  8. }
+
+. 
+. matrix colnames F4A_Q05 = `cnA05'
+
+. matrix colnames F4A_Q50 = `cnA50'
+
+. matrix colnames F4A_Q95 = `cnA95'
+
+. matrix colnames F4T_Q05 = `cnT05'
+
+. matrix colnames F4T_Q50 = `cnT50'
+
+. matrix colnames F4T_Q95 = `cnT95'
+
+. 
+. preserve
+
+. clear
+
+. set obs `= $JIE_H + 1'
+Number of observations (_N) was 0, now 11.
+
+. gen horizon = _n - 1
+
+. 
+. svmat double F4A_Q05, names(col)
+
+. svmat double F4A_Q50, names(col)
+
+. svmat double F4A_Q95, names(col)
+
+. 
+. svmat double F4T_Q05, names(col)
+
+. svmat double F4T_Q50, names(col)
+
+. svmat double F4T_Q95, names(col)
+
+. 
+. replace acts_q05_gdp_pct    = 100 * acts_q05_gdp_pct
+(11 real changes made)
+
+. replace acts_q50_gdp_pct    = 100 * acts_q50_gdp_pct
+(11 real changes made)
+
+. replace acts_q95_gdp_pct    = 100 * acts_q95_gdp_pct
+(11 real changes made)
+
+. 
+. replace threats_q05_gdp_pct = 100 * threats_q05_gdp_pct
+(11 real changes made)
+
+. replace threats_q50_gdp_pct = 100 * threats_q50_gdp_pct
+(11 real changes made)
+
+. replace threats_q95_gdp_pct = 100 * threats_q95_gdp_pct
+(11 real changes made)
+
+. 
+. save "$JIE_DER/fig4_irf.dta", replace
+file C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/derived/fig4_irf.dta saved
+
+. export delimited using "$JIE_DER/fig4_irf.csv", replace
+file C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/derived/fig4_irf.csv saved
+
+. 
+. local gtitle_gpa_country          "GPA Country (Blue)"
+
+. local gtitle_gpt_country          "GPT Country (Gray)"
+
+. local gtitle_inflation_ppt        "Inflation (ppt)"
+
+. local gtitle_gdp_pct              "GDP (%)"
+
+. local gtitle_trade_to_gdp_ppt     "Trade to GDP (ppt)"
+
+. local gtitle_shortages_index      "Shortages Index"
+
+. local gtitle_milit_exp_to_gdp_ppt "Mil. Exp. to GDP (ppt)"
+
+. local gtitle_debt_to_gdp_ppt      "Debt to GDP (ppt)"
+
+. local gtitle_money_growth_ppt     "Money Growth (ppt)"
+
+. local gtitle_govt_exp_to_gdp_ppt  "Govt Exp. to GDP (ppt)"
+
+. 
+. local yset_gpa_country ///
+>     "yscale(range(-0.02 1.05)) ylabel(0 .5 1, nogrid labsize(medsmall))"
+
+. 
+. local yset_gpt_country ///
+>     "yscale(range(-0.02 1.05)) ylabel(0 .5 1, nogrid labsize(medsmall))"
+
+. 
+. local yset_inflation_ppt ///
+>     "yscale(range(0 3)) ylabel(0 .5 1 1.5 2 2.5, nogrid labsize(medsmall))"
+
+. 
+. local yset_gdp_pct ///
+>     "yscale(range(-2.5 0.1)) ylabel(-2 -.5 -1 -1.5 0, nogrid labsize(medsmall))"
+
+. 
+. local yset_trade_to_gdp_ppt ///
+>     "yscale(range(-1.25 0.55) noextend) ylabel(-1 -.5 0 .5, angle(horizontal) nogrid labsize(medsmall))"
+
+. 
+. local yset_shortages_index ///
+>     "yscale(range(0 .5)) ylabel(0 .1 .2 .3 .4, nogrid labsize(medsmall))"
+
+. 
+. local yset_milit_exp_to_gdp_ppt ///
+>     "yscale(range(-0.15 1.55)) ylabel(0 .5 1 1.5, nogrid labsize(medsmall))"
+
+. 
+. local yset_debt_to_gdp_ppt ///
+>     "yscale(range(-1 4.5)) ylabel(-1 0 1 2 3 4, nogrid labsize(medsmall))"
+
+. 
+. local yset_money_growth_ppt ///
+>     "yscale(range(-.5 2.1)) ylabel(-.5 0 .5 1 1.5 2, nogrid labsize(medsmall))"
+
+. 
+. local yset_govt_exp_to_gdp_ppt ///
+>     "yscale(range(0 1.4)) ylabel(0 .5 1, nogrid labsize(medsmall))"
+
+. 
+. local linecolA "blue"
+
+. local bandcolA "lavender"
+
+. 
+. local linecolT "gs5"
+
+. local bandcolT "gs12"
+
+. 
+. local graphs
+
+. foreach v of local yraw {
+  2.     twoway ///
+>         rarea acts_q05_`v' acts_q95_`v' horizon, ///
+>             color(`bandcolA'%65) ///
+>             lcolor(`bandcolA'%0) || ///
+>         rarea threats_q05_`v' threats_q95_`v' horizon, ///
+>             color(`bandcolT'%45) ///
+>             lcolor(`bandcolT'%0) || ///
+>         line acts_q50_`v' horizon, ///
+>             lcolor(`linecolA') lwidth(medthick) || ///
+>         line threats_q50_`v' horizon, ///
+>             lcolor(`linecolT') lwidth(medthick) || ///
+>         , ///
+>         title("`gtitle_`v''", size(medium) color(black)) ///
+>         yline(0, lcolor(black%35) lwidth(vthin)) ///
+>         xtitle("Year", size(medsmall)) ///
+>         ytitle("") ///
+>         xlabel(0(2)$JIE_H, labsize(medsmall) nogrid) ///
+>         `yset_`v'' ///
+>         legend(off) ///
+>         graphregion(color(white) margin(small)) ///
+>         plotregion(color(white) margin(tiny)) ///
+>         name(gr4_`v', replace)
+  3. 
+.     local graphs `graphs' gr4_`v'
+  4. }
+
+. 
+. *------------------------------------------------------------*
+. * IMPORTANT:
+. * Keep the individual twoway graphs as usual, but REMOVE any
+. * special xsize() you added by hand to the first two panels.
+. * The nested combine below will handle the width automatically.
+. *------------------------------------------------------------*
+. 
+. * First row, left mini-block:
+. * GPA Country + GPT Country together occupy ONE column
+. graph combine ///
+>     gr4_gpa_country ///
+>     gr4_gpt_country, ///
+>     cols(2) ///
+>     imargin(0 0 0 0) ///
+>     graphregion(color(white) margin(0 0 0 0)) ///
+>     name(row1_left_f4, replace)
+
+. 
+. * First row: 3 columns total
+. *   col 1 = row1_left_f4
+. *   col 2 = Inflation
+. *   col 3 = GDP
+. graph combine ///
+>     row1_left_f4 ///
+>     gr4_inflation_ppt ///
+>     gr4_gdp_pct, ///
+>     cols(3) ///
+>     imargin(1 1 1 1) ///
+>     graphregion(color(white) margin(0 0 0 0)) ///
+>     name(row1_f4, replace)
+
+. 
+. * Second row: standard 3-column row
+. graph combine ///
+>     gr4_trade_to_gdp_ppt ///
+>     gr4_shortages_index ///
+>     gr4_milit_exp_to_gdp_ppt, ///
+>     cols(3) ///
+>     imargin(1 1 1 1) ///
+>     graphregion(color(white) margin(0 0 0 0)) ///
+>     name(row2_f4, replace)
+
+. 
+. * Third row: standard 3-column row
+. graph combine ///
+>     gr4_debt_to_gdp_ppt ///
+>     gr4_money_growth_ppt ///
+>     gr4_govt_exp_to_gdp_ppt, ///
+>     cols(3) ///
+>     imargin(1 1 1 1) ///
+>     graphregion(color(white) margin(0 0 0 0)) ///
+>     name(row3_f4, replace)
+
+. 
+. *------------------------------------------------------------*
+. * Legend graph
+. * Do NOT use preserve again here if you are already inside a
+. * preserve block. Just clear the working data with drop _all.
+. *------------------------------------------------------------*
+. drop _all
+
+. set obs 2
+Number of observations (_N) was 0, now 2.
+
+. gen x = _n
+
+. gen y1 = 1
+
+. gen y2 = 2
+
+. 
+. twoway ///
+>     line y1 x, lcolor(blue) lwidth(medthick) || ///
+>     line y2 x, lcolor(gs5)  lwidth(medthick) || ///
+>     , ///
+>     legend( ///
+>         order(1 "GPA Shock" 2 "GPT Shock") ///
+>         rows(1) ///
+>         size(tiny) ///
+>         pos(6) ///
+>         ring(0) ///
+>         symxsize(22) ///
+>         region(fcolor(white) lcolor(black) lwidth(vthin) margin(small)) ///
+>     ) ///
+>     xtitle("") ///
+>     ytitle("") ///
+>     xlabel(none) ///
+>     ylabel(none) ///
+>     xscale(off) ///
+>     yscale(off) ///
+>     graphregion(color(white) margin(0 0 0 0)) ///
+>     plotregion(color(white) margin(0 0 0 0)) ///
+>     name(fig4_legend, replace)
+
+. 
+. *------------------------------------------------------------*
+. * Final stacked figure
+. *------------------------------------------------------------*
+. graph combine ///
+>     row1_f4 ///
+>     row2_f4 ///
+>     row3_f4 ///
+>     , ///
+>     cols(1) ///
+>     imargin(zero) ///
+>     graphregion(color(white) margin(2 2 2 2)) ///
+>     name(fig4_combined, replace)
+
+. 
+. graph save "$JIE_FIG/figure4_acts_threats_journalstyle.gph", replace
+file C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/figures/figure4_acts_threats_journalstyle.gph saved
+
+. graph export "$JIE_FIG/figure4_acts_threats_journalstyle.png", ///
+>     width(2600) replace
+file C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/figures/figure4_acts_threats_journalstyle.png saved as PNG format
+
+. 
+. restore
+
+. log close _f4
+      name:  _f4
+       log:  C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/logs/21_figure4_acts_threats.log
+  log type:  text
+ closed on:  10 Apr 2026, 09:40:47
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. 
+. display as text "Building Figure 5..."
+Building Figure 5...
+
+. do "$JIE_CODE/22_figure5_global_country.do"
+
+. version 18.0
+
+. 
+. capture log close _f5
+
+. log using "$JIE_LOG/22_figure5_global_country.log", replace text ///
+>     name(_f5)
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  _f5
+       log:  C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/logs/22_figure5_global_country.log
+  log type:  text
+ opened on:  10 Apr 2026, 09:40:47
+
+. 
+. use "$JIE_DER/annual_panel.dta", clear
+
+. sort country_id year
+
+. xtset country_id year
+
+Panel variable: country_id (strongly balanced)
+ Time variable: year, 1900 to 2023
+         Delta: 1 unit
+
+. 
+. local yraw ///
+>     gpr_global ///
+>     gpr_country ///
+>     inflation_ppt ///
+>     gdp_pct ///
+>     trade_to_gdp_ppt ///
+>     shortages_index ///
+>     milit_exp_to_gdp_ppt ///
+>     debt_to_gdp_ppt ///
+>     money_growth_ppt ///
+>     govt_exp_to_gdp_ppt
+
+. 
+. egen __rowmiss_f5 = rowmiss(`yraw')
+
+. gen byte sample_f5 = (__rowmiss_f5 == 0)
+
+. drop __rowmiss_f5
+
+. 
+. count if sample_f5
+  3,622
+
+. display as text "Figure 5 raw complete-case observations: " r(N)
+Figure 5 raw complete-case observations: 3622
+
+. 
+. foreach v of local yraw {
+  2.     by country_id: egen mean_`v'_f5 = mean(cond(sample_f5, `v', .))
+  3.     gen dm_`v'_f5 = cond(sample_f5, `v' - mean_`v'_f5, .)
+  4.     drop mean_`v'_f5
+  5. }
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+
+. 
+. local ydm
+
+. foreach v of local yraw {
+  2.     local ydm `ydm' dm_`v'_f5
+  3. }
+
+. 
+. mata: jie_bvar_pooled_summary( ///
+>     "`ydm'", "country_id", "year", "sample_f5", ///
+>     $JIE_P, $JIE_H, $JIE_NDRAWS, 1, 1, ///
+>     "F5G_Q05", "F5G_Q50", "F5G_Q95", ///
+>     "F5G_MEAN", "F5G_VAR", "F5G_Neff" ///
+> )
+
+. 
+. mata: jie_bvar_pooled_summary( ///
+>     "`ydm'", "country_id", "year", "sample_f5", ///
+>     $JIE_P, $JIE_H, $JIE_NDRAWS, 2, 2, ///
+>     "F5C_Q05", "F5C_Q50", "F5C_Q95", ///
+>     "F5C_MEAN", "F5C_VAR", "F5C_Neff" ///
+> )
+
+. 
+. display as text "Figure 5 lag-valid pooled rows: " ///
+>     %9.0g scalar(F5G_Neff)
+Figure 5 lag-valid pooled rows:      3564
+
+. 
+. local cnG05
+
+. local cnG50
+
+. local cnG95
+
+. local cnC05
+
+. local cnC50
+
+. local cnC95
+
+. 
+. foreach v of local yraw {
+  2.     local cnG05 `cnG05' global_q05_`v'
+  3.     local cnG50 `cnG50' global_q50_`v'
+  4.     local cnG95 `cnG95' global_q95_`v'
+  5.     local cnC05 `cnC05' country_q05_`v'
+  6.     local cnC50 `cnC50' country_q50_`v'
+  7.     local cnC95 `cnC95' country_q95_`v'
+  8. }
+
+. 
+. matrix colnames F5G_Q05 = `cnG05'
+
+. matrix colnames F5G_Q50 = `cnG50'
+
+. matrix colnames F5G_Q95 = `cnG95'
+
+. matrix colnames F5C_Q05 = `cnC05'
+
+. matrix colnames F5C_Q50 = `cnC50'
+
+. matrix colnames F5C_Q95 = `cnC95'
+
+. 
+. preserve
+
+. clear
+
+. set obs `= $JIE_H + 1'
+Number of observations (_N) was 0, now 11.
+
+. gen horizon = _n - 1
+
+. 
+. svmat double F5G_Q05, names(col)
+
+. svmat double F5G_Q50, names(col)
+
+. svmat double F5G_Q95, names(col)
+
+. 
+. svmat double F5C_Q05, names(col)
+
+. svmat double F5C_Q50, names(col)
+
+. svmat double F5C_Q95, names(col)
+
+. 
+. *------------------------------------------------------------*
+. * JIE-style display normalization for the blue IRFs
+. *------------------------------------------------------------*
+. scalar lambdaG = 0.68 / global_q50_gpr_country[1]
+
+. 
+. display as text "Figure 5 global scaling factor = " ///
+>     %9.4f scalar(lambdaG)
+Figure 5 global scaling factor =   64.4483
+
+. 
+. local yscale_blue ///
+>     gpr_country ///
+>     inflation_ppt ///
+>     gdp_pct ///
+>     trade_to_gdp_ppt ///
+>     shortages_index ///
+>     milit_exp_to_gdp_ppt ///
+>     debt_to_gdp_ppt ///
+>     money_growth_ppt ///
+>     govt_exp_to_gdp_ppt
+
+. 
+. foreach v of local yscale_blue {
+  2.     replace global_q05_`v' = global_q05_`v' * scalar(lambdaG)
+  3.     replace global_q50_`v' = global_q50_`v' * scalar(lambdaG)
+  4.     replace global_q95_`v' = global_q95_`v' * scalar(lambdaG)
+  5. }
+(11 real changes made)
+(11 real changes made)
+(11 real changes made)
+(11 real changes made)
+(11 real changes made)
+(11 real changes made)
+(11 real changes made)
+(11 real changes made)
+(11 real changes made)
+(11 real changes made)
+(11 real changes made)
+(11 real changes made)
+(11 real changes made)
+(11 real changes made)
+(11 real changes made)
+(11 real changes made)
+(11 real changes made)
+(11 real changes made)
+(11 real changes made)
+(11 real changes made)
+(11 real changes made)
+(11 real changes made)
+(11 real changes made)
+(11 real changes made)
+(11 real changes made)
+(11 real changes made)
+(11 real changes made)
+
+. 
+. *------------------------------------------------------------*
+. * Final cosmetic fix:
+. * rescale ONLY the gray curve in the GPR Global panel
+. *------------------------------------------------------------*
+. quietly summarize country_q50_gpr_global, meanonly
+
+. scalar peak_cgpr_global = r(max)
+
+. scalar lambdaCG = 0.10 / peak_cgpr_global
+
+. 
+. display as text "Figure 5 gray GPR-global scaling factor = " ///
+>     %9.4f scalar(lambdaCG)
+Figure 5 gray GPR-global scaling factor =    0.0151
+
+. 
+. replace country_q05_gpr_global = ///
+>     country_q05_gpr_global * scalar(lambdaCG)
+(10 real changes made)
+
+. replace country_q50_gpr_global = ///
+>     country_q50_gpr_global * scalar(lambdaCG)
+(10 real changes made)
+
+. replace country_q95_gpr_global = ///
+>     country_q95_gpr_global * scalar(lambdaCG)
+(10 real changes made)
+
+. 
+. * GDP in decimal units -> percent
+. replace global_q05_gdp_pct  = 100 * global_q05_gdp_pct
+(11 real changes made)
+
+. replace global_q50_gdp_pct  = 100 * global_q50_gdp_pct
+(11 real changes made)
+
+. replace global_q95_gdp_pct  = 100 * global_q95_gdp_pct
+(11 real changes made)
+
+. 
+. replace country_q05_gdp_pct = 100 * country_q05_gdp_pct
+(11 real changes made)
+
+. replace country_q50_gdp_pct = 100 * country_q50_gdp_pct
+(11 real changes made)
+
+. replace country_q95_gdp_pct = 100 * country_q95_gdp_pct
+(11 real changes made)
+
+. 
+. save "$JIE_DER/fig5_irf.dta", replace
+file C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/derived/fig5_irf.dta saved
+
+. export delimited using "$JIE_DER/fig5_irf.csv", replace
+file C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/derived/fig5_irf.csv saved
+
+. 
+. local gtitle_gpr_global           "GPR Global"
+
+. local gtitle_gpr_country          "GPR Country"
+
+. local gtitle_inflation_ppt        "Inflation (ppt)"
+
+. local gtitle_gdp_pct              "GDP (%)"
+
+. local gtitle_trade_to_gdp_ppt     "Trade to GDP (ppt)"
+
+. local gtitle_shortages_index      "Shortages Index"
+
+. local gtitle_milit_exp_to_gdp_ppt "Mil. Exp. to GDP (ppt)"
+
+. local gtitle_debt_to_gdp_ppt      "Debt to GDP (ppt)"
+
+. local gtitle_money_growth_ppt     "Money Growth (ppt)"
+
+. local gtitle_govt_exp_to_gdp_ppt  "Govt Exp. to GDP (ppt)"
+
+. 
+. local yset_gpr_global ///
+>     "yscale(range(-0.02 1.05)) ylabel(0 .2 .4 .6 .8 1, nogrid labsize(medsmall))"
+
+. 
+. local yset_gpr_country ///
+>     "yscale(range(-0.02 1.05)) ylabel(0 .2 .4 .6 .8 1, nogrid labsize(medsmall))"
+
+. 
+. local yset_inflation_ppt ///
+>     "yscale(range(-0.1 3.6)) ylabel(0 1 2 3, nogrid labsize(medsmall))"
+
+. 
+. local yset_gdp_pct ///
+>     "yscale(range(-2.2 0.2)) ylabel(-2 -1.5 -1 -.5 0, nogrid labsize(medsmall))"
+
+. 
+. local yset_trade_to_gdp_ppt ///
+>     "yscale(range(-1.3 0.2) noextend) ylabel(-1.5 -.5 0, angle(horizontal) nogrid labsize(medsmall))"
+
+. 
+. local yset_shortages_index ///
+>     "yscale(range(0 .52)) ylabel(0 .1 .2 .3 .4 .5, nogrid labsize(medsmall))"
+
+. 
+. local yset_milit_exp_to_gdp_ppt ///
+>     "yscale(range(0 1.6)) ylabel(0 .5 1 1.5, nogrid labsize(medsmall))"
+
+. 
+. local yset_debt_to_gdp_ppt ///
+>     "yscale(range(0 4.2)) ylabel(0 1 2 3 4, nogrid labsize(medsmall))"
+
+. 
+. local yset_money_growth_ppt ///
+>     "yscale(range(0 3.2)) ylabel(0 1 2 3, nogrid labsize(medsmall))"
+
+. 
+. local yset_govt_exp_to_gdp_ppt ///
+>     "yscale(range(0 1.4)) ylabel(0 .5 1, nogrid labsize(medsmall))"
+
+. 
+. local linecolG "blue"
+
+. local bandcolG "lavender"
+
+. local linecolC "gs5"
+
+. local bandcolC "gs12"
+
+. 
+. foreach v of local yraw {
+  2.     twoway ///
+>         rarea global_q05_`v' global_q95_`v' horizon, ///
+>             color(`bandcolG'%65) ///
+>             lcolor(`bandcolG'%0) || ///
+>         rarea country_q05_`v' country_q95_`v' horizon, ///
+>             color(`bandcolC'%45) ///
+>             lcolor(`bandcolC'%0) || ///
+>         line global_q50_`v' horizon, ///
+>             lcolor(`linecolG') lwidth(medthick) || ///
+>         line country_q50_`v' horizon, ///
+>             lcolor(`linecolC') lwidth(medthick) || ///
+>         , ///
+>         title("`gtitle_`v''", size(medium) color(black)) ///
+>         yline(0, lcolor(black%35) lwidth(vthin)) ///
+>         xtitle("Year", size(medsmall)) ///
+>         ytitle("") ///
+>         xlabel(0(2)$JIE_H, labsize(medsmall) nogrid) ///
+>         `yset_`v'' ///
+>         legend(off) ///
+>         graphregion(color(white) margin(small)) ///
+>         plotregion(color(white) margin(tiny)) ///
+>         name(gr5_`v', replace)
+  3. }
+
+. 
+. graph combine ///
+>     gr5_gpr_global ///
+>     gr5_gpr_country, ///
+>     cols(2) ///
+>     imargin(0 0 0 0) ///
+>     graphregion(color(white) margin(0 0 0 0)) ///
+>     name(row1_left_f5, replace)
+
+. 
+. graph combine ///
+>     row1_left_f5 ///
+>     gr5_inflation_ppt ///
+>     gr5_gdp_pct, ///
+>     cols(3) ///
+>     imargin(1 1 1 1) ///
+>     graphregion(color(white) margin(0 0 0 0)) ///
+>     name(row1_f5, replace)
+
+. 
+. graph combine ///
+>     gr5_trade_to_gdp_ppt ///
+>     gr5_shortages_index ///
+>     gr5_milit_exp_to_gdp_ppt, ///
+>     cols(3) ///
+>     imargin(1 1 1 1) ///
+>     graphregion(color(white) margin(0 0 0 0)) ///
+>     name(row2_f5, replace)
+
+. 
+. graph combine ///
+>     gr5_debt_to_gdp_ppt ///
+>     gr5_money_growth_ppt ///
+>     gr5_govt_exp_to_gdp_ppt, ///
+>     cols(3) ///
+>     imargin(1 1 1 1) ///
+>     graphregion(color(white) margin(0 0 0 0)) ///
+>     name(row3_f5, replace)
+
+. 
+. graph combine ///
+>     row1_f5 ///
+>     row2_f5 ///
+>     row3_f5, ///
+>     cols(1) ///
+>     imargin(zero) ///
+>     graphregion(color(white) margin(2 2 2 2)) ///
+>     name(fig5_combined, replace)
+
+. 
+. graph save "$JIE_FIG/figure5_global_country_journalstyle.gph", replace
+file C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/figures/figure5_global_country_journalstyle.gph saved
+
+. graph export "$JIE_FIG/figure5_global_country_journalstyle.png", ///
+>     width(2600) replace
+file C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/figures/figure5_global_country_journalstyle.png saved as PNG format
+
+. 
+. restore
+
+. log close _f5
+      name:  _f5
+       log:  C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/logs/22_figure5_global_country.log
+  log type:  text
+ closed on:  10 Apr 2026, 09:41:16
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. 
+. display as text "Building Figure 6..."
+Building Figure 6...
+
+. do "$JIE_CODE/23_figure6_narrative.do"
+
+. version 18.0
+
+. 
+. capture log close _f6
+
+. log using "$JIE_LOG/23_figure6_narrative.log", replace text ///
+>     name(_f6)
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  _f6
+       log:  C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/logs/23_figure6_narrative.log
+  log type:  text
+ opened on:  10 Apr 2026, 09:41:16
+
+. 
+. use "$JIE_DER/annual_panel.dta", clear
+
+. sort country_id year
+
+. xtset country_id year
+
+Panel variable: country_id (strongly balanced)
+ Time variable: year, 1900 to 2023
+         Delta: 1 unit
+
+. 
+. * ----------------------------------------------------------------------
+. * Baseline specification
+. * ----------------------------------------------------------------------
+. local yraw_base ///
+>     gpr_country ///
+>     inflation_ppt ///
+>     gdp_pct ///
+>     trade_to_gdp_ppt ///
+>     shortages_index ///
+>     milit_exp_to_gdp_ppt ///
+>     debt_to_gdp_ppt ///
+>     money_growth_ppt ///
+>     govt_exp_to_gdp_ppt
+
+. 
+. egen __rowmiss_f6b = rowmiss(`yraw_base')
+
+. gen byte sample_f6_base = (__rowmiss_f6b == 0)
+
+. drop __rowmiss_f6b
+
+. 
+. foreach v of local yraw_base {
+  2.     by country_id: egen mean_`v'_f6b = ///
+>         mean(cond(sample_f6_base, `v', .))
+  3.     gen dm_`v'_f6b = ///
+>         cond(sample_f6_base, `v' - mean_`v'_f6b, .)
+  4. }
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+
+. 
+. local ydm_base
+
+. foreach v of local yraw_base {
+  2.     local ydm_base `ydm_base' dm_`v'_f6b
+  3. }
+
+. 
+. mata: jie_bvar_pooled_summary( ///
+>     "`ydm_base'", "country_id", "year", "sample_f6_base", ///
+>     $JIE_P, $JIE_H, $JIE_NDRAWS, 1, 1, ///
+>     "F6B_Q05", "F6B_Q50", "F6B_Q95", ///
+>     "F6B_MEAN", "F6B_VAR", "F6B_Neff" ///
+> )
+
+. 
+. * ----------------------------------------------------------------------
+. * Narrative specification
+. * ----------------------------------------------------------------------
+. local yraw_narr ///
+>     gpr_narrative ///
+>     gpr_country ///
+>     inflation_ppt ///
+>     gdp_pct ///
+>     trade_to_gdp_ppt ///
+>     shortages_index ///
+>     milit_exp_to_gdp_ppt ///
+>     debt_to_gdp_ppt ///
+>     money_growth_ppt ///
+>     govt_exp_to_gdp_ppt
+
+. 
+. egen __rowmiss_f6n = rowmiss(`yraw_narr')
+
+. gen byte sample_f6_narr = (__rowmiss_f6n == 0)
+
+. drop __rowmiss_f6n
+
+. 
+. foreach v of local yraw_narr {
+  2.     by country_id: egen mean_`v'_f6n = ///
+>         mean(cond(sample_f6_narr, `v', .))
+  3.     gen dm_`v'_f6n = ///
+>         cond(sample_f6_narr, `v' - mean_`v'_f6n, .)
+  4. }
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+(124 missing values generated)
+(1,834 missing values generated)
+
+. 
+. local ydm_narr
+
+. foreach v of local yraw_narr {
+  2.     local ydm_narr `ydm_narr' dm_`v'_f6n
+  3. }
+
+. 
+. mata: jie_bvar_pooled_summary( ///
+>     "`ydm_narr'", "country_id", "year", "sample_f6_narr", ///
+>     $JIE_P, $JIE_H, $JIE_NDRAWS, 1, 2, ///
+>     "F6N_Q05", "F6N_Q50", "F6N_Q95", ///
+>     "F6N_MEAN", "F6N_VAR", "F6N_Neff" ///
+> )
+
+. 
+. display as text "Figure 6 baseline lag-valid pooled rows: " ///
+>     %9.0g scalar(F6B_Neff)
+Figure 6 baseline lag-valid pooled rows:      3564
+
+. 
+. display as text "Figure 6 narrative lag-valid pooled rows: " ///
+>     %9.0g scalar(F6N_Neff)
+Figure 6 narrative lag-valid pooled rows:      3564
+
+. 
+. * Keep narrative responses for cols 2..10 so displayed variables match Fig. 3
+. matrix F6N_Q05P = F6N_Q05[1..rowsof(F6N_Q05), 2..colsof(F6N_Q05)]
+
+. matrix F6N_Q50P = F6N_Q50[1..rowsof(F6N_Q50), 2..colsof(F6N_Q50)]
+
+. matrix F6N_Q95P = F6N_Q95[1..rowsof(F6N_Q95), 2..colsof(F6N_Q95)]
+
+. 
+. local cnB05
+
+. local cnB50
+
+. local cnB95
+
+. local cnN05
+
+. local cnN50
+
+. local cnN95
+
+. 
+. foreach v of local yraw_base {
+  2.     local cnB05 `cnB05' base_q05_`v'
+  3.     local cnB50 `cnB50' base_q50_`v'
+  4.     local cnB95 `cnB95' base_q95_`v'
+  5.     local cnN05 `cnN05' narr_q05_`v'
+  6.     local cnN50 `cnN50' narr_q50_`v'
+  7.     local cnN95 `cnN95' narr_q95_`v'
+  8. }
+
+. 
+. matrix colnames F6B_Q05  = `cnB05'
+
+. matrix colnames F6B_Q50  = `cnB50'
+
+. matrix colnames F6B_Q95  = `cnB95'
+
+. matrix colnames F6N_Q05P = `cnN05'
+
+. matrix colnames F6N_Q50P = `cnN50'
+
+. matrix colnames F6N_Q95P = `cnN95'
+
+. 
+. preserve
+
+. clear
+
+. set obs `= $JIE_H + 1'
+Number of observations (_N) was 0, now 11.
+
+. gen horizon = _n - 1
+
+. 
+. svmat double F6B_Q05,  names(col)
+
+. svmat double F6B_Q50,  names(col)
+
+. svmat double F6B_Q95,  names(col)
+
+. svmat double F6N_Q05P, names(col)
+
+. svmat double F6N_Q50P, names(col)
+
+. svmat double F6N_Q95P, names(col)
+
+. 
+. * Match Figure 3 scaling for GDP
+. replace base_q05_gdp_pct = 100 * base_q05_gdp_pct
+(11 real changes made)
+
+. replace base_q50_gdp_pct = 100 * base_q50_gdp_pct
+(11 real changes made)
+
+. replace base_q95_gdp_pct = 100 * base_q95_gdp_pct
+(11 real changes made)
+
+. 
+. replace narr_q05_gdp_pct = 100 * narr_q05_gdp_pct
+(11 real changes made)
+
+. replace narr_q50_gdp_pct = 100 * narr_q50_gdp_pct
+(11 real changes made)
+
+. replace narr_q95_gdp_pct = 100 * narr_q95_gdp_pct
+(11 real changes made)
+
+. 
+. save "$JIE_DER/fig6_irf.dta", replace
+file C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/derived/fig6_irf.dta saved
+
+. export delimited using "$JIE_DER/fig6_irf.csv", replace
+file C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/derived/fig6_irf.csv saved
+
+. 
+. local gtitle_gpr_country          "GPR Country"
+
+. local gtitle_inflation_ppt        "Inflation (ppt)"
+
+. local gtitle_gdp_pct              "GDP (%)"
+
+. local gtitle_trade_to_gdp_ppt     "Trade to GDP (ppt)"
+
+. local gtitle_shortages_index      "Shortages Index"
+
+. local gtitle_milit_exp_to_gdp_ppt "Mil. Exp. to GDP (ppt)"
+
+. local gtitle_debt_to_gdp_ppt      "Debt to GDP (ppt)"
+
+. local gtitle_money_growth_ppt     "Money Growth (ppt)"
+
+. local gtitle_govt_exp_to_gdp_ppt  "Govt Exp to GDP (ppt)"
+
+. 
+. * Use Figure 3 journal-style axis settings
+. local yset_gpr_country ///
+>     "yscale(range(-0.02 1.05)) ylabel(0 .5 1, nogrid labsize(medsmall))"
+
+. 
+. local yset_inflation_ppt ///
+>     "yscale(range(0 3)) ylabel(0 1 2 2.5, nogrid labsize(medsmall))"
+
+. 
+. local yset_gdp_pct ///
+>     "yscale(range(-2.3 0.1)) ylabel(-2.5 -2 -1.5 -1 -.5 0, nogrid labsize(medsmall))"
+
+. 
+. local yset_trade_to_gdp_ppt ///
+>     "yscale(range(-1.15 0.05) noextend) ylabel(-2 -1.5 -1 -.5 0, angle(horizontal) nogrid labsize(medsmall))"
+
+. 
+. local yset_shortages_index ///
+>     "yscale(range(0 .5)) ylabel(0 .2 .4 .6, nogrid labsize(medsmall))"
+
+. 
+. local yset_milit_exp_to_gdp_ppt ///
+>     "yscale(range(0 1.4)) ylabel(0 .5 1 1.5, nogrid labsize(medsmall))"
+
+. 
+. local yset_debt_to_gdp_ppt ///
+>     "yscale(range(0 4.2)) ylabel(0 1 2 3 4 5, nogrid labsize(medsmall))"
+
+. 
+. local yset_money_growth_ppt ///
+>     "yscale(range(0 2.2)) ylabel(0 .5 1 1.5 2, nogrid labsize(medsmall))"
+
+. 
+. local yset_govt_exp_to_gdp_ppt ///
+>     "yscale(range(0 1.4)) ylabel(0 .5 1 1.5 2, nogrid labsize(medsmall))"
+
+. 
+. local base_line  "blue"
+
+. local base_band  "lavender"
+
+. local narr_line  "gs5"
+
+. local narr_band  "gs12"
+
+. 
+. local graphs
+
+. local i = 0
+
+. 
+. foreach v of local yraw_base {
+  2.     local ++i
+  3. 
+.     if `i' == 1 {
+  4.         local legopt ///
+>             legend(off)
+  5.     }
+  6.     else {
+  7.         local legopt legend(off)
+  8.     }
+  9. 
+.     twoway ///
+>         rarea base_q05_`v' base_q95_`v' horizon, ///
+>             color(`base_band'%65) lcolor(`base_band'%0) || ///
+>         rarea narr_q05_`v' narr_q95_`v' horizon, ///
+>             color(`narr_band'%55) lcolor(`narr_band'%0) || ///
+>         line base_q50_`v' horizon, ///
+>             lcolor(`base_line') lwidth(medthick) || ///
+>         line narr_q50_`v' horizon, ///
+>             lcolor(`narr_line') lwidth(medthick) || ///
+>         , ///
+>         title("`gtitle_`v''", size(medium) color(black)) ///
+>         yline(0, lcolor(black%35) lwidth(vthin)) ///
+>         xtitle("Year", size(medsmall)) ///
+>         ytitle("") ///
+>         xlabel(0(2)$JIE_H, labsize(medsmall) nogrid) ///
+>         `yset_`v'' ///
+>         `legopt' ///
+>         graphregion(color(white) margin(small)) ///
+>         plotregion(color(white) margin(tiny)) ///
+>         name(gr6_`v', replace)
+ 10. 
+.     local graphs `graphs' gr6_`v'
+ 11. }
+
+. 
+. graph combine `graphs', ///
+>     cols(3) ///
+>     imargin(1 1 1 1) ///
+>     graphregion(color(white) margin(2 2 2 2)) ///
+>     name(fig6_combined, replace)
+
+. 
+. graph save "$JIE_FIG/figure6_narrative_journalstyle.gph", replace
+file C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/figures/figure6_narrative_journalstyle.gph saved
+
+. graph export "$JIE_FIG/figure6_narrative_journalstyle.png", ///
+>     width(2400) replace
+file C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/figures/figure6_narrative_journalstyle.png saved as PNG format
+
+. 
+. restore
+
+. log close _f6
+      name:  _f6
+       log:  C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/logs/23_figure6_narrative.log
+  log type:  text
+ closed on:  10 Apr 2026, 09:41:34
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. 
+. display as text "Building Figure 7..."
+Building Figure 7...
+
+. do "$JIE_CODE/24_figure7_units_estimators.do"
+
+. version 18.0
+
+. 
+. capture log close _f7
+
+. log using "$JIE_LOG/24_figure7_units_estimators.log", replace text ///
+>     name(_f7)
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  _f7
+       log:  C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/logs/24_figure7_units_estimators.log
+  log type:  text
+ opened on:  10 Apr 2026, 09:41:34
+
+. 
+. use "$JIE_DER/annual_panel.dta", clear
+
+. sort country_id year
+
+. xtset country_id year
+
+Panel variable: country_id (strongly balanced)
+ Time variable: year, 1900 to 2023
+         Delta: 1 unit
+
+. 
+. local yraw ///
+>     gpr_country ///
+>     inflation_ppt ///
+>     gdp_pct
+
+. 
+. egen __rowmiss_f7 = rowmiss(`yraw')
+
+. gen byte sample_f7 = (__rowmiss_f7 == 0)
+
+. drop __rowmiss_f7
+
+. 
+. count if sample_f7
+  4,919
+
+. display as text "Figure 7 raw complete-case observations: " r(N)
+Figure 7 raw complete-case observations: 4919
+
+. 
+. foreach v of local yraw {
+  2.     by country_id: egen mean_`v'_f7 = mean(cond(sample_f7, `v', .))
+  3.     gen dm_`v'_f7 = cond(sample_f7, `v' - mean_`v'_f7, .)
+  4. }
+(537 missing values generated)
+(537 missing values generated)
+(537 missing values generated)
+
+. 
+. local ydm
+
+. foreach v of local yraw {
+  2.     local ydm `ydm' dm_`v'_f7
+  3. }
+
+. 
+. mata: jie_bvar_pooled_summary( ///
+>     "`ydm'", "country_id", "year", "sample_f7", ///
+>     $JIE_P, $JIE_H, $JIE_NDRAWS, 1, 1, ///
+>     "F7P_Q05", "F7P_Q50", "F7P_Q95", ///
+>     "F7P_MEAN", "F7P_VAR", "F7P_Neff" ///
+> )
+
+. 
+. display as text "Figure 7 lag-valid pooled rows: " ///
+>     %9.0g scalar(F7P_Neff)
+Figure 7 lag-valid pooled rows:      4869
+
+. 
+. bys country_id: egen T_f7 = total(sample_f7)
+
+. egen tag_country = tag(country_id)
+
+. 
+. display as text ///
+>     "Figure 7 countries retained by the $JIE_MINOBS-observation rule:"
+Figure 7 countries retained by the 60-observation rule:
+
+. levelsof country if tag_country & T_f7 >= $JIE_MINOBS, local(keep_f7)
+`"Argentina"' `"Australia"' `"Belgium"' `"Brazil"' `"Canada"' `"Chile"' `"China"' `"Colombia"' `"Denmark"' `"Egypt"' `"Finland"' `"France"' `"Germany"' `"Hong Kong"' `"Hungary"' `"India"' `"Indonesia"' `"Israel"' `"Italy"' `"Japan"' `"Malaysia"' `"Mexico"
+> ' `"Netherlands"' `"Norway"' `"Peru"' `"Philippines"' `"Poland"' `"Portugal"' `"Russia"' `"Saudi Arabia"' `"South Africa"' `"South Korea"' `"Spain"' `"Sweden"' `"Switzerland"' `"Taiwan"' `"Thailand"' `"Tunisia"' `"Turkey"' `"United Kingdom"' `"United St
+> ates"' `"Venezuela"' `"Vietnam"'
+
+. local nkeep_f7 : word count `keep_f7'
+
+. display as text "Figure 7 included countries: `nkeep_f7'"
+Figure 7 included countries: 43
+
+. 
+. display as text ///
+>     "Figure 7 countries excluded by the $JIE_MINOBS-observation rule:"
+Figure 7 countries excluded by the 60-observation rule:
+
+. levelsof country if tag_country & T_f7 < $JIE_MINOBS, local(drop_f7)
+`"Ukraine"'
+
+. local ndrop_f7 : word count `drop_f7'
+
+. display as text "Figure 7 excluded countries: `ndrop_f7'"
+Figure 7 excluded countries: 1
+
+. 
+. mata: jie_bvar_units_aggregate( ///
+>     "`yraw'", "country_id", "year", "sample_f7", ///
+>     $JIE_MINOBS, $JIE_P, $JIE_H, $JIE_NDRAWS, 1, 1, ///
+>     "F7_IVW", "F7_EW", "F7_B05", "F7_B95", "F7_Ncountry" ///
+> )
+
+. 
+. display as text "Figure 7 countries used in aggregation: " ///
+>     %9.0g scalar(F7_Ncountry)
+Figure 7 countries used in aggregation:        43
+
+. 
+. local cnP50
+
+. local cnIVW
+
+. local cnEW
+
+. local cnB05
+
+. local cnB95
+
+. foreach v of local yraw {
+  2.     local cnP50 `cnP50' pooled_q50_`v'
+  3.     local cnIVW `cnIVW' ivw_`v'
+  4.     local cnEW  `cnEW'  ew_`v'
+  5.     local cnB05 `cnB05' band_q05_`v'
+  6.     local cnB95 `cnB95' band_q95_`v'
+  7. }
+
+. 
+. matrix colnames F7P_Q50 = `cnP50'
+
+. matrix colnames F7_IVW  = `cnIVW'
+
+. matrix colnames F7_EW   = `cnEW'
+
+. matrix colnames F7_B05  = `cnB05'
+
+. matrix colnames F7_B95  = `cnB95'
+
+. 
+. preserve
+
+. clear
+
+. set obs `= $JIE_H + 1'
+Number of observations (_N) was 0, now 11.
+
+. gen horizon = _n - 1
+
+. 
+. svmat double F7P_Q50, names(col)
+
+. svmat double F7_IVW,  names(col)
+
+. svmat double F7_EW,   names(col)
+
+. svmat double F7_B05,  names(col)
+
+. svmat double F7_B95,  names(col)
+
+. 
+. replace pooled_q50_gdp_pct = 100 * pooled_q50_gdp_pct
+(11 real changes made)
+
+. replace ivw_gdp_pct        = 100 * ivw_gdp_pct
+(11 real changes made)
+
+. replace ew_gdp_pct         = 100 * ew_gdp_pct
+(11 real changes made)
+
+. replace band_q05_gdp_pct   = 100 * band_q05_gdp_pct
+(11 real changes made)
+
+. replace band_q95_gdp_pct   = 100 * band_q95_gdp_pct
+(11 real changes made)
+
+. 
+. save "$JIE_DER/fig7_irf.dta", replace
+file C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/derived/fig7_irf.dta saved
+
+. export delimited using "$JIE_DER/fig7_irf.csv", replace
+file C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/derived/fig7_irf.csv saved
+
+. 
+. local bandcol "pink"
+
+. local pcol    "blue"
+
+. local ivwcol  "red"
+
+. local ewcol   "forest_green"
+
+. 
+. twoway ///
+>     rarea band_q05_gpr_country band_q95_gpr_country horizon, ///
+>         color(`bandcol'%25) lcolor(`bandcol'%0) || ///
+>     line ivw_gpr_country horizon, ///
+>         lcolor(`ivwcol') lwidth(medthick) || ///
+>     line ew_gpr_country horizon, ///
+>         lcolor(`ewcol') lwidth(medthick) ///
+>         lpattern(shortdash) || ///
+>     line pooled_q50_gpr_country horizon, ///
+>         lcolor(`pcol') lwidth(thick) || ///
+>     , ///
+>     title("GPR Country", size(medium) color(black)) ///
+>     yline(0, lcolor(black%35) lwidth(vthin)) ///
+>     xtitle("Year", size(medsmall)) ///
+>     ytitle("") ///
+>     xlabel(0(2)$JIE_H, labsize(medsmall) nogrid) ///
+>     yscale(range(-0.08 1.05)) ///
+>     ylabel(0 .2 .4 .6 .8 1, nogrid labsize(medsmall)) ///
+>     legend(order(2 "Variance Weighted" ///
+>                  3 "Equally Weighted" ///
+>                  4 "Pooled / Baseline") ///
+>            rows(3) size(small) ring(0) pos(2) ///
+>            region(lcolor(black) fcolor(white))) ///
+>     graphregion(color(white) margin(small)) ///
+>     plotregion(color(white) margin(tiny)) ///
+>     name(gr7_gpr_country, replace)
+
+. 
+. twoway ///
+>     rarea band_q05_inflation_ppt band_q95_inflation_ppt horizon, ///
+>         color(`bandcol'%25) lcolor(`bandcol'%0) || ///
+>     line ivw_inflation_ppt horizon, ///
+>         lcolor(`ivwcol') lwidth(medthick) || ///
+>     line ew_inflation_ppt horizon, ///
+>         lcolor(`ewcol') lwidth(medthick) ///
+>         lpattern(shortdash) || ///
+>     line pooled_q50_inflation_ppt horizon, ///
+>         lcolor(`pcol') lwidth(thick) || ///
+>     , ///
+>     title("Inflation (ppt)", size(medium) color(black)) ///
+>     yline(0, lcolor(black%35) lwidth(vthin)) ///
+>     xtitle("Year", size(medsmall)) ///
+>     ytitle("") ///
+>     xlabel(0(2)$JIE_H, labsize(medsmall) nogrid) ///
+>     yscale(range(-0.7 3.4)) ///
+>     ylabel(-.5 0 .5 1 1.5 2 2.5 3, ///
+>         nogrid labsize(medsmall)) ///
+>     legend(off) ///
+>     graphregion(color(white) margin(small)) ///
+>     plotregion(color(white) margin(tiny)) ///
+>     name(gr7_inflation_ppt, replace)
+
+. 
+. twoway ///
+>     rarea band_q05_gdp_pct band_q95_gdp_pct horizon, ///
+>         color(`bandcol'%25) lcolor(`bandcol'%0) || ///
+>     line ivw_gdp_pct horizon, ///
+>         lcolor(`ivwcol') lwidth(medthick) || ///
+>     line ew_gdp_pct horizon, ///
+>         lcolor(`ewcol') lwidth(medthick) ///
+>         lpattern(shortdash) || ///
+>     line pooled_q50_gdp_pct horizon, ///
+>         lcolor(`pcol') lwidth(thick) || ///
+>     , ///
+>     title("GDP (%)", size(medium) color(black)) ///
+>     yline(0, lcolor(black%35) lwidth(vthin)) ///
+>     xtitle("Year", size(medsmall)) ///
+>     ytitle("") ///
+>     xlabel(0(2)$JIE_H, labsize(medsmall) nogrid) ///
+>     yscale(range(-3.6 0.6)) ///
+>     ylabel(-3 -2 -1 0, nogrid labsize(medsmall)) ///
+>     legend(off) ///
+>     graphregion(color(white) margin(small)) ///
+>     plotregion(color(white) margin(tiny)) ///
+>     name(gr7_gdp_pct, replace)
+
+. 
+. graph combine ///
+>     gr7_gpr_country ///
+>     gr7_inflation_ppt ///
+>     gr7_gdp_pct, ///
+>     cols(3) ///
+>     imargin(1 1 1 1) ///
+>     graphregion(color(white) margin(2 2 2 2)) ///
+>     name(fig7_combined, replace)
+
+. 
+. graph save "$JIE_FIG/figure7_units_estimators_journalstyle.gph", replace
+file C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/figures/figure7_units_estimators_journalstyle.gph saved
+
+. graph export "$JIE_FIG/figure7_units_estimators_journalstyle.png", ///
+>     width(2400) replace
+file C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/figures/figure7_units_estimators_journalstyle.png saved as PNG format
+
+. 
+. restore
+
+. drop tag_country T_f7
+
+. log close _f7
+      name:  _f7
+       log:  C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/logs/24_figure7_units_estimators.log
+  log type:  text
+ closed on:  10 Apr 2026, 09:41:50
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. 
+. display as text "Building Figure 9..."
+Building Figure 9...
+
+. do "$JIE_CODE/25_figure9_spillovers.do"
+
+. version 18.0
+
+. 
+. capture log close _f9
+
+. log using "$JIE_LOG/25_figure9_spillovers.log", replace text ///
+>     name(_f9)
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  _f9
+       log:  C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/logs/25_figure9_spillovers.log
+  log type:  text
+ opened on:  10 Apr 2026, 09:41:50
+
+. 
+. use "$JIE_DER/annual_panel.dta", clear
+
+. sort country_id year
+
+. xtset country_id year
+
+Panel variable: country_id (strongly balanced)
+ Time variable: year, 1900 to 2023
+         Delta: 1 unit
+
+. 
+. * ----------------------------------------------------------------------
+. * Rebuild foreign GPR as the leave-one-out average of domestic GPR
+. * ----------------------------------------------------------------------
+. capture confirm variable gpr_foreign_old
+
+. if _rc {
+.     capture drop gpr_foreign_old
+.     clonevar gpr_foreign_old = gpr_foreign
+. }
+
+. 
+. capture drop __sum_gpr_f9
+
+. capture drop __n_gpr_f9
+
+. capture drop gpr_foreign
+
+. 
+. bys year: egen __sum_gpr_f9 = total(gpr_country)
+
+. bys year: egen __n_gpr_f9   = count(gpr_country)
+
+. 
+. gen gpr_foreign = .
+(5,456 missing values generated)
+
+. replace gpr_foreign = ///
+>     (__sum_gpr_f9 - gpr_country) / (__n_gpr_f9 - 1) ///
+>     if !missing(gpr_country) & __n_gpr_f9 > 1
+(5,456 real changes made)
+
+. 
+. drop __sum_gpr_f9 __n_gpr_f9
+
+. 
+. summ gpr_foreign gpr_foreign_old
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+ gpr_foreign |      5,456   -1.24e-09    .5504277  -.6943848   1.998606
+gpr_foreig~d |      5,456    27.85671    21.08599   3.733044   115.9296
+
+. 
+. * ----------------------------------------------------------------------
+. * Figure 9 variables
+. * ----------------------------------------------------------------------
+. local yraw ///
+>     gpr_country ///
+>     gpr_foreign ///
+>     inflation_ppt ///
+>     gdp_pct
+
+. 
+. egen __rowmiss_f9 = rowmiss(`yraw')
+
+. gen byte sample_f9 = (__rowmiss_f9 == 0)
+
+. drop __rowmiss_f9
+
+. 
+. count if sample_f9
+  4,919
+
+. display as text ///
+>     "Figure 9 raw complete-case observations: " r(N)
+Figure 9 raw complete-case observations: 4919
+
+. 
+. * ----------------------------------------------------------------------
+. * Pooled estimator: country-demeaned system
+. * ----------------------------------------------------------------------
+. 
+. sort country_id year
+
+. 
+. foreach v of local yraw {
+  2.     by country_id: egen mean_`v'_f9 = ///
+>         mean(cond(sample_f9, `v', .))
+  3.     gen dm_`v'_f9 = ///
+>         cond(sample_f9, `v' - mean_`v'_f9, .)
+  4. }
+(537 missing values generated)
+(537 missing values generated)
+(537 missing values generated)
+(537 missing values generated)
+
+. 
+. local ydm
+
+. foreach v of local yraw {
+  2.     local ydm `ydm' dm_`v'_f9
+  3. }
+
+. 
+. * ----------------------------------------------------------------------
+. * Figure 9 is unnormalized:
+. * shock_idx = 2  -> foreign GPR shock
+. * scale_idx = 0  -> no normalization
+. * ----------------------------------------------------------------------
+. mata: jie_bvar_pooled_summary( ///
+>     "`ydm'", "country_id", "year", "sample_f9", ///
+>     $JIE_P, $JIE_H, $JIE_NDRAWS, ///
+>     2, 0, ///
+>     "F9P_Q05", "F9P_Q50", "F9P_Q95", ///
+>     "F9P_MEAN", "F9P_VAR", "F9P_Neff" ///
+> )
+
+. 
+. display as text "Figure 9 lag-valid pooled rows: " ///
+>     %9.0g scalar(F9P_Neff)
+Figure 9 lag-valid pooled rows:      4869
+
+. 
+. * ----------------------------------------------------------------------
+. * Country-by-country inclusion rule
+. * ----------------------------------------------------------------------
+. bys country_id: egen T_f9 = total(sample_f9)
+
+. egen tag_country = tag(country_id)
+
+. 
+. display as text ///
+>     "Figure 9 countries retained by the " ///
+>     "$JIE_MINOBS-observation rule:"
+Figure 9 countries retained by the 60-observation rule:
+
+. levelsof country if tag_country & T_f9 >= $JIE_MINOBS, ///
+>     local(keep_f9)
+`"Argentina"' `"Australia"' `"Belgium"' `"Brazil"' `"Canada"' `"Chile"' `"China"' `"Colombia"' `"Denmark"' `"Egypt"' `"Finland"' `"France"' `"Germany"' `"Hong Kong"' `"Hungary"' `"India"' `"Indonesia"' `"Israel"' `"Italy"' `"Japan"' `"Malaysia"' `"Mexico"
+> ' `"Netherlands"' `"Norway"' `"Peru"' `"Philippines"' `"Poland"' `"Portugal"' `"Russia"' `"Saudi Arabia"' `"South Africa"' `"South Korea"' `"Spain"' `"Sweden"' `"Switzerland"' `"Taiwan"' `"Thailand"' `"Tunisia"' `"Turkey"' `"United Kingdom"' `"United St
+> ates"' `"Venezuela"' `"Vietnam"'
+
+. local nkeep_f9 : word count `keep_f9'
+
+. display as text "Figure 9 included countries: `nkeep_f9'"
+Figure 9 included countries: 43
+
+. 
+. display as text ///
+>     "Figure 9 countries excluded by the " ///
+>     "$JIE_MINOBS-observation rule:"
+Figure 9 countries excluded by the 60-observation rule:
+
+. levelsof country if tag_country & T_f9 < $JIE_MINOBS, ///
+>     local(drop_f9)
+`"Ukraine"'
+
+. local ndrop_f9 : word count `drop_f9'
+
+. display as text "Figure 9 excluded countries: `ndrop_f9'"
+Figure 9 excluded countries: 1
+
+. 
+. mata: jie_bvar_units_aggregate( ///
+>     "`yraw'", "country_id", "year", "sample_f9", ///
+>     $JIE_MINOBS, $JIE_P, $JIE_H, $JIE_NDRAWS, ///
+>     2, 0, ///
+>     "F9_IVW", "F9_EW", "F9_B05", "F9_B95", ///
+>     "F9_Ncountry" ///
+> )
+
+. 
+. display as text ///
+>     "Figure 9 countries used in unit-by-unit aggregation: " ///
+>     %9.0g scalar(F9_Ncountry)
+Figure 9 countries used in unit-by-unit aggregation:        43
+
+. 
+. * ----------------------------------------------------------------------
+. * Name matrices
+. * ----------------------------------------------------------------------
+. local cnP50
+
+. local cnIVW
+
+. local cnEW
+
+. local cnB05
+
+. local cnB95
+
+. 
+. foreach v of local yraw {
+  2.     local cnP50 `cnP50' pooled_q50_`v'
+  3.     local cnIVW `cnIVW' ivw_`v'
+  4.     local cnEW  `cnEW'  ew_`v'
+  5.     local cnB05 `cnB05' band_q05_`v'
+  6.     local cnB95 `cnB95' band_q95_`v'
+  7. }
+
+. 
+. matrix colnames F9P_Q50 = `cnP50'
+
+. matrix colnames F9_IVW  = `cnIVW'
+
+. matrix colnames F9_EW   = `cnEW'
+
+. matrix colnames F9_B05  = `cnB05'
+
+. matrix colnames F9_B95  = `cnB95'
+
+. 
+. * ----------------------------------------------------------------------
+. * Put IRFs in a plotting dataset
+. * ----------------------------------------------------------------------
+. preserve
+
+. clear
+
+. set obs `= $JIE_H + 1'
+Number of observations (_N) was 0, now 11.
+
+. gen horizon = _n - 1
+
+. 
+. svmat double F9P_Q50, names(col)
+
+. svmat double F9_IVW,  names(col)
+
+. svmat double F9_EW,   names(col)
+
+. svmat double F9_B05,  names(col)
+
+. svmat double F9_B95,  names(col)
+
+. 
+. * GDP panel in percent units, as in the replication figure
+. replace pooled_q50_gdp_pct = 100 * pooled_q50_gdp_pct
+(11 real changes made)
+
+. replace ivw_gdp_pct        = 100 * ivw_gdp_pct
+(11 real changes made)
+
+. replace ew_gdp_pct         = 100 * ew_gdp_pct
+(11 real changes made)
+
+. replace band_q05_gdp_pct   = 100 * band_q05_gdp_pct
+(11 real changes made)
+
+. replace band_q95_gdp_pct   = 100 * band_q95_gdp_pct
+(11 real changes made)
+
+. 
+. save "$JIE_DER/fig9_irf.dta", replace
+file C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/derived/fig9_irf.dta saved
+
+. export delimited using "$JIE_DER/fig9_irf.csv", replace
+file C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/derived/fig9_irf.csv saved
+
+. 
+. list horizon ///
+>     pooled_q50_gpr_foreign ///
+>     ivw_gpr_foreign ///
+>     ew_gpr_foreign ///
+>     if horizon <= 10, noobs sep(0)
+
+  +---------------------------------------------+
+  | horizon   pooled_~n   ivw_gpr~n   ew_gpr_~n |
+  |---------------------------------------------|
+  |       0   .26217207   .23481038   .24754669 |
+  |       1   .21827897   .19450343   .19332534 |
+  |       2   .18208256   .15074004   .15524497 |
+  |       3   .15196684   .11248059   .12605762 |
+  |       4   .12675412   .08275997   .10283913 |
+  |       5   .10564985   .06139418   .08403184 |
+  |       6   .08792787   .04656338   .06868221 |
+  |       7   .07309837   .03616793   .05613797 |
+  |       8   .06062497     .028637   .04591069 |
+  |       9   .05018047   .02299203   .03760935 |
+  |      10    .0414487   .01865233   .03090781 |
+  +---------------------------------------------+
+
+. 
+. * ----------------------------------------------------------------------
+. * Plotting
+. * ----------------------------------------------------------------------
+. local bandcol "pink"
+
+. local pcol    "blue"
+
+. local ivwcol  "red"
+
+. local ewcol   "forest_green"
+
+. 
+. twoway ///
+>     rarea band_q05_gpr_country band_q95_gpr_country ///
+>         horizon, color(`bandcol'%30) lcolor(`bandcol'%0) || ///
+>     line ivw_gpr_country horizon, ///
+>         lcolor(`ivwcol') lwidth(medthick) || ///
+>     line ew_gpr_country horizon, ///
+>         lcolor(`ewcol') lwidth(medthick) ///
+>         lpattern(shortdash) || ///
+>     line pooled_q50_gpr_country horizon, ///
+>         lcolor(`pcol') lwidth(thick) || ///
+>     , ///
+>     title("GPR Country", size(medium)) ///
+>     yline(0, lcolor(gs10)) ///
+>     xtitle("Year", size(medsmall)) ///
+>     ytitle("") ///
+>     xlabel(0(2)$JIE_H, labsize(medsmall) nogrid) ///
+>     ylabel(-.05 0 .05 .10 .15, ///
+>         format(%4.2f) angle(horizontal) ///
+>         labsize(vsmall) nogrid) ///
+>     yscale(range(-0.06 0.165)) ///
+>     legend(order(2 "Variance Weighted" ///
+>                  3 "Equally Weighted" ///
+>                  4 "Pooled / Baseline") ///
+>            rows(3) size(vsmall) pos(2) ring(0) ///
+>            region(lcolor(black) fcolor(white))) ///
+>     graphregion(color(white) margin(small)) ///
+>     plotregion(color(white) margin(medium)) ///
+>     name(gr9_gpr_country, replace)
+
+. 
+. twoway ///
+>     rarea band_q05_gpr_foreign band_q95_gpr_foreign ///
+>         horizon, color(`bandcol'%30) lcolor(`bandcol'%0) || ///
+>     line ivw_gpr_foreign horizon, ///
+>         lcolor(`ivwcol') lwidth(medthick) || ///
+>     line ew_gpr_foreign horizon, ///
+>         lcolor(`ewcol') lwidth(medthick) ///
+>         lpattern(shortdash) || ///
+>     line pooled_q50_gpr_foreign horizon, ///
+>         lcolor(`pcol') lwidth(thick) || ///
+>     , ///
+>     title("GPR Foreign", size(medium)) ///
+>     yline(0, lcolor(gs10)) ///
+>     xtitle("Year", size(medsmall)) ///
+>     ytitle("") ///
+>     xlabel(0(2)$JIE_H, labsize(medsmall) nogrid) ///
+>     ylabel(0(.1).4, format(%3.1f) ///
+>         angle(horizontal) labsize(small) nogrid) ///
+>     yscale(range(-0.02 0.46)) ///
+>     legend(off) ///
+>     graphregion(color(white) margin(small)) ///
+>     plotregion(color(white) margin(medium)) ///
+>     name(gr9_gpr_foreign, replace)
+
+. 
+. twoway ///
+>     rarea band_q05_inflation_ppt band_q95_inflation_ppt ///
+>         horizon, color(`bandcol'%30) lcolor(`bandcol'%0) || ///
+>     line ivw_inflation_ppt horizon, ///
+>         lcolor(`ivwcol') lwidth(medthick) || ///
+>     line ew_inflation_ppt horizon, ///
+>         lcolor(`ewcol') lwidth(medthick) ///
+>         lpattern(shortdash) || ///
+>     line pooled_q50_inflation_ppt horizon, ///
+>         lcolor(`pcol') lwidth(thick) || ///
+>     , ///
+>     title("Inflation (ppt)", size(medium)) ///
+>     yline(0, lcolor(gs10)) ///
+>     xtitle("Year", size(medsmall)) ///
+>     ytitle("") ///
+>     xlabel(0(2)$JIE_H, labsize(medsmall) nogrid) ///
+>     ylabel(-.5 0 .5 1 1.5, ///
+>         format(%3.1f) angle(horizontal) ///
+>         labsize(small) nogrid) ///
+>     yscale(range(-0.5 1.6)) ///
+>     legend(off) ///
+>     graphregion(color(white) margin(small)) ///
+>     plotregion(color(white) margin(medium)) ///
+>     name(gr9_inflation_ppt, replace)
+
+. 
+. twoway ///
+>     rarea band_q05_gdp_pct band_q95_gdp_pct ///
+>         horizon, color(`bandcol'%30) lcolor(`bandcol'%0) || ///
+>     line ivw_gdp_pct horizon, ///
+>         lcolor(`ivwcol') lwidth(medthick) || ///
+>     line ew_gdp_pct horizon, ///
+>         lcolor(`ewcol') lwidth(medthick) ///
+>         lpattern(shortdash) || ///
+>     line pooled_q50_gdp_pct horizon, ///
+>         lcolor(`pcol') lwidth(thick) || ///
+>     , ///
+>     title("GDP (%)", size(medium)) ///
+>     yline(0, lcolor(gs10)) ///
+>     xtitle("Year", size(medsmall)) ///
+>     ytitle("") ///
+>     xlabel(0(2)$JIE_H, labsize(medsmall) nogrid) ///
+>     ylabel(-1.5(-.5)0.5, ///
+>         format(%3.1f) angle(horizontal) ///
+>         labsize(small) nogrid) ///
+>     yscale(range(-1.85 0.65)) ///
+>     legend(off) ///
+>     graphregion(color(white) margin(small)) ///
+>     plotregion(color(white) margin(medium)) ///
+>     name(gr9_gdp_pct, replace)
+
+. 
+. graph combine ///
+>     gr9_gpr_country ///
+>     gr9_gpr_foreign ///
+>     gr9_inflation_ppt ///
+>     gr9_gdp_pct, ///
+>     cols(2) ///
+>     imargin(3 3 3 3) ///
+>     graphregion(color(white) margin(4 4 4 4)) ///
+>     name(fig9_combined, replace)
+
+. 
+. graph save "$JIE_FIG/figure9_spillovers.gph", replace
+file C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/figures/figure9_spillovers.gph saved
+
+. graph export "$JIE_FIG/figure9_spillovers.png", ///
+>     width(2400) replace
+file C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/figures/figure9_spillovers.png saved as PNG format
+
+. 
+. restore
+
+. 
+. drop tag_country T_f9
+
+. 
+. log close _f9
+      name:  _f9
+       log:  C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/logs/25_figure9_spillovers.log
+  log type:  text
+ closed on:  10 Apr 2026, 09:42:02
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+. 
+end of do-file
+
+. 
+. display as result "Done. See:"
+Done. See:
+
+. display as result "  $JIE_DER"
+  C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/derived
+
+. display as result "  $JIE_FIG"
+  C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/figures
+
+. display as result "  $JIE_LOG"
+  C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/logs
+
+. 
+. log close
+      name:  <unnamed>
+       log:  C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/logs/00_run_all_requested_figures.log
+  log type:  text
+ closed on:  10 Apr 2026, 09:42:02
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

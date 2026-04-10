@@ -1,0 +1,19 @@
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7\code/output/logs/00_run_all_requested_figures.log
+  log type:  text
+ opened on:   8 Apr 2026, 04:06:51
+
+. 
+. display as text "Preparing annual panel..."
+Preparing annual panel...
+
+. do "$JIE_CODE/01_prepare_annual_panel.do"
+file C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7\code/code/01_prepare_annual_panel.do not found
+r(601);
+
+end of do-file
+
+r(601);
+
+. exit, clear

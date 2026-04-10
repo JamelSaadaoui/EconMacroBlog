@@ -1,0 +1,82 @@
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  _prep
+       log:  C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/logs/01_prepare_annual_panel.log
+  log type:  text
+ opened on:  10 Apr 2026, 09:40:04
+
+. 
+. local src1 "$JIE_RAW/datapanelGPR_long.xlsx"
+
+. local src2 "$JIE_ROOT/raw/datapanelGPR_long.xlsx"
+
+. 
+. capture confirm file "`src1'"
+
+. if _rc {
+.     capture confirm file "`src2'"
+.     if _rc {
+.         display as error "Could not find datapanelGPR_long.xlsx in:"
+.         display as error "  `src1'"
+.         display as error "  `src2'"
+.         exit 601
+.     }
+.     local src "`src2'"
+. }
+
+. else {
+.     local src "`src1'"
+. }
+
+. 
+. display as text "Importing `src'"
+Importing C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/raw/datapanelGPR_long.xlsx
+
+. 
+. import excel using "`src'", firstrow clear
+(22 vars, 5,456 obs)
+
+. 
+. compress
+  (0 bytes saved)
+
+. order country_id country year
+
+. sort country_id year
+
+. 
+. capture isid country_id year
+
+. if _rc {
+.     display as error "country_id year is not unique."
+.     exit 459
+. }
+
+. 
+. xtset country_id year
+
+Panel variable: country_id (strongly balanced)
+ Time variable: year, 1900 to 2023
+         Delta: 1 unit
+
+. 
+. label var country_id "Country numeric identifier"
+
+. label var country    "Country name"
+
+. label var year       "Calendar year"
+
+. 
+. save "$JIE_DER/annual_panel.dta", replace
+file C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/derived/annual_panel.dta saved
+
+. 
+. display as result "Saved: $JIE_DER/annual_panel.dta"
+Saved: C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/derived/annual_panel.dta
+
+. 
+. log close _prep
+      name:  _prep
+       log:  C:\Users\jamel\Dropbox\GPR_Inflationrisks\Caldara_VAR_LP\JIE_Caldara_AnnualPVAR_Stata_v7/output/logs/01_prepare_annual_panel.log
+  log type:  text
+ closed on:  10 Apr 2026, 09:40:04
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
