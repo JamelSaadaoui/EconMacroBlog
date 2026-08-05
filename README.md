@@ -6,8 +6,7 @@ This repository houses the code and data to accompany the [Jamel Saadaoui's **Ec
 
 |Blog Topic (EconMacro link) |Codes and Data (Github Repository)|Date|
 |:----|:----|:----|
-|[DATA Stata](https://www.jamelsaadaoui.com/inspect-combine-and-link-data-in-stata/)| ["Inspect, Combine, and Link Data in Stata
-"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Inspect_Combine_and_Link) | August 3, 2026|
+|[DATA Stata](https://www.jamelsaadaoui.com/inspect-combine-and-link-data-in-stata/)| ["Inspect, Combine, and Link Data in Stata"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Inspect_Combine_and_Link) | August 3, 2026|
 |[BPVAR Stata](https://www.jamelsaadaoui.com/do-geopolitical-risks-raise-or-lower-inflation-part-vi/)| ["Do geopolitical risks raise or lower inflation? Part VI"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/GPR_raise_or_lower_inflation) | April 10, 2026|
 |[LP Stata](https://www.jamelsaadaoui.com/improving-the-visualization-of-local-projection-irfs-in-stata/)| ["Improving the Visualization of Local Projection IRFs in Stata"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Improving_the_Visualization_of_Local_Projection_IRFs_in_Stata) | December 11, 2025|
 |[Currency Stata](https://www.jamelsaadaoui.com/chi%e1%b9%adu-eichengreen-mehl-global-currencies-database-cemgcd/)| ["Chiṭu-Eichengreen-Mehl Global Currencies Database (CEMGCD)"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Chi%E1%B9%ADu-Eichengreen-Mehl_Global_Currencies_Database_(CEMGCD)) | November 10, 2025|
