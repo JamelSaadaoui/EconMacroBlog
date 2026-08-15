@@ -6,6 +6,7 @@ This repository houses the code and data to accompany the [Jamel Saadaoui's **Ec
 
 |Blog Topic (EconMacro link) |Codes and Data (Github Repository)|Date|
 |:----|:----|:----|
+|[Threshold Stata](https://www.jamelsaadaoui.com/1001-downloads-later-revisiting-the-bank-credit-growth-threshold-in-asean-with-xtthreshold/)| ["1,001 Downloads Later: Revisiting the Bank Credit–Growth Threshold in ASEAN with xtthreshold"](https://github.com/JamelSaadaoui/EconMacroBlog/blob/main/Bank_Credit_Growth_Threshold_in_ASEAN_with_xtthreshold/xtthreshold_asean_blog.do) | August 15, 2026|
 |[DATA Stata](https://www.jamelsaadaoui.com/inspect-combine-and-link-data-in-stata/)| ["Inspect, Combine, and Link Data in Stata"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Inspect_Combine_and_Link) | August 3, 2026|
 |[BPVAR Stata](https://www.jamelsaadaoui.com/do-geopolitical-risks-raise-or-lower-inflation-part-vi/)| ["Do geopolitical risks raise or lower inflation? Part VI"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/GPR_raise_or_lower_inflation) | April 10, 2026|
 |[LP Stata](https://www.jamelsaadaoui.com/improving-the-visualization-of-local-projection-irfs-in-stata/)| ["Improving the Visualization of Local Projection IRFs in Stata"](https://github.com/JamelSaadaoui/EconMacroBlog/tree/main/Improving_the_Visualization_of_Local_Projection_IRFs_in_Stata) | December 11, 2025|
