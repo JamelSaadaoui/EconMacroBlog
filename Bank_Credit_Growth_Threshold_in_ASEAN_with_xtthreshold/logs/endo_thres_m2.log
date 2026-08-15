@@ -1,0 +1,917 @@
+----------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\jamel\Documents\GitHub\ResearchPapers\Ho and Saadaoui 2022\logs\endo_thr
+> es_m2.log
+  log type:  text
+ opened on:   4 Jan 2024, 12:56:17
+
+. 
+. use data\data_asean_final_m2.dta, clear
+
+. 
+. // Install useful packages
+. 
+. *capture ssc install xtendothresdpd
+. *capture ssc install outreg2
+. 
+. // Prepare the panel data
+. 
+. rename cn country
+
+. 
+. encode country, generate(cn)
+
+. 
+. drop country
+
+. 
+. order cn code year, first
+
+. 
+. xtset cn year  
+
+Panel variable: cn (strongly balanced)
+ Time variable: year, 1993 to 2019
+         Delta: 1 unit
+
+. 
+. *browse
+. 
+. // Label the variables
+. 
+. label variable cn "Country"
+
+. label variable year "Date"
+
+. label variable gdpgpc "Annual growth rate of GDP per capita"
+
+. label variable inv "Annual percentage change in investment"
+
+. label variable gov "Annual percentage change in government expenditure"
+
+. label variable tot "Terms of trade"
+
+. label variable open "Openness ratio"
+
+. label variable pop "Annual percentage change of population"
+
+. label variable inflation "Annual percentage change of the CPI"
+
+. label variable creditgrowth "Annual percentage change of bank credit"
+
+. label variable creditgdp "Credit-to-GDP ratio"
+
+. label variable bankingcrisislv "Dummy for bank crises"
+
+. label variable currencycrisislv "Dummy for currency crises"
+
+. label variable debtcrisislv "Dummy for sovereign debt crises"
+
+. label variable debtrestruclv "Dummy for debt restructuring"
+
+. label variable allyearsbankingcrisis "Dummy for all year bank crises"
+
+. label variable m2gdp "M2-to-GDP ratio"
+
+. 
+. 
+. // Inspect the dataset
+. 
+. xtdes //-> Note 1
+
+      cn:  1, 2, ..., 7                                      n =          7
+    year:  1993, 1994, ..., 2019                             T =         27
+           Delta(year) = 1 unit
+           Span(year)  = 27 periods
+           (cn*year uniquely identifies each observation)
+
+Distribution of T_i:   min      5%     25%       50%       75%     95%     max
+                        27      27      27        27        27      27      27
+
+     Freq.  Percent    Cum. |  Pattern
+ ---------------------------+-----------------------------
+        7    100.00  100.00 |  111111111111111111111111111
+ ---------------------------+-----------------------------
+        7    100.00         |  XXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+. 
+. des
+
+Contains data from data\data_asean_final_m2.dta
+ Observations:           189                  
+    Variables:            18                  4 Jan 2024 12:56
+----------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------
+cn              long    %17.0g     cn         Country
+code            str3    %9s                   code
+year            int     %10.0g                Date
+gdpgpc          double  %10.0g                Annual growth rate of GDP per capita
+inv             double  %10.0g                Annual percentage change in investment
+gov             double  %10.0g                Annual percentage change in government
+                                                expenditure
+tot             double  %10.0g                Terms of trade
+open            double  %10.0g                Openness ratio
+pop             double  %10.0g                Annual percentage change of population
+inflation       double  %10.0g                Annual percentage change of the CPI
+creditgrowth    double  %10.0g                Annual percentage change of bank credit
+creditgdp       double  %10.0g                Credit-to-GDP ratio
+bankingcrisislv byte    %10.0g                Dummy for bank crises
+currencycrisi~v byte    %10.0g                Dummy for currency crises
+debtcrisislv    byte    %10.0g                Dummy for sovereign debt crises
+debtrestruclv   byte    %10.0g                Dummy for debt restructuring
+allyearsbanki~v byte    %10.0g                Dummy for all year bank crises
+m2gdp           double  %10.0g                M2-to-GDP ratio
+----------------------------------------------------------------------------------------------
+Sorted by: cn  year
+     Note: Dataset has changed since last saved.
+
+. 
+. xtsum //-> Note 2
+
+Variable         |      Mean   Std. dev.       Min        Max |    Observations
+-----------------+--------------------------------------------+----------------
+cn       overall |         4   2.005312          1          7 |     N =     189
+         between |             2.160247          1          7 |     n =       7
+         within  |                    0          4          4 |     T =      27
+                 |                                            |
+code     overall |         .          .          .          . |     N =       0
+         between |                    .          .          . |     n =       0
+         within  |                    .          .          . |     T =       .
+                 |                                            |
+year     overall |      2006   7.809569       1993       2019 |     N =     189
+         between |                    0       2006       2006 |     n =       7
+         within  |             7.809569       1993       2019 |     T =      27
+                 |                                            |
+gdpgpc   overall |  3.046886   3.453147  -14.35055   12.51431 |     N =     189
+         between |             1.820736  -.5600959     5.6028 |     n =       7
+         within  |             3.011248  -14.62271   12.14262 |     T =      27
+                 |                                            |
+inv      overall |  6.138769   14.19388  -44.02647   86.21863 |     N =     189
+         between |             3.095473   2.148368   12.33429 |     n =       7
+         within  |             13.89998  -41.96481   86.69503 |     T =      27
+                 |                                            |
+gov      overall |  5.374985   6.241908  -15.37154   58.80649 |     N =     189
+         between |             1.982488   2.762105    9.08542 |     n =       7
+         within  |             5.964453  -14.17211   55.09605 |     T =      27
+                 |                                            |
+tot      overall |  114.2067   34.77842   70.38032   284.4361 |     N =     189
+         between |             26.91753   89.02761   170.4092 |     n =       7
+         within  |             24.19069   31.72149   228.2337 |     T =      27
+                 |                                            |
+open     overall |  145.0728   96.93687    37.3034   437.3267 |     N =     189
+         between |             100.7133   54.04387   355.6002 |     n =       7
+         within  |             25.61977   74.09328   226.7993 |     T =      27
+                 |                                            |
+pop      overall |  1.542275   .7854225  -1.474533   5.321517 |     N =     189
+         between |             .5047223   .6887134   2.105163 |     n =       7
+         within  |             .6303765   -2.03742    4.75863 |     T =      27
+                 |                                            |
+inflat~n overall |  4.071462     5.5082  -2.314972   58.45104 |     N =     189
+         between |             3.081579   .7916025   9.361041 |     n =       7
+         within  |             4.707168  -4.395399   53.16147 |     T =      27
+                 |                                            |
+credit~h overall |  12.90742   14.29712  -55.49218   65.15823 |     N =     189
+         between |             7.366695   5.599524   27.15825 |     n =       7
+         within  |             12.55567  -59.19096   72.46613 |     T =      27
+                 |                                            |
+credit~p overall |  81.77134    50.6477   16.52946    269.733 |     N =     189
+         between |             47.56994   36.09649   159.4478 |     n =       7
+         within  |             24.80413   27.44876   192.0566 |     T =      27
+                 |                                            |
+bankin~v overall |   .026455   .1609104          0          1 |     N =     189
+         between |             .0180722          0    .037037 |     n =       7
+         within  |             .1600335   -.010582    .989418 |     T =      27
+                 |                                            |
+curren~v overall |   .021164   .1443132          0          1 |     N =     189
+         between |             .0197971          0    .037037 |     n =       7
+         within  |             .1431383   -.015873    .984127 |     T =      27
+                 |                                            |
+debtcr~v overall |   .005291   .0727393          0          1 |     N =     189
+         between |             .0139987          0    .037037 |     n =       7
+         within  |             .0715692   -.031746    .968254 |     T =      27
+                 |                                            |
+debtre~v overall |   .010582   .1025949          0          1 |     N =     189
+         between |             .0180722          0    .037037 |     n =       7
+         within  |             .1012141   -.026455    .973545 |     T =      27
+                 |                                            |
+allyea~v overall |  .0952381   .2943232          0          1 |     N =     189
+         between |              .082422          0   .1851852 |     n =       7
+         within  |             .2842046  -.0899471   1.058201 |     T =      27
+                 |                                            |
+m2gdp    overall |  87.46507   35.30093   19.56649   164.8682 |     N =     189
+         between |             30.37788   44.42633   127.7249 |     n =       7
+         within  |              21.2359    24.5654   169.8672 |     T =      27
+
+. 
+. /*
+> sum
+> 
+> sum  gdpgpc creditgdp inv gov tot open pop inflation
+> 
+> outreg2 using sum, sum(log) tex replace
+> 
+> sum  gdpgpc creditgdp inv gov tot open pop inflation if creditgdp<=96.47
+> 
+> outreg2 using sumbelow if creditgdp<=96.47, sum(log) tex replace
+> 
+> sum  gdpgpc creditgdp inv gov tot open pop inflation if creditgdp>96.47
+> 
+> outreg2 using sumabove if creditgdp>96.47, sum(log) tex replace
+> 
+> summarize, detail
+> */
+. 
+. // Country list
+. 
+. label list cn
+cn:
+           1 Brunei Darussalam
+           2 Indonesia
+           3 Malaysia
+           4 Philippines
+           5 Singapore
+           6 Thailand
+           7 Vietnam
+
+. 
+. // Generate time dummies
+. 
+. forvalue num=1993(1)2019 {
+  2.                 gen time_`num' = 0
+  3.         replace time_`num' = 1 if year==`num'
+  4. }
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+
+. 
+. // After the South East Asian Crisis
+. 
+. *drop if year<=1998
+. 
+. // Apply the Stata Journal scheme
+. 
+. set scheme sj
+
+. 
+. // Plotting the Credit-to-GDP ratio
+. 
+. format %ty year
+
+. 
+. xtline m2gdp, ylabel(, angle(horizontal)) ylabel(, labsize(small)) /// 
+> tlabel(, grid) tlabel(, labsize(small))
+
+. 
+. capture graph rename m2gdp, replace
+
+. capture graph export figures\m2gdp.png, replace
+
+. capture graph export figures\creditgdp.pdf, replace
+
+. 
+. xtline m2gdp, ylabel(, angle(horizontal)) ylabel(, labsize(small)) /// 
+> tlabel(, grid) tlabel(, labsize(small)) overlay
+
+. 
+. 
+. capture graph rename m2gdpover, replace
+
+. capture graph export figures\m2gdpover.png, replace
+
+. capture graph export figures\m2gdpover.pdf, replace
+
+. 
+. /*
+> xtline gdpgpc, ylabel(, angle(horizontal)) ylabel(, labsize(small)) /// 
+> tlabel(, grid) tlabel(, labsize(small)) yline(0) overlay
+> 
+> capture graph rename gdpgpcover, replace
+> capture graph export gdpgpcover.png, replace
+> capture graph export gdpgpcover.pdf, replace
+> */
+. 
+. // OLS, FE, RE
+. 
+. *OLS
+. 
+. reg gdpgpc m2gdp inv gov tot open time_* bankingcrisislv currencycrisislv debtcrisislv debtr
+> estruclv if creditgdp<=96.47
+note: time_2018 omitted because of collinearity.
+
+      Source |       SS           df       MS      Number of obs   =       108
+-------------+----------------------------------   F(35, 72)       =      5.58
+       Model |  955.947006        35  27.3127716   Prob > F        =    0.0000
+    Residual |   352.61989        72  4.89749847   R-squared       =    0.7305
+-------------+----------------------------------   Adj R-squared   =    0.5995
+       Total |   1308.5669       107  12.2295972   Root MSE        =     2.213
+
+----------------------------------------------------------------------------------
+          gdpgpc | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-----------------+----------------------------------------------------------------
+           m2gdp |  -.0465347   .0136715    -3.40   0.001    -.0737884   -.0192809
+             inv |   .0080701   .0192028     0.42   0.676      -.03021    .0463501
+             gov |   .0862452   .0382529     2.25   0.027     .0099895     .162501
+             tot |  -.0366198   .0052992    -6.91   0.000    -.0471835   -.0260561
+            open |   .0153843   .0036545     4.21   0.000     .0080991    .0226694
+       time_1993 |  -1.624416   1.671827    -0.97   0.334    -4.957143     1.70831
+       time_1994 |   .9259843   1.639137     0.56   0.574    -2.341575    4.193543
+       time_1995 |   .6970832    1.64366     0.42   0.673    -2.579493     3.97366
+       time_1996 |   .1115425   1.663711     0.07   0.947    -3.205004    3.428089
+       time_1997 |  -4.928788   2.743997    -1.80   0.077    -10.39885    .5412713
+       time_1998 |  -2.256404   2.061456    -1.09   0.277    -6.365841    1.853033
+       time_1999 |  -.6264712   1.882983    -0.33   0.740    -4.380128    3.127186
+       time_2000 |   1.265716   1.659897     0.76   0.448    -2.043229     4.57466
+       time_2001 |   .1235435   1.714623     0.07   0.943    -3.294495    3.541582
+       time_2002 |   .5574541   1.774137     0.31   0.754    -2.979224    4.094132
+       time_2003 |   1.392553   1.727819     0.81   0.423    -2.051792    4.836897
+       time_2004 |   1.933222   1.654544     1.17   0.246    -1.365052    5.231496
+       time_2005 |   1.245406   1.675467     0.74   0.460    -2.094575    4.585388
+       time_2006 |   2.086768   1.685669     1.24   0.220    -1.273551    5.447088
+       time_2007 |   1.518181   1.647966     0.92   0.360    -1.766979    4.803341
+       time_2008 |   .8580145   1.718504     0.50   0.619    -2.567761     4.28379
+       time_2009 |  -1.639516   1.859559    -0.88   0.381    -5.346478    2.067447
+       time_2010 |   4.432005   1.726935     2.57   0.012     .9894229    7.874587
+       time_2011 |   1.786498   1.838533     0.97   0.334     -1.87855    5.451546
+       time_2012 |   1.327082   1.699091     0.78   0.437    -2.059994    4.714158
+       time_2013 |   -.347344   1.818214    -0.19   0.849    -3.971887    3.277199
+       time_2014 |    .304103    1.85886     0.16   0.871    -3.401467    4.009673
+       time_2015 |   .3947226   1.813727     0.22   0.828    -3.220875    4.010321
+       time_2016 |   .4118263   1.821777     0.23   0.822    -3.219821    4.043473
+       time_2017 |   1.260712   1.812755     0.70   0.489    -2.352949    4.874373
+       time_2018 |          0  (omitted)
+       time_2019 |   1.365341   1.826016     0.75   0.457    -2.274756    5.005437
+ bankingcrisislv |   5.208956   2.851563     1.83   0.072    -.4755308    10.89344
+currencycrisislv |   -7.89208   2.251682    -3.50   0.001    -12.38073   -3.403433
+    debtcrisislv |  -.8265536   2.579399    -0.32   0.750    -5.968493    4.315385
+   debtrestruclv |   .5112054   1.910692     0.27   0.790    -3.297689    4.320099
+           _cons |   7.424476    1.61284     4.60   0.000     4.209339    10.63961
+----------------------------------------------------------------------------------
+
+. reg gdpgpc m2gdp inv gov tot open inflation time_* bankingcrisislv currencycrisislv debtcris
+> islv debtrestruclv if creditgdp>96.47
+note: time_1995 omitted because of collinearity.
+note: debtcrisislv omitted because of collinearity.
+note: debtrestruclv omitted because of collinearity.
+
+      Source |       SS           df       MS      Number of obs   =        81
+-------------+----------------------------------   F(34, 46)       =      8.17
+       Model |  799.515343        34  23.5151571   Prob > F        =    0.0000
+    Residual |  132.382701        46   2.8778848   R-squared       =    0.8579
+-------------+----------------------------------   Adj R-squared   =    0.7529
+       Total |  931.898044        80  11.6487255   Root MSE        =    1.6964
+
+----------------------------------------------------------------------------------
+          gdpgpc | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-----------------+----------------------------------------------------------------
+           m2gdp |   .0123068    .020915     0.59   0.559    -.0297929    .0544065
+             inv |   .1339815   .0439798     3.05   0.004     .0454547    .2225082
+             gov |  -.0136132   .0649224    -0.21   0.835    -.1442952    .1170687
+             tot |  -.0366632   .0324692    -1.13   0.265    -.1020203    .0286939
+            open |  -.0046926   .0024394    -1.92   0.061    -.0096029    .0002177
+       inflation |   .1567803   .1257097     1.25   0.219    -.0962602    .4098208
+       time_1993 |   .9141398   1.709484     0.53   0.595    -2.526873    4.355153
+       time_1994 |   .3180779   1.707031     0.19   0.853    -3.117998    3.754153
+       time_1995 |          0  (omitted)
+       time_1996 |    .112774   1.753058     0.06   0.949    -3.415949    3.641497
+       time_1997 |   .7425916   2.222164     0.33   0.740    -3.730393    5.215576
+       time_1998 |  -7.222792   2.375126    -3.04   0.004    -12.00367   -2.441911
+       time_1999 |   1.711392    1.96291     0.87   0.388    -2.239741    5.662526
+       time_2000 |  -.5522715   1.836811    -0.30   0.765    -4.249581    3.145038
+       time_2001 |   -4.02644   1.890978    -2.13   0.039     -7.83278   -.2200992
+       time_2002 |   .7810714   1.840254     0.42   0.673    -2.923168    4.485311
+       time_2003 |    1.82545   1.776208     1.03   0.309    -1.749872    5.400772
+       time_2004 |   .2205322    1.82851     0.12   0.905    -3.460067    3.901131
+       time_2005 |   -1.78229   1.805427    -0.99   0.329    -5.416427    1.851847
+       time_2006 |  -.5673715   1.898504    -0.30   0.766    -4.388863     3.25412
+       time_2007 |   .2927124   1.860308     0.16   0.876    -3.451893    4.037317
+       time_2008 |  -4.241965   1.792456    -2.37   0.022    -7.849993   -.6339374
+       time_2009 |  -4.315338   1.756646    -2.46   0.018    -7.851283   -.7793927
+       time_2010 |   .1571161   1.656646     0.09   0.925    -3.177539    3.491772
+       time_2011 |  -1.495501   1.803182    -0.83   0.411    -5.125118    2.134116
+       time_2012 |  -1.328456   1.705354    -0.78   0.440    -4.761155    2.104243
+       time_2013 |  -1.351818   1.711411    -0.79   0.434    -4.796709    2.093074
+       time_2014 |  -1.220891   1.761429    -0.69   0.492    -4.766463    2.324682
+       time_2015 |  -.6439058   1.754642    -0.37   0.715    -4.175818    2.888006
+       time_2016 |  -.8587877   1.795275    -0.48   0.635    -4.472489    2.754913
+       time_2017 |    .094731   1.752513     0.05   0.957    -3.432895    3.622357
+       time_2018 |   .0121954   1.794265     0.01   0.995    -3.599473    3.623864
+       time_2019 |  -1.221803   1.845355    -0.66   0.511     -4.93631    2.492705
+ bankingcrisislv |  -3.996309   2.523641    -1.58   0.120    -9.076135    1.083517
+currencycrisislv |  -.0469397   2.947548    -0.02   0.987    -5.980046    5.886167
+    debtcrisislv |          0  (omitted)
+   debtrestruclv |          0  (omitted)
+           _cons |   6.874814   3.592202     1.91   0.062     -.355914    14.10554
+----------------------------------------------------------------------------------
+
+. 
+. *FE
+. 
+. xtreg gdpgpc m2gdp inv gov tot open inflation time_* bankingcrisislv currencycrisislv debtcr
+> isislv debtrestruclv, fe
+note: time_2019 omitted because of collinearity.
+
+Fixed-effects (within) regression               Number of obs     =        189
+Group variable: cn                              Number of groups  =          7
+
+R-squared:                                      Obs per group:
+     Within  = 0.6552                                         min =         27
+     Between = 0.0152                                         avg =       27.0
+     Overall = 0.5008                                         max =         27
+
+                                                F(36, 146)        =       7.71
+corr(u_i, Xb) = -0.0090                         Prob > F          =     0.0000
+
+----------------------------------------------------------------------------------
+          gdpgpc | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-----------------+----------------------------------------------------------------
+           m2gdp |  -.0066541   .0118117    -0.56   0.574    -.0299982      .01669
+             inv |   .0338943   .0143576     2.36   0.020     .0055186    .0622699
+             gov |   .0152339   .0293598     0.52   0.605    -.0427913     .073259
+             tot |  -.0086456    .007361    -1.17   0.242    -.0231934    .0059022
+            open |    .000877   .0091622     0.10   0.924    -.0172306    .0189846
+       inflation |  -.1299014   .0415285    -3.13   0.002     -.211976   -.0478267
+       time_1993 |   .6967225   1.196887     0.58   0.561    -1.668739    3.062184
+       time_1994 |   1.994554   1.153924     1.73   0.086     -.285999    4.275107
+       time_1995 |   2.101298   1.177262     1.78   0.076    -.2253781    4.427974
+       time_1996 |   .8768348   1.178104     0.74   0.458    -1.451505    3.205175
+       time_1997 |   -.412683   1.694428    -0.24   0.808    -3.761459    2.936093
+       time_1998 |  -3.985349   1.443996    -2.76   0.007    -6.839184   -1.131515
+       time_1999 |   .1622293    1.17012     0.14   0.890    -2.150332     2.47479
+       time_2000 |    .807933   1.138612     0.71   0.479    -1.442357    3.058223
+       time_2001 |  -2.135221   1.117451    -1.91   0.058    -4.343691     .073249
+       time_2002 |  -.1111141   1.135389    -0.10   0.922    -2.355034    2.132806
+       time_2003 |    1.16861    1.12397     1.04   0.300    -1.052744    3.389963
+       time_2004 |    1.47856    1.15561     1.28   0.203    -.8053255    3.762445
+       time_2005 |   .6399316   1.192161     0.54   0.592     -1.71619    2.996053
+       time_2006 |    1.52269   1.196586     1.27   0.205    -.8421777    3.887557
+       time_2007 |   .7677855    1.16011     0.66   0.509    -1.524993    3.060564
+       time_2008 |  -.9970554   1.214274    -0.82   0.413    -3.396882    1.402771
+       time_2009 |  -3.369814   1.097179    -3.07   0.003    -5.538219   -1.201409
+       time_2010 |   2.996342   1.110027     2.70   0.008     .8025446    5.190139
+       time_2011 |   .5196476   1.128023     0.46   0.646    -1.709715    2.749011
+       time_2012 |   .4851374   1.107681     0.44   0.662    -1.704023    2.674298
+       time_2013 |  -.4489547   1.088553    -0.41   0.681    -2.600312    1.702402
+       time_2014 |  -.3494375   1.083139    -0.32   0.747    -2.490094    1.791219
+       time_2015 |  -.4028497   1.075239    -0.37   0.708    -2.527893    1.722193
+       time_2016 |  -.4827513   1.078604    -0.45   0.655    -2.614445    1.648942
+       time_2017 |   .7316156   1.075962     0.68   0.498    -1.394858    2.858089
+       time_2018 |   .1354736   1.078004     0.13   0.900    -1.995034    2.265981
+       time_2019 |          0  (omitted)
+ bankingcrisislv |   -.907948   1.777799    -0.51   0.610    -4.421494    2.605598
+currencycrisislv |  -4.639643   1.810222    -2.56   0.011    -8.217268   -1.062017
+    debtcrisislv |  -1.599907   2.289603    -0.70   0.486    -6.124954     2.92514
+   debtrestruclv |   .9927704    1.59966     0.62   0.536    -2.168712    4.154252
+           _cons |    4.68556   1.559384     3.00   0.003     1.603678    7.767442
+-----------------+----------------------------------------------------------------
+         sigma_u |  1.8110416
+         sigma_e |  2.0063718
+             rho |  .44896542   (fraction of variance due to u_i)
+----------------------------------------------------------------------------------
+F test that all u_i=0: F(6, 146) = 9.63                      Prob > F = 0.0000
+
+. 
+. *without time dummies
+. 
+. xtreg gdpgpc m2gdp inv gov tot open inflation bankingcrisislv currencycrisislv debtcrisislv 
+> debtrestruclv if creditgdp<=96.47, fe
+
+Fixed-effects (within) regression               Number of obs     =        108
+Group variable: cn                              Number of groups  =          5
+
+R-squared:                                      Obs per group:
+     Within  = 0.5752                                         min =         10
+     Between = 0.7110                                         avg =       21.6
+     Overall = 0.0007                                         max =         27
+
+                                                F(10, 93)         =      12.59
+corr(u_i, Xb) = -0.6296                         Prob > F          =     0.0000
+
+----------------------------------------------------------------------------------
+          gdpgpc | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-----------------+----------------------------------------------------------------
+           m2gdp |   .0390675   .0151214     2.58   0.011     .0090395    .0690955
+             inv |   .0252241   .0125623     2.01   0.048     .0002778    .0501704
+             gov |   .0233663   .0286561     0.82   0.417    -.0335391    .0802716
+             tot |   .0072033   .0064195     1.12   0.265    -.0055445    .0199512
+            open |  -.0263905   .0124645    -2.12   0.037    -.0511425   -.0016384
+       inflation |  -.1491235   .0404885    -3.68   0.000    -.2295257   -.0687213
+ bankingcrisislv |   .1283023   1.165281     0.11   0.913    -2.185714    2.442319
+currencycrisislv |  -6.341086   1.754121    -3.61   0.000    -9.824423    -2.85775
+    debtcrisislv |  -2.340813   1.910072    -1.23   0.223    -6.133838    1.452211
+   debtrestruclv |   .3207193   1.412408     0.23   0.821    -2.484043    3.125482
+           _cons |   3.158171   1.375243     2.30   0.024     .4272123    5.889131
+-----------------+----------------------------------------------------------------
+         sigma_u |   5.047285
+         sigma_e |   1.781077
+             rho |   .8892659   (fraction of variance due to u_i)
+----------------------------------------------------------------------------------
+F test that all u_i=0: F(4, 93) = 18.62                      Prob > F = 0.0000
+
+. 
+. estimate store M2_FE_BELOW
+
+. 
+. *with time dummies
+. 
+. xtreg gdpgpc m2gdp inv gov tot open inflation time_* bankingcrisislv currencycrisislv debtcr
+> isislv debtrestruclv if creditgdp<=96.47, fe
+note: time_2019 omitted because of collinearity.
+
+Fixed-effects (within) regression               Number of obs     =        108
+Group variable: cn                              Number of groups  =          5
+
+R-squared:                                      Obs per group:
+     Within  = 0.7182                                         min =         10
+     Between = 0.5880                                         avg =       21.6
+     Overall = 0.0249                                         max =         27
+
+                                                F(36, 67)         =       4.74
+corr(u_i, Xb) = -0.5759                         Prob > F          =     0.0000
+
+----------------------------------------------------------------------------------
+          gdpgpc | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-----------------+----------------------------------------------------------------
+           m2gdp |   .0403045   .0169408     2.38   0.020     .0064905    .0741186
+             inv |   .0111295   .0153593     0.72   0.471    -.0195278    .0417868
+             gov |   .0441889   .0319267     1.38   0.171     -.019537    .1079149
+             tot |   -.001171   .0086953    -0.13   0.893     -.018527    .0161849
+            open |  -.0318031    .015402    -2.06   0.043    -.0625455   -.0010607
+       inflation |  -.1914426   .0456932    -4.19   0.000    -.2826466   -.1002385
+       time_1993 |  -1.350585   1.356642    -1.00   0.323    -4.058455    1.357284
+       time_1994 |   .3727997    1.31137     0.28   0.777    -2.244707    2.990306
+       time_1995 |   .8980979   1.326221     0.68   0.501     -1.74905    3.545245
+       time_1996 |   -.166811   1.356364    -0.12   0.902    -2.874124    2.540502
+       time_1997 |  -3.533977   2.130798    -1.66   0.102    -7.787068    .7191145
+       time_1998 |  -2.017671   1.641048    -1.23   0.223    -5.293217    1.257875
+       time_1999 |  -.9349854    1.46841    -0.64   0.526    -3.865945    1.995974
+       time_2000 |  -.8247698   1.319937    -0.62   0.534    -3.459374    1.809835
+       time_2001 |  -1.343463    1.37172    -0.98   0.331    -4.081428    1.394502
+       time_2002 |  -.8367343    1.43422    -0.58   0.562    -3.699449    2.025981
+       time_2003 |  -.3968845   1.369349    -0.29   0.773    -3.130117    2.336348
+       time_2004 |   .5646015   1.351242     0.42   0.677    -2.132488    3.261691
+       time_2005 |   .1978617   1.391441     0.14   0.887    -2.579467     2.97519
+       time_2006 |   .7668336   1.423642     0.54   0.592    -2.074768    3.608435
+       time_2007 |  -.4251333   1.382961    -0.31   0.759    -3.185535    2.335269
+       time_2008 |  -.0224937   1.466294    -0.02   0.988    -2.949229    2.904242
+       time_2009 |  -3.294745   1.447296    -2.28   0.026    -6.183559    -.405931
+       time_2010 |   2.014047   1.385721     1.45   0.151    -.7518631    4.779956
+       time_2011 |   .1788253   1.466779     0.12   0.903    -2.748878    3.106528
+       time_2012 |  -.6513674   1.375971    -0.47   0.637    -3.397817    2.095082
+       time_2013 |  -1.251675   1.415534    -0.88   0.380    -4.077093    1.573744
+       time_2014 |    -1.4786   1.423189    -1.04   0.303    -4.319297    1.362098
+       time_2015 |  -1.593434   1.413213    -1.13   0.264     -4.41422    1.227351
+       time_2016 |  -2.153454   1.422692    -1.51   0.135    -4.993159     .686251
+       time_2017 |  -.9409332   1.410833    -0.67   0.507    -3.756968    1.875101
+       time_2018 |    -1.0992   1.414756    -0.78   0.440    -3.923064    1.724664
+       time_2019 |          0  (omitted)
+ bankingcrisislv |   3.122703   2.286488     1.37   0.177    -1.441146    7.686552
+currencycrisislv |  -3.602403   2.190403    -1.64   0.105    -7.974465    .7696598
+    debtcrisislv |  -1.469995   2.147466    -0.68   0.496    -5.756356    2.816366
+   debtrestruclv |   .5007986   1.491466     0.34   0.738    -2.476179    3.477776
+           _cons |   5.331298   2.112924     2.52   0.014     1.113885    9.548711
+-----------------+----------------------------------------------------------------
+         sigma_u |  5.0953975
+         sigma_e |  1.7090497
+             rho |  .89887626   (fraction of variance due to u_i)
+----------------------------------------------------------------------------------
+F test that all u_i=0: F(4, 67) = 12.69                      Prob > F = 0.0000
+
+. 
+. estimate store M2_FE_TE_BELOW
+
+. 
+. *without time dummies
+. 
+. xtreg gdpgpc m2gdp inv gov tot open inflation bankingcrisislv currencycrisislv debtcrisislv 
+> debtrestruclv if creditgdp>96.47, fe
+note: debtcrisislv omitted because of collinearity.
+note: debtrestruclv omitted because of collinearity.
+
+Fixed-effects (within) regression               Number of obs     =         81
+Group variable: cn                              Number of groups  =          4
+
+R-squared:                                      Obs per group:
+     Within  = 0.6077                                         min =         10
+     Between = 0.1295                                         avg =       20.2
+     Overall = 0.5597                                         max =         27
+
+                                                F(8, 69)          =      13.36
+corr(u_i, Xb) = 0.0058                          Prob > F          =     0.0000
+
+----------------------------------------------------------------------------------
+          gdpgpc | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-----------------+----------------------------------------------------------------
+           m2gdp |  -.0463608    .027787    -1.67   0.100    -.1017944    .0090728
+             inv |   .1768213   .0405201     4.36   0.000     .0959858    .2576567
+             gov |  -.0652446   .0730528    -0.89   0.375    -.2109809    .0804917
+             tot |  -.0065996   .0385323    -0.17   0.865    -.0834694    .0702702
+            open |  -.0027575   .0106092    -0.26   0.796    -.0239222    .0184072
+       inflation |  -.0815533   .1313074    -0.62   0.537    -.3435045    .1803978
+ bankingcrisislv |  -1.694739   1.726874    -0.98   0.330    -5.139758     1.75028
+currencycrisislv |    -4.4389   2.572356    -1.73   0.089    -9.570609    .6928088
+    debtcrisislv |          0  (omitted)
+   debtrestruclv |          0  (omitted)
+           _cons |   10.08736   4.186483     2.41   0.019     1.735554    18.43916
+-----------------+----------------------------------------------------------------
+         sigma_u |  1.4458745
+         sigma_e |  2.1851886
+             rho |  .30449668   (fraction of variance due to u_i)
+----------------------------------------------------------------------------------
+F test that all u_i=0: F(3, 69) = 1.58                       Prob > F = 0.2024
+
+. 
+. estimate store M2_FE_ABOVE
+
+. 
+. *with time dummies
+. 
+. xtreg gdpgpc m2gdp inv gov tot open inflation time_* bankingcrisislv currencycrisislv debtcr
+> isislv debtrestruclv if creditgdp>96.47, fe
+note: time_2019 omitted because of collinearity.
+note: debtcrisislv omitted because of collinearity.
+note: debtrestruclv omitted because of collinearity.
+
+Fixed-effects (within) regression               Number of obs     =         81
+Group variable: cn                              Number of groups  =          4
+
+R-squared:                                      Obs per group:
+     Within  = 0.8609                                         min =         10
+     Between = 0.2527                                         avg =       20.2
+     Overall = 0.8007                                         max =         27
+
+                                                F(34, 43)         =       7.82
+corr(u_i, Xb) = -0.0712                         Prob > F          =     0.0000
+
+----------------------------------------------------------------------------------
+          gdpgpc | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-----------------+----------------------------------------------------------------
+           m2gdp |  -.0278052   .0370097    -0.75   0.457    -.1024424    .0468319
+             inv |   .1298947   .0428951     3.03   0.004     .0433885     .216401
+             gov |  -.0368642    .063836    -0.58   0.567    -.1656018    .0918735
+             tot |  -.0019228   .0388362    -0.05   0.961    -.0802434    .0763978
+            open |  -.0064359   .0126086    -0.51   0.612    -.0318637    .0189918
+       inflation |  -.0746354   .1580432    -0.47   0.639    -.3933599     .244089
+       time_1993 |   2.612731   1.971386     1.33   0.192    -1.362947    6.588409
+       time_1994 |   2.266474   2.092999     1.08   0.285    -1.954461    6.487409
+       time_1995 |   2.227819   2.138031     1.04   0.303    -2.083932     6.53957
+       time_1996 |   2.263733   1.903684     1.19   0.241    -1.575412    6.102877
+       time_1997 |   1.092126   2.520917     0.43   0.667    -3.991787    6.176039
+       time_1998 |  -6.472637   1.994575    -3.25   0.002    -10.49508   -2.450192
+       time_1999 |   2.923127    1.47281     1.98   0.054    -.0470764    5.893331
+       time_2000 |   .6872236   1.910366     0.36   0.721    -3.165397    4.539844
+       time_2001 |  -2.325462   1.425007    -1.63   0.110    -5.199262    .5483374
+       time_2002 |   2.060358   1.465941     1.41   0.167    -.8959931    5.016709
+       time_2003 |    3.11745   1.499943     2.08   0.044     .0925268    6.142373
+       time_2004 |   1.835144   1.774626     1.03   0.307    -1.743729    5.414018
+       time_2005 |   .1612735   1.894919     0.09   0.933    -3.660195    3.982742
+       time_2006 |   1.290851   1.802347     0.72   0.478    -2.343928    4.925631
+       time_2007 |   1.544697   1.850119     0.83   0.408    -2.186423    5.275817
+       time_2008 |  -1.896027   1.850207    -1.02   0.311    -5.627326    1.835272
+       time_2009 |  -3.301686   1.268351    -2.60   0.013     -5.85956   -.7438122
+       time_2010 |    1.67972   1.527025     1.10   0.277    -1.399819    4.759259
+       time_2011 |   .9479621   1.545518     0.61   0.543    -2.168873    4.064797
+       time_2012 |   1.033493   1.485646     0.70   0.490    -1.962599    4.029584
+       time_2013 |   .4185226     1.2594     0.33   0.741    -2.121299    2.958345
+       time_2014 |   .3092372   1.200587     0.26   0.798    -2.111976    2.730451
+       time_2015 |   .3524787   1.208789     0.29   0.772    -2.085276    2.790233
+       time_2016 |   .2943006   1.174353     0.25   0.803    -2.074009     2.66261
+       time_2017 |   1.469477   1.192038     1.23   0.224    -.9344971    3.873451
+       time_2018 |   1.269024   1.176943     1.08   0.287    -1.104507    3.642555
+       time_2019 |          0  (omitted)
+ bankingcrisislv |  -2.252617   2.578548    -0.87   0.387    -7.452754     2.94752
+currencycrisislv |   .8163235   2.941293     0.28   0.783    -5.115359    6.748006
+    debtcrisislv |          0  (omitted)
+   debtrestruclv |          0  (omitted)
+           _cons |    7.41456   4.990108     1.49   0.145    -2.648952    17.47807
+-----------------+----------------------------------------------------------------
+         sigma_u |  1.3419819
+         sigma_e |  1.6485141
+             rho |  .39856363   (fraction of variance due to u_i)
+----------------------------------------------------------------------------------
+F test that all u_i=0: F(3, 43) = 1.90                       Prob > F = 0.1432
+
+. 
+. estimate store M2_FE_TE_ABOVE
+
+. 
+. // PTR
+. 
+. **Single threshold model (Hansen 1999)
+. 
+. *without time dummies
+. 
+. xthreg gdpgpc inv gov tot open inflation bankingcrisislv currencycrisislv debtcrisislv debtr
+> estruclv, rx(m2gdp) qx(creditgdp) thnum(1) grid(400) trim(0.01) bs(150)
+Estimating  the  threshold  parameters:   1st ......  Done
+Boostrap for single threshold
+.................................................. +   50
+.................................................. +  100
+.................................................. +  150
+
+Threshold estimator (level = 95):
+-----------------------------------------------------
+     model |    Threshold         Lower         Upper
+-----------+-----------------------------------------
+      Th-1 |      96.4703       95.4554       96.7483
+-----------------------------------------------------
+
+Threshold effect test (bootstrap = 150):
+-------------------------------------------------------------------------------
+ Threshold |       RSS        MSE      Fstat    Prob   Crit10    Crit5    Crit1
+-----------+-------------------------------------------------------------------
+    Single |  807.2558     4.9831      19.28  0.0000  12.0997  13.8762  17.5930
+-------------------------------------------------------------------------------
+
+Fixed-effects (within) regression               Number of obs     =        189
+Group variable: cn                              Number of groups  =          7
+
+R-squared:                                      Obs per group:
+     Within  = 0.5265                                         min =         27
+     Between = 0.2728                                         avg =       27.0
+     Overall = 0.1917                                         max =         27
+
+                                                F(11, 171)        =      17.28
+corr(u_i, Xb) = -0.3852                         Prob > F          =     0.0000
+
+----------------------------------------------------------------------------------
+          gdpgpc | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-----------------+----------------------------------------------------------------
+             inv |   .0546691   .0136459     4.01   0.000     .0277329    .0816053
+             gov |   .0028339   .0298726     0.09   0.925    -.0561326    .0618003
+             tot |   .0007493   .0070799     0.11   0.916    -.0132261    .0147246
+            open |   .0006844   .0079888     0.09   0.932    -.0150849    .0164537
+       inflation |   -.105798   .0401078    -2.64   0.009    -.1849682   -.0266279
+ bankingcrisislv |  -1.465734   1.054058    -1.39   0.166    -3.546376     .614907
+currencycrisislv |  -8.866152   1.386443    -6.39   0.000     -11.6029   -6.129405
+    debtcrisislv |  -2.246321   2.303022    -0.98   0.331    -6.792335    2.299694
+   debtrestruclv |   .8586636   1.657546     0.52   0.605    -2.413223     4.13055
+                 |
+    _cat#c.m2gdp |
+              0  |   .0250742   .0136811     1.83   0.069    -.0019314    .0520798
+              1  |  -.0073223   .0099202    -0.74   0.461    -.0269041    .0122595
+                 |
+           _cons |   2.640309   1.320075     2.00   0.047     .0345688    5.246049
+-----------------+----------------------------------------------------------------
+         sigma_u |  2.6987577
+         sigma_e |  2.1727388
+             rho |  .60673445   (fraction of variance due to u_i)
+----------------------------------------------------------------------------------
+F test that all u_i=0: F(6, 171) = 12.84                     Prob > F = 0.0000
+
+. 
+. estimate store M2_PTR
+
+. 
+. *with time dummies
+. 
+. xthreg gdpgpc inv gov tot open inflation time_* bankingcrisislv currencycrisislv debtcrisisl
+> v debtrestruclv, rx(m2gdp) qx(creditgdp) thnum(1) grid(400) trim(0.01) bs(400)
+Estimating  the  threshold  parameters:   1st ......  Done
+Boostrap for single threshold
+.................................................. +   50
+.................................................. +  100
+.................................................. +  150
+.................................................. +  200
+.................................................. +  250
+.................................................. +  300
+.................................................. +  350
+.................................................. +  400
+
+Threshold estimator (level = 95):
+-----------------------------------------------------
+     model |    Threshold         Lower         Upper
+-----------+-----------------------------------------
+      Th-1 |      96.4703       95.4554       96.7483
+-----------------------------------------------------
+
+Threshold effect test (bootstrap = 400):
+-------------------------------------------------------------------------------
+ Threshold |       RSS        MSE      Fstat    Prob   Crit10    Crit5    Crit1
+-----------+-------------------------------------------------------------------
+    Single |  531.0470     3.2781      17.29  0.0350  13.0543  15.2581  22.3808
+-------------------------------------------------------------------------------
+note: time_1998 omitted because of collinearity
+
+Fixed-effects (within) regression               Number of obs     =        189
+Group variable: cn                              Number of groups  =          7
+
+R-squared:                                      Obs per group:
+     Within  = 0.6885                                         min =         27
+     Between = 0.4471                                         avg =       27.0
+     Overall = 0.3273                                         max =         27
+
+                                                F(37, 145)        =       8.66
+corr(u_i, Xb) = -0.2845                         Prob > F          =     0.0000
+
+----------------------------------------------------------------------------------
+          gdpgpc | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-----------------+----------------------------------------------------------------
+             inv |   .0332447   .0136957     2.43   0.016     .0061756    .0603138
+             gov |    .013492   .0280078     0.48   0.631    -.0418643    .0688482
+             tot |   .0010209   .0074386     0.14   0.891    -.0136813    .0157231
+            open |  -.0016596   .0087629    -0.19   0.850    -.0189791    .0156599
+       inflation |  -.1394099   .0396848    -3.51   0.001    -.2178453   -.0609745
+       time_1993 |   4.324603   1.404393     3.08   0.002     1.548877     7.10033
+       time_1994 |   5.459266   1.366928     3.99   0.000     2.757588    8.160945
+       time_1995 |   5.608825    1.37897     4.07   0.000     2.883346    8.334304
+       time_1996 |   4.351505   1.397066     3.11   0.002      1.59026    7.112751
+       time_1997 |   2.580034   1.787363     1.44   0.151    -.9526171    6.112685
+       time_1998 |          0  (omitted)
+       time_1999 |   3.778552   1.392333     2.71   0.007     1.026661    6.530443
+       time_2000 |   3.805891   1.417161     2.69   0.008     1.004928    6.606853
+       time_2001 |   1.272924   1.388881     0.92   0.361    -1.472144    4.017992
+       time_2002 |   3.342905   1.403119     2.38   0.018     .5696981    6.116113
+       time_2003 |   4.564518   1.390479     3.28   0.001     1.816293    7.312742
+       time_2004 |    4.50112   1.424253     3.16   0.002     1.686141    7.316099
+       time_2005 |   3.712058   1.442389     2.57   0.011     .8612349    6.562882
+       time_2006 |   4.465217   1.464335     3.05   0.003     1.571018    7.359415
+       time_2007 |   3.652241   1.450417     2.52   0.013     .7855499    6.518932
+       time_2008 |   2.397257    1.45257     1.65   0.101    -.4736887    5.268203
+       time_2009 |   .1716143   1.394868     0.12   0.902    -2.585287    2.928515
+       time_2010 |   6.125057   1.414856     4.33   0.000     3.328651    8.921463
+       time_2011 |   4.207377    1.40118     3.00   0.003     1.438002    6.976752
+       time_2012 |   3.797747    1.40264     2.71   0.008     1.025486    6.570008
+       time_2013 |   3.237922    1.37918     2.35   0.020     .5120296    5.963815
+       time_2014 |   3.203189    1.38373     2.31   0.022     .4683016    5.938076
+       time_2015 |   3.121381   1.389486     2.25   0.026     .3751178    5.867645
+       time_2016 |   2.948507   1.400048     2.11   0.037     .1813686    5.715645
+       time_2017 |   4.213213    1.39324     3.02   0.003      1.45953    6.966897
+       time_2018 |   3.713214   1.385426     2.68   0.008     .9749755    6.451453
+       time_2019 |   3.530101    1.38218     2.55   0.012     .7982792    6.261923
+ bankingcrisislv |  -.3567811   1.701497    -0.21   0.834    -3.719721    3.006158
+currencycrisislv |  -5.265615   1.733961    -3.04   0.003    -8.692719    -1.83851
+    debtcrisislv |  -2.387569   2.193051    -1.09   0.278    -6.722047    1.946908
+   debtrestruclv |   1.074803   1.525947     0.70   0.482    -1.941169    4.090776
+                 |
+    _cat#c.m2gdp |
+              0  |   .0262816   .0140365     1.87   0.063     -.001461    .0540242
+              1  |  -.0004223   .0113772    -0.04   0.970    -.0229089    .0220643
+                 |
+           _cons |  -.9031013    1.56838    -0.58   0.566    -4.002942    2.196739
+-----------------+----------------------------------------------------------------
+         sigma_u |   2.561657
+         sigma_e |  1.9137381
+             rho |   .6418015   (fraction of variance due to u_i)
+----------------------------------------------------------------------------------
+F test that all u_i=0: F(6, 145) = 12.64                     Prob > F = 0.0000
+
+. 
+. estimate store M2_TE_PTR
+
+. 
+. local switches "dec(4) excel se"
+
+. 
+. outreg2 [M2_*] using results\HJ_threshold_M2.xml, replace `switches'
+results\HJ_threshold_M2.xml
+dir : seeout
+
+. 
+. _matplot e(LR), yline(7.35, lpattern(dash)) connect(direct) msize(small) mlabp(0) mlabs(zero
+> ) ytitle("LR Statistics") xtitle("Threshold") recast(line)
+
+. 
+. // local switches "dec(4) excel se"
+. 
+. // outreg2 [M2_*] using "HJ_threshold.xml", replace `switches'
+. 
+. // Save the data
+. save data\data_endothres_gcasean_m2.dta, ///
+> replace
+file data\data_endothres_gcasean_m2.dta saved
+
+. 
+. log close
+      name:  <unnamed>
+       log:  C:\Users\jamel\Documents\GitHub\ResearchPapers\Ho and Saadaoui 2022\logs\endo_thr
+> es_m2.log
+  log type:  text
+ closed on:   4 Jan 2024, 12:56:30
+----------------------------------------------------------------------------------------------

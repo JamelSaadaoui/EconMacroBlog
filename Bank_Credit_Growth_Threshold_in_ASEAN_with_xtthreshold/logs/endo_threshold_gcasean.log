@@ -1,0 +1,499 @@
+----------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\jamel\Documents\GitHub\ResearchPapers\Ho and Saadaoui 2022\logs\endo_thr
+> eshold_gcasean.log
+  log type:  text
+ opened on:  10 Feb 2024, 11:34:23
+
+. 
+. use data\data_asean_final.dta, clear
+
+. 
+. // Install useful packages
+. 
+. *capture ssc install xtendothresdpd
+. *capture ssc install outreg2
+. 
+. // Prepare the panel data
+. 
+. rename cn country
+
+. 
+. encode country, generate(cn)
+
+. 
+. drop country
+
+. 
+. order cn code year, first
+
+. 
+. xtset cn year  
+
+Panel variable: cn (strongly balanced)
+ Time variable: year, 1993 to 2019
+         Delta: 1 unit
+
+. 
+. *browse
+. 
+. // Label the variables
+. 
+. label variable cn "Country"
+
+. label variable year "Date"
+
+. label variable gdpgpc "Annual growth rate of GDP per capita"
+
+. label variable inv "Annual percentage change in investment"
+
+. label variable gov "Annual percentage change in government expenditure"
+
+. label variable tot "Terms of trade"
+
+. label variable open "Openness ratio"
+
+. label variable pop "Annual percentage change of population"
+
+. label variable inflation "Annual percentage change of the CPI"
+
+. label variable creditgrowth "Annual percentage change of bank credit"
+
+. label variable creditgdp "Credit-to-GDP ratio"
+
+. label variable bankingcrisislv "Dummy for bank crises"
+
+. label variable currencycrisislv "Dummy for currency crises"
+
+. label variable debtcrisislv "Dummy for sovereign debt crises"
+
+. label variable debtrestruclv "Dummy for debt restructuring"
+
+. label variable allyearsbankingcrisis "Dummy for all year bank crises"
+
+. 
+. // Inspect the dataset
+. 
+. xtdes //-> Note 1
+
+      cn:  1, 2, ..., 7                                      n =          7
+    year:  1993, 1994, ..., 2019                             T =         27
+           Delta(year) = 1 unit
+           Span(year)  = 27 periods
+           (cn*year uniquely identifies each observation)
+
+Distribution of T_i:   min      5%     25%       50%       75%     95%     max
+                        27      27      27        27        27      27      27
+
+     Freq.  Percent    Cum. |  Pattern
+ ---------------------------+-----------------------------
+        7    100.00  100.00 |  111111111111111111111111111
+ ---------------------------+-----------------------------
+        7    100.00         |  XXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+. 
+. des
+
+Contains data from data\data_asean_final.dta
+ Observations:           189                  
+    Variables:            17                  4 Jan 2024 12:52
+----------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+----------------------------------------------------------------------------------------------
+cn              long    %17.0g     cn         Country
+code            str3    %9s                   code
+year            int     %10.0g                Date
+gdpgpc          double  %10.0g                Annual growth rate of GDP per capita
+inv             double  %10.0g                Annual percentage change in investment
+gov             double  %10.0g                Annual percentage change in government
+                                                expenditure
+tot             double  %10.0g                Terms of trade
+open            double  %10.0g                Openness ratio
+pop             double  %10.0g                Annual percentage change of population
+inflation       double  %10.0g                Annual percentage change of the CPI
+creditgrowth    double  %10.0g                Annual percentage change of bank credit
+creditgdp       double  %10.0g                Credit-to-GDP ratio
+bankingcrisislv byte    %10.0g                Dummy for bank crises
+currencycrisi~v byte    %10.0g                Dummy for currency crises
+debtcrisislv    byte    %10.0g                Dummy for sovereign debt crises
+debtrestruclv   byte    %10.0g                Dummy for debt restructuring
+allyearsbanki~v byte    %10.0g                Dummy for all year bank crises
+----------------------------------------------------------------------------------------------
+Sorted by: cn  year
+     Note: Dataset has changed since last saved.
+
+. 
+end of do-file
+
+. help xthreg
+
+. do "C:\Users\jamel\AppData\Local\Temp\STD599c_000000.tmp"
+
+. xthreg gdpgpc inv gov tot open inflation time_* bankingcrisislv currencycrisislv debtcrisisl
+> v debtrestruclv, rx(creditgdp) qx(creditgdp) thnum(1) grid(100) trim(0.01) bs(300)
+variable time_* not found
+r(111);
+
+end of do-file
+
+r(111);
+
+. do "C:\Users\jamel\AppData\Local\Temp\STD599c_000000.tmp"
+
+. // Generate time dummies
+. 
+. forvalue num=1993(1)2019 {
+  2.                 gen time_`num' = 0
+  3.         replace time_`num' = 1 if year==`num'
+  4. }
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+(7 real changes made)
+
+. 
+. // Cross-sectional averages
+. 
+. foreach v in gdpgpc creditgdp inv gov tot open inflation {
+  2.         egen cr_`v'=mean(`v'), by(year)
+  3. }
+
+. 
+. foreach v in gdpgpc creditgdp inv gov tot open inflation {
+  2.         gen lcr_`v'=l.cr_`v'
+  3. }
+(7 missing values generated)
+(7 missing values generated)
+(7 missing values generated)
+(7 missing values generated)
+(7 missing values generated)
+(7 missing values generated)
+(7 missing values generated)
+
+. 
+end of do-file
+
+. do "C:\Users\jamel\AppData\Local\Temp\STD599c_000000.tmp"
+
+. xthreg gdpgpc inv gov tot open time_* bankingcrisislv currencycrisislv debtcrisislv debtrest
+> ruclv, rx(creditgdp) qx(creditgdp) thnum(1) grid(400) 
+Estimating  the  threshold  parameters:   1st ......  Done
+
+Threshold estimator (level = 95):
+-----------------------------------------------------
+     model |    Threshold         Lower         Upper
+-----------+-----------------------------------------
+      Th-1 |      96.4703       95.4554       96.7483
+-----------------------------------------------------
+note: time_1998 omitted because of collinearity
+
+Fixed-effects (within) regression               Number of obs     =        189
+Group variable: cn                              Number of groups  =          7
+
+R-squared:                                      Obs per group:
+     Within  = 0.6699                                         min =         27
+     Between = 0.0058                                         avg =       27.0
+     Overall = 0.4753                                         max =         27
+
+                                                F(36, 146)        =       8.23
+corr(u_i, Xb) = -0.0783                         Prob > F          =     0.0000
+
+----------------------------------------------------------------------------------
+          gdpgpc | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-----------------+----------------------------------------------------------------
+             inv |    .042989   .0141054     3.05   0.003     .0151118    .0708662
+             gov |   .0209198     .02868     0.73   0.467    -.0357618    .0776014
+             tot |  -.0022615   .0072232    -0.31   0.755    -.0165371    .0120141
+            open |  -.0073458   .0068423    -1.07   0.285    -.0208686    .0061769
+       time_1993 |   3.579868   1.438275     2.49   0.014     .7373387    6.422398
+       time_1994 |   4.798277   1.396143     3.44   0.001     2.039016    7.557539
+       time_1995 |   4.818971   1.400925     3.44   0.001     2.050258    7.587684
+       time_1996 |   3.631597   1.438159     2.53   0.013     .7892976    6.473896
+       time_1997 |   1.522373   1.871865     0.81   0.417     -2.17708    5.221825
+       time_1998 |          0  (omitted)
+       time_1999 |   3.884873   1.425896     2.72   0.007      1.06681    6.702936
+       time_2000 |    4.28988   1.438784     2.98   0.003     1.446345    7.133415
+       time_2001 |   1.552988    1.41781     1.10   0.275    -1.249094     4.35507
+       time_2002 |   3.512833   1.434339     2.45   0.016     .6780837    6.347581
+       time_2003 |   5.020434   1.421132     3.53   0.001     2.211786    7.829083
+       time_2004 |   4.736634   1.449271     3.27   0.001     1.872373    7.600894
+       time_2005 |   3.864544   1.464432     2.64   0.009     .9703207    6.758768
+       time_2006 |   4.726305   1.485662     3.18   0.002     1.790123    7.662486
+       time_2007 |   3.932687   1.473288     2.67   0.008      1.02096    6.844413
+       time_2008 |   2.013656   1.463232     1.38   0.171    -.8781963    4.905509
+       time_2009 |   .5703578   1.419692     0.40   0.688    -2.235445     3.37616
+       time_2010 |   6.327454   1.432553     4.42   0.000     3.496234    9.158673
+       time_2011 |   4.080319   1.427085     2.86   0.005     1.259906    6.900731
+       time_2012 |    3.80657   1.425403     2.67   0.008     .9894805    6.623659
+       time_2013 |   3.332039   1.404412     2.37   0.019     .5564367    6.107642
+       time_2014 |   3.427631   1.402688     2.44   0.016     .6554358    6.199827
+       time_2015 |   3.399135   1.395863     2.44   0.016     .6404285    6.157842
+       time_2016 |   3.217986   1.390742     2.31   0.022     .4693993    5.966573
+       time_2017 |   4.381509   1.397425     3.14   0.002     1.619714    7.143305
+       time_2018 |   3.826951   1.398946     2.74   0.007      1.06215    6.591752
+       time_2019 |   3.817412    1.38791     2.75   0.007     1.074422    6.560403
+ bankingcrisislv |   .1154187   1.759881     0.07   0.948    -3.362714    3.593551
+currencycrisislv |  -7.335688   1.647955    -4.45   0.000    -10.59262    -4.07876
+    debtcrisislv |  -2.734776   2.189717    -1.25   0.214    -7.062413    1.592861
+   debtrestruclv |    1.88692   1.593049     1.18   0.238    -1.261495    5.035335
+                 |
+_cat#c.creditgdp |
+              0  |   .0427774   .0112303     3.81   0.000     .0205825    .0649723
+              1  |   .0113026   .0070212     1.61   0.110    -.0025738     .025179
+                 |
+           _cons |  -1.162669   1.577102    -0.74   0.462    -4.279567     1.95423
+-----------------+----------------------------------------------------------------
+         sigma_u |  1.9521249
+         sigma_e |  1.9631241
+             rho |  .49719069   (fraction of variance due to u_i)
+----------------------------------------------------------------------------------
+F test that all u_i=0: F(6, 146) = 9.25                      Prob > F = 0.0000
+
+. 
+end of do-file
+
+. do "C:\Users\jamel\AppData\Local\Temp\STD599c_000000.tmp"
+
+. xthreg gdpgpc inv gov tot open bankingcrisislv currencycrisislv debtcrisislv debtrestruclv, 
+> rx(creditgdp) qx(creditgdp) thnum(1) grid(400) 
+Estimating  the  threshold  parameters:   1st ......  Done
+
+Threshold estimator (level = 95):
+-----------------------------------------------------
+     model |    Threshold         Lower         Upper
+-----------+-----------------------------------------
+      Th-1 |      96.4703       95.4554       96.7483
+-----------------------------------------------------
+
+Fixed-effects (within) regression               Number of obs     =        189
+Group variable: cn                              Number of groups  =          7
+
+R-squared:                                      Obs per group:
+     Within  = 0.5174                                         min =         27
+     Between = 0.0984                                         avg =       27.0
+     Overall = 0.3275                                         max =         27
+
+                                                F(10, 172)        =      18.44
+corr(u_i, Xb) = -0.1323                         Prob > F          =     0.0000
+
+----------------------------------------------------------------------------------
+          gdpgpc | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-----------------+----------------------------------------------------------------
+             inv |    .060983   .0136659     4.46   0.000     .0340086    .0879574
+             gov |   .0077424    .030004     0.26   0.797    -.0514811    .0669659
+             tot |   .0029559   .0069147     0.43   0.670    -.0106928    .0166045
+            open |  -.0055633   .0065418    -0.85   0.396    -.0184758    .0073492
+ bankingcrisislv |  -2.148279   1.072525    -2.00   0.047    -4.265286   -.0312721
+currencycrisislv |  -10.75419   1.245566    -8.63   0.000    -13.21276    -8.29563
+    debtcrisislv |   -2.20234   2.265121    -0.97   0.332    -6.673355    2.268675
+   debtrestruclv |   2.057273   1.695779     1.21   0.227    -1.289945     5.40449
+                 |
+_cat#c.creditgdp |
+              0  |   .0515117   .0113892     4.52   0.000     .0290311    .0739923
+              1  |   .0134151   .0070693     1.90   0.059    -.0005386    .0273689
+                 |
+           _cons |   1.283575   1.343525     0.96   0.341    -1.368345    3.935496
+-----------------+----------------------------------------------------------------
+         sigma_u |  2.0744921
+         sigma_e |  2.1869509
+             rho |  .47362853   (fraction of variance due to u_i)
+----------------------------------------------------------------------------------
+F test that all u_i=0: F(6, 172) = 10.09                     Prob > F = 0.0000
+
+. 
+end of do-file
+
+. do "C:\Users\jamel\AppData\Local\Temp\STD599c_000000.tmp"
+
+. xthreg gdpgpc inv gov tot open bankingcrisislv currencycrisislv debtcrisislv debtrestruclv, 
+> rx(creditgdp) qx(inflation) thnum(1) grid(400) 
+Estimating  the  threshold  parameters:   1st ......  Done
+
+Threshold estimator (level = 95):
+-----------------------------------------------------
+     model |    Threshold         Lower         Upper
+-----------+-----------------------------------------
+      Th-1 |       1.4168        0.9455        1.4213
+-----------------------------------------------------
+
+Fixed-effects (within) regression               Number of obs     =        189
+Group variable: cn                              Number of groups  =          7
+
+R-squared:                                      Obs per group:
+     Within  = 0.4693                                         min =         27
+     Between = 0.0581                                         avg =       27.0
+     Overall = 0.3685                                         max =         27
+
+                                                F(10, 172)        =      15.21
+corr(u_i, Xb) = -0.0280                         Prob > F          =     0.0000
+
+----------------------------------------------------------------------------------
+          gdpgpc | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-----------------+----------------------------------------------------------------
+             inv |   .0587739   .0144154     4.08   0.000     .0303202    .0872277
+             gov |   .0047447   .0315865     0.15   0.881    -.0576024    .0670918
+             tot |  -.0014267   .0071703    -0.20   0.843    -.0155799    .0127265
+            open |  -.0057613   .0069496    -0.83   0.408    -.0194789    .0079562
+ bankingcrisislv |  -1.796082   1.121575    -1.60   0.111    -4.009904    .4177408
+currencycrisislv |  -10.57922   1.310861    -8.07   0.000    -13.16666   -7.991769
+    debtcrisislv |  -2.832581   2.374047    -1.19   0.234    -7.518599    1.853437
+   debtrestruclv |   1.248506   1.769359     0.71   0.481    -2.243947    4.740959
+                 |
+_cat#c.creditgdp |
+              0  |  -.0029591   .0083342    -0.36   0.723    -.0194096    .0134913
+              1  |   .0083355   .0073079     1.14   0.256    -.0060893    .0227602
+                 |
+           _cons |    3.52048   1.366943     2.58   0.011      .822336    6.218624
+-----------------+----------------------------------------------------------------
+         sigma_u |  1.7766364
+         sigma_e |  2.2934826
+             rho |  .37502968   (fraction of variance due to u_i)
+----------------------------------------------------------------------------------
+F test that all u_i=0: F(6, 172) = 6.44                      Prob > F = 0.0000
+
+. 
+end of do-file
+
+. do "C:\Users\jamel\AppData\Local\Temp\STD599c_000000.tmp"
+
+. xthreg gdpgpc  gov tot open bankingcrisislv currencycrisislv debtcrisislv debtrestruclv, rx(
+> creditgdp inv) qx(inflation) thnum(1) grid(400) 
+Estimating  the  threshold  parameters:   1st ......  Done
+
+Threshold estimator (level = 95):
+-----------------------------------------------------
+     model |    Threshold         Lower         Upper
+-----------+-----------------------------------------
+      Th-1 |       2.1849        1.3065        2.2415
+-----------------------------------------------------
+
+Fixed-effects (within) regression               Number of obs     =        189
+Group variable: cn                              Number of groups  =          7
+
+R-squared:                                      Obs per group:
+     Within  = 0.4790                                         min =         27
+     Between = 0.1559                                         avg =       27.0
+     Overall = 0.3996                                         max =         27
+
+                                                F(11, 171)        =      14.29
+corr(u_i, Xb) = 0.0242                          Prob > F          =     0.0000
+
+----------------------------------------------------------------------------------
+          gdpgpc | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-----------------+----------------------------------------------------------------
+             gov |  -.0193394    .034205    -0.57   0.573    -.0868578    .0481789
+             tot |   .0004512   .0072478     0.06   0.950    -.0138553    .0147578
+            open |  -.0036646   .0068512    -0.53   0.593    -.0171885    .0098592
+ bankingcrisislv |  -1.911907   1.122951    -1.70   0.090    -4.128538    .3047233
+currencycrisislv |  -9.681957   1.505225    -6.43   0.000    -12.65317   -6.710742
+    debtcrisislv |  -2.017399   2.418771    -0.83   0.405    -6.791893    2.757095
+   debtrestruclv |   1.488746   1.760719     0.85   0.399    -1.986797    4.964289
+                 |
+_cat#c.creditgdp |
+              0  |   .0001069   .0082985     0.01   0.990    -.0162739    .0164876
+              1  |   .0092582   .0072857     1.27   0.206    -.0051233    .0236396
+                 |
+      _cat#c.inv |
+              0  |   .0502752   .0159067     3.16   0.002     .0188765    .0816739
+              1  |   .0955551   .0273384     3.50   0.001     .0415909    .1495193
+                 |
+           _cons |   2.972203   1.408073     2.11   0.036     .1927596    5.751646
+-----------------+----------------------------------------------------------------
+         sigma_u |  1.6815463
+         sigma_e |  2.2789992
+             rho |  .35250523   (fraction of variance due to u_i)
+----------------------------------------------------------------------------------
+F test that all u_i=0: F(6, 171) = 6.10                      Prob > F = 0.0000
+
+. 
+end of do-file
+
+. do "C:\Users\jamel\AppData\Local\Temp\STD599c_000000.tmp"
+
+. xthreg gdpgpc  gov tot open bankingcrisislv currencycrisislv debtcrisislv debtrestruclv, rx(
+> creditgdp inv) qx(inflation) thnum(1) grid(400) bs(100)
+Estimating  the  threshold  parameters:   1st ......  Done
+Boostrap for single threshold
+.................................................. +   50
+.................................................. +  100
+
+Threshold estimator (level = 95):
+-----------------------------------------------------
+     model |    Threshold         Lower         Upper
+-----------+-----------------------------------------
+      Th-1 |       2.1849        1.3065        2.2415
+-----------------------------------------------------
+
+Threshold effect test (bootstrap = 100):
+-------------------------------------------------------------------------------
+ Threshold |       RSS        MSE      Fstat    Prob   Crit10    Crit5    Crit1
+-----------+-------------------------------------------------------------------
+    Single |  888.1462     5.4824       9.11  0.3100  13.1551  15.3671  20.5883
+-------------------------------------------------------------------------------
+
+Fixed-effects (within) regression               Number of obs     =        189
+Group variable: cn                              Number of groups  =          7
+
+R-squared:                                      Obs per group:
+     Within  = 0.4790                                         min =         27
+     Between = 0.1559                                         avg =       27.0
+     Overall = 0.3996                                         max =         27
+
+                                                F(11, 171)        =      14.29
+corr(u_i, Xb) = 0.0242                          Prob > F          =     0.0000
+
+----------------------------------------------------------------------------------
+          gdpgpc | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-----------------+----------------------------------------------------------------
+             gov |  -.0193394    .034205    -0.57   0.573    -.0868578    .0481789
+             tot |   .0004512   .0072478     0.06   0.950    -.0138553    .0147578
+            open |  -.0036646   .0068512    -0.53   0.593    -.0171885    .0098592
+ bankingcrisislv |  -1.911907   1.122951    -1.70   0.090    -4.128538    .3047233
+currencycrisislv |  -9.681957   1.505225    -6.43   0.000    -12.65317   -6.710742
+    debtcrisislv |  -2.017399   2.418771    -0.83   0.405    -6.791893    2.757095
+   debtrestruclv |   1.488746   1.760719     0.85   0.399    -1.986797    4.964289
+                 |
+_cat#c.creditgdp |
+              0  |   .0001069   .0082985     0.01   0.990    -.0162739    .0164876
+              1  |   .0092582   .0072857     1.27   0.206    -.0051233    .0236396
+                 |
+      _cat#c.inv |
+              0  |   .0502752   .0159067     3.16   0.002     .0188765    .0816739
+              1  |   .0955551   .0273384     3.50   0.001     .0415909    .1495193
+                 |
+           _cons |   2.972203   1.408073     2.11   0.036     .1927596    5.751646
+-----------------+----------------------------------------------------------------
+         sigma_u |  1.6815463
+         sigma_e |  2.2789992
+             rho |  .35250523   (fraction of variance due to u_i)
+----------------------------------------------------------------------------------
+F test that all u_i=0: F(6, 171) = 6.10                      Prob > F = 0.0000
+
+. 
+end of do-file
+
+. exit, clear

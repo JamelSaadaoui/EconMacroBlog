@@ -1,0 +1,134 @@
+----------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\jamel\Documents\GitHub\ResearchPapers\Ho and Saadaoui 2022\logs\causalit
+> y.log
+  log type:  text
+ opened on:   4 Jan 2024, 12:53:50
+
+. 
+. // Use data in Stata format
+. 
+. use data\data_asean_final.dta, clear
+
+. 
+. // Install useful packages
+. 
+. *ssc install xtgcause, replace
+. 
+. // Prepare the panel data
+. 
+. rename cn country
+
+. 
+. encode country, generate(cn)
+
+. 
+. drop country
+
+. 
+. order cn code year, first
+
+. 
+. xtset cn year 
+
+Panel variable: cn (strongly balanced)
+ Time variable: year, 1993 to 2019
+         Delta: 1 unit
+
+. 
+. // Exploring causality in panel data 
+. 
+. xtgcause creditgdp gdpgpc, lags(aic)
+
+
+Dumitrescu & Hurlin (2012) Granger non-causality test results:
+--------------------------------------------------------------
+Optimal number of lags (AIC): 7 (lags tested: 1 to 7).
+W-bar =         17.5818
+Z-bar =          7.4825   (p-value = 0.0000)
+Z-bar tilde =    0.7936   (p-value = 0.4274)
+--------------------------------------------------------------
+H0: gdpgpc does not Granger-cause creditgdp.
+H1: gdpgpc does Granger-cause creditgdp for at least one panel (cn).
+
+. 
+. xtgcause creditgdp gdpgpc, lags(bic)
+
+
+Dumitrescu & Hurlin (2012) Granger non-causality test results:
+--------------------------------------------------------------
+Optimal number of lags (BIC): 7 (lags tested: 1 to 7).
+W-bar =         17.5818
+Z-bar =          7.4825   (p-value = 0.0000)
+Z-bar tilde =    0.7936   (p-value = 0.4274)
+--------------------------------------------------------------
+H0: gdpgpc does not Granger-cause creditgdp.
+H1: gdpgpc does Granger-cause creditgdp for at least one panel (cn).
+
+. 
+. xtgcause creditgdp gdpgpc, lags(hqic)
+
+
+Dumitrescu & Hurlin (2012) Granger non-causality test results:
+--------------------------------------------------------------
+Optimal number of lags (HQIC): 7 (lags tested: 1 to 7).
+W-bar =         17.5818
+Z-bar =          7.4825   (p-value = 0.0000)
+Z-bar tilde =    0.7936   (p-value = 0.4274)
+--------------------------------------------------------------
+H0: gdpgpc does not Granger-cause creditgdp.
+H1: gdpgpc does Granger-cause creditgdp for at least one panel (cn).
+
+. 
+. xtgcause creditgdp gdpgpc, lags(aic) bootstrap //-> Note 1
+
+-----------------------------
+Bootstrap replications (1000)
+-----------------------------
+..................................................    50
+..................................................   100
+..................................................   150
+..................................................   200
+..................................................   250
+..................................................   300
+..................................................   350
+..................................................   400
+..................................................   450
+..................................................   500
+..................................................   550
+..................................................   600
+..................................................   650
+..................................................   700
+..................................................   750
+..................................................   800
+..................................................   850
+..................................................   900
+..................................................   950
+.................................................. 1,000
+
+
+Dumitrescu & Hurlin (2012) Granger non-causality test results:
+--------------------------------------------------------------
+Optimal number of lags (AIC): 7 (lags tested: 1 to 7).
+W-bar =         17.5818
+Z-bar =          7.4825   (p-value* = 0.1210, 95% critical value = 10.7331)
+Z-bar tilde =    0.7936   (p-value* = 0.1820, 95% critical value = 1.4104)
+--------------------------------------------------------------
+H0: gdpgpc does not Granger-cause creditgdp.
+H1: gdpgpc does Granger-cause creditgdp for at least one panel (cn).
+*p-values computed using 1000 bootstrap replications.
+
+. 
+. // Save the data
+. save data\causality.dta, ///
+> replace
+file data\causality.dta saved
+
+. 
+. log close
+      name:  <unnamed>
+       log:  C:\Users\jamel\Documents\GitHub\ResearchPapers\Ho and Saadaoui 2022\logs\causalit
+> y.log
+  log type:  text
+ closed on:   4 Jan 2024, 12:56:16
+----------------------------------------------------------------------------------------------

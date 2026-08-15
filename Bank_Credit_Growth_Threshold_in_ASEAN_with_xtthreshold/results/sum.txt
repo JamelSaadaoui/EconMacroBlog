@@ -1,0 +1,21 @@
+	(1)	(2)	(3)	(4)	(5)
+VARIABLES	N	mean	sd	min	max
+					
+cn	189	4	2.005	1	7
+year	189	2,006	7.810	1,993	2,019
+gdpgpc	189	3.047	3.453	-14.35	12.51
+inv	189	6.139	14.19	-44.03	86.22
+gov	189	5.375	6.242	-15.37	58.81
+tot	189	114.2	34.78	70.38	284.4
+open	189	145.1	96.94	37.30	437.3
+pop	189	1.542	0.785	-1.475	5.322
+inflation	189	4.071	5.508	-2.315	58.45
+creditgrowth	189	12.91	14.30	-55.49	65.16
+creditgdp	189	81.77	50.65	16.53	269.7
+bankingcrisislv	189	0.0265	0.161	0	1
+currencycrisislv	189	0.0212	0.144	0	1
+debtcrisislv	189	0.00529	0.0727	0	1
+debtrestruclv	189	0.0106	0.103	0	1
+allyearsbankingcrisislv	189	0.0952	0.294	0	1
+					
+Number of cn	7	7	7	7	7

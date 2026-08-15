@@ -1,0 +1,613 @@
+--------------------------------------------------------------------------------
+      name:  xtthlog
+       log:  C:\Users\jamel\Downloads\Ho and Saadaoui 2022 Blog Aug 2026\logs/xt
+> threshold_asean_blog.log
+  log type:  text
+ opened on:  15 Aug 2026, 05:46:57
+
+. 
+. *----------------------------------------------------------------------------
+. **# 1. Install or update the required packages
+. *----------------------------------------------------------------------------
+. 
+. * Set this global to 0 after the first successful run to skip update checks.
+. global XTTH_UPDATE_PACKAGES 0
+
+. 
+. if ${XTTH_UPDATE_PACKAGES} == 1 {
+.     capture noisily ssc install moremata, replace
+.     capture noisily net install xtthreshold, ///
+>         from("https://janditzen.github.io/xtthreshold/") replace
+.     capture noisily net install xtdcce2, ///
+>         from("https://janditzen.github.io/xtdcce2/") replace
+. }
+
+. 
+. capture findfile moremata.hlp
+
+. if _rc != 0 {
+.     display as error "moremata is required but is not installed."
+.     capture log close xtthlog
+.     error 499
+. }
+
+. 
+. foreach command in xtthreshold xtdcce2 {
+  2.     capture which `command'
+  3.     if _rc != 0 {
+  4.         display as error "The required command `command' is not installed."
+  5.         capture log close xtthlog
+  6.         error 499
+  7.     }
+  8. }
+
+. 
+. *----------------------------------------------------------------------------
+. **# 2. Load and declare the ASEAN panel
+. *----------------------------------------------------------------------------
+. 
+. use "data/data_asean_final.dta", clear
+
+. 
+. encode cn, generate(country_id)
+
+. order country_id cn code year, first
+
+. isid country_id year
+
+. xtset country_id year
+
+Panel variable: country_id (strongly balanced)
+ Time variable: year, 1993 to 2019
+         Delta: 1 unit
+
+. 
+. label variable country_id "Country"
+
+. label variable year "Year"
+
+. label variable gdpgpc "Annual growth rate of GDP per capita"
+
+. label variable creditgdp "Credit-to-GDP ratio"
+
+. label variable inv "Annual percentage change in investment"
+
+. label variable gov ///
+>     "Annual percentage change in government expenditure"
+
+. label variable tot "Terms of trade"
+
+. label variable open "Openness ratio"
+
+. label variable inflation "Annual percentage change of the CPI"
+
+. 
+. quietly egen byte __panel_tag = tag(country_id)
+
+. quietly count if __panel_tag
+
+. global XTTH_N = r(N)
+
+. drop __panel_tag
+
+. 
+. quietly summarize year, meanonly
+
+. global XTTH_FIRST_YEAR = r(min)
+
+. global XTTH_LAST_YEAR = r(max)
+
+. global XTTH_T = ${XTTH_LAST_YEAR} - ${XTTH_FIRST_YEAR} + 1
+
+. 
+. noi display as result "Panel dimensions:"
+Panel dimensions:
+
+. noi display as result "  N = ${XTTH_N}"
+  N = 7
+
+. noi display as result "  T = ${XTTH_T}"
+  T = 27
+
+. noi display as result ///
+>     "  Years = ${XTTH_FIRST_YEAR}-${XTTH_LAST_YEAR}"
+  Years = 1993-2019
+
+. noi display as text "This is an empirical illustration of xtthreshold."
+This is an empirical illustration of xtthreshold.
+
+. noi display as error "Caution: fixed-T inference assumes that N is large."
+Caution: fixed-T inference assumes that N is large.
+
+. noi display as error "Here, N = ${XTTH_N}; interpret inference cautiously."
+Here, N = 7; interpret inference cautiously.
+
+. 
+. xtdescribe
+
+country_id:  1, 2, ..., 7                                    n =          7
+    year:  1993, 1994, ..., 2019                             T =         27
+           Delta(year) = 1 unit
+           Span(year)  = 27 periods
+           (country_id*year uniquely identifies each observation)
+
+Distribution of T_i:   min      5%     25%       50%       75%     95%     max
+                        27      27      27        27        27      27      27
+
+     Freq.  Percent    Cum. |  Pattern
+ ---------------------------+-----------------------------
+        7    100.00  100.00 |  111111111111111111111111111
+ ---------------------------+-----------------------------
+        7    100.00         |  XXXXXXXXXXXXXXXXXXXXXXXXXXX
+
+. summarize gdpgpc creditgdp inv gov tot open inflation
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+      gdpgpc |        189    3.046886    3.453147  -14.35055   12.51431
+   creditgdp |        189    81.77134     50.6477   16.52946    269.733
+         inv |        189    6.138769    14.19388  -44.02647   86.21863
+         gov |        189    5.374985    6.241908  -15.37154   58.80649
+         tot |        189    114.2067    34.77842   70.38032   284.4361
+-------------+---------------------------------------------------------
+        open |        189    145.0728    96.93687    37.3034   437.3267
+   inflation |        189    4.071462      5.5082  -2.314972   58.45104
+
+. 
+. *----------------------------------------------------------------------------
+. **# 3. Define the interactive-fixed-effects threshold model
+. *----------------------------------------------------------------------------
+. 
+. global XTTH_Y gdpgpc
+
+. global XTTH_Z creditgdp
+
+. global XTTH_CONTROLS inv gov tot open inflation
+
+. global XTTH_CSA ${XTTH_Z}
+
+. global XTTH_GRID 90
+
+. 
+. /*
+>  Syntax reminder:
+> 
+>    xtthreshold depvar variables_with_regime_dependent_slopes |
+>                variables_with_constant_slopes,
+>                threshold(threshold_variable)
+> 
+>  creditgdp is placed before | because its coefficient may differ below and
+>  above the estimated threshold. The remaining controls are placed after |
+>  because their coefficients are constant across the two regimes.
+> 
+>  Following the fixed-T threshold theory, the cross-sectional averages contain
+>  the regressors but not the dependent variable.
+> */
+. 
+. xtthreshold ${XTTH_Y} ${XTTH_Z} | ${XTTH_CONTROLS}, ///
+>     threshold(${XTTH_Z}) ///
+>     csa(${XTTH_CSA}) ///
+>     grid(${XTTH_GRID})
+Threshold estimator:
+--------------------------------------------
+ Threshold   |    Value         95% CI            
+-------------+------------------------------
+         1   |     96.2      96.2      96.2
+--------------------------------------------
+
+. 
+. estimates store XTTHRESHOLD_SEARCH
+
+. capture estimates save ///
+>     "results/xtthreshold_search.ster", replace
+
+. 
+. ereturn list
+
+scalars:
+                e(ssr) =  905.6941184975869
+
+macros:
+          e(ClassName) : "_xtthreshold"
+          e(estat_cmd) : "xtthreshold_estat"
+                e(cmd) : "xtthreshold"
+
+matrices:
+            e(thresCI) :  1 x 2
+              e(thres) :  1 x 1
+
+functions:
+             e(sample)   
+
+. 
+. *----------------------------------------------------------------------------
+. **# 4. Plot the likelihood-ratio profile
+. *----------------------------------------------------------------------------
+. 
+. * Keep this directly after the first xtthreshold estimation. In version 0.1,
+. * estat graph lr refers to the Mata object created by that estimation.
+. capture noisily estat graph lr
+Number of observations (_N) was 0, now 90.
+
+. global XTTH_RC_LR = _rc
+
+. 
+. if ${XTTH_RC_LR} == 0 {
+.     capture graph rename Graph xtthreshold_lr, replace
+.     capture noisily graph export ///
+>         "figures/xtthreshold_lr.png", width(2400) replace
+file figures/xtthreshold_lr.png saved as PNG format
+.     capture noisily graph export ///
+>         "figures/xtthreshold_lr.pdf", replace
+file figures/xtthreshold_lr.pdf saved as PDF format
+.     capture noisily graph export ///
+>         "figures/xtthreshold_lr.svg", replace
+file figures/xtthreshold_lr.svg saved as SVG format
+. }
+
+. else {
+.     display as error "The LR graph could not be produced."
+.     display as error "Inspect the log for the returned error."
+. }
+
+. 
+. *----------------------------------------------------------------------------
+. * 5. Split credit-to-GDP at the estimated threshold
+. *----------------------------------------------------------------------------
+. 
+. capture noisily estat split
+
+. global XTTH_RC_SPLIT = _rc
+
+. 
+. if ${XTTH_RC_SPLIT} != 0 {
+.     display as error "estat split failed."
+.     display as error "The final CCE model cannot be estimated."
+.     capture log close xtthlog
+.     error ${XTTH_RC_SPLIT}
+. }
+
+. 
+. capture confirm variable creditgdp_0
+
+. if _rc != 0 {
+.     display as error "estat split did not create creditgdp_0."
+.     capture log close xtthlog
+.     error 111
+. }
+
+. 
+. capture confirm variable creditgdp_1
+
+. if _rc != 0 {
+.     display as error "estat split did not create creditgdp_1."
+.     capture log close xtthlog
+.     error 111
+. }
+
+. 
+. label variable creditgdp_0 ///
+>     "Credit-to-GDP below the estimated threshold"
+
+. label variable creditgdp_1 ///
+>     "Credit-to-GDP above the estimated threshold"
+
+. 
+. generate byte high_credit_regime = ///
+>     !missing(creditgdp_1) & creditgdp_1 != 0 ///
+>     if !missing(creditgdp)
+
+. 
+. label define high_credit_lbl ///
+>     0 "Below threshold" ///
+>     1 "Above threshold"
+
+. label values high_credit_regime high_credit_lbl
+
+. label variable high_credit_regime "Estimated credit regime"
+
+. 
+. noi tabulate high_credit_regime
+
+      Estimated |
+  credit regime |      Freq.     Percent        Cum.
+----------------+-----------------------------------
+Below threshold |        108       57.14       57.14
+Above threshold |         81       42.86      100.00
+----------------+-----------------------------------
+          Total |        189      100.00
+
+. noi tabulate country_id high_credit_regime, row
+
++----------------+
+| Key            |
+|----------------|
+|   frequency    |
+| row percentage |
++----------------+
+
+                  |   Estimated credit
+                  |        regime
+          Country | Below thr  Above thr |     Total
+------------------+----------------------+----------
+Brunei Darussalam |        27          0 |        27 
+                  |    100.00       0.00 |    100.00 
+------------------+----------------------+----------
+        Indonesia |        27          0 |        27 
+                  |    100.00       0.00 |    100.00 
+------------------+----------------------+----------
+         Malaysia |         0         27 |        27 
+                  |      0.00     100.00 |    100.00 
+------------------+----------------------+----------
+      Philippines |        27          0 |        27 
+                  |    100.00       0.00 |    100.00 
+------------------+----------------------+----------
+        Singapore |        10         17 |        27 
+                  |     37.04      62.96 |    100.00 
+------------------+----------------------+----------
+         Thailand |         0         27 |        27 
+                  |      0.00     100.00 |    100.00 
+------------------+----------------------+----------
+          Vietnam |        17         10 |        27 
+                  |     62.96      37.04 |    100.00 
+------------------+----------------------+----------
+            Total |       108         81 |       189 
+                  |     57.14      42.86 |    100.00 
+
+. 
+. *----------------------------------------------------------------------------
+. **# 6. Estimate the final pooled CCE threshold regression
+. *----------------------------------------------------------------------------
+. 
+. /*
+>  The xtthreshold documentation illustrates the post-threshold regression with
+>  xtdcce2. All structural slopes are pooled here. The constant and coefficients
+>  on the cross-sectional averages remain country-specific. This matches the
+>  common-slope structure used during the threshold search.
+> 
+>  pooledvce(wpn) requests the fixed-T adjustment available in xtdcce2.
+>  mgmissing is useful because a country may lie entirely within one regime.
+>  A split regressor may then be collinear in a country-specific regression.
+> */
+. 
+. global XTTH_SPLITVARS creditgdp_0 creditgdp_1
+
+. global XTTH_MODELVARS ${XTTH_SPLITVARS} ${XTTH_CONTROLS}
+
+. 
+. * The package documentation's heterogeneous CCE follow-up is:
+. *
+. * xtdcce2 ${XTTH_Y} ${XTTH_MODELVARS}, ///
+> *     cr(${XTTH_CSA}) mgmissing
+. *
+. * The structural slopes are pooled here to follow the common-slope model.
+. 
+. capture noisily xtdcce2 ${XTTH_Y} ${XTTH_MODELVARS}, ///
+>     cr(${XTTH_Y} ${XTTH_CSA}, cr_lags(0)) ///
+>     pooled(${XTTH_MODELVARS}) ///
+>     pooledvce(wpn) ///
+>     mgmissing
+(Dynamic) Common Correlated Effects Estimator - Pooled 
+
+Panel Variable (i): country_id                   Number of obs     =        189
+Time Variable (t): year                          Number of groups  =          7
+
+Degrees of freedom per group:                    Obs per group (T) =         27
+ without cross-sectional averages   = 19
+ with cross-sectional averages      = 17
+Number of                                        F(28, 161)        =       1.94
+ cross-sectional lags               0 to 0       Prob > F          =       0.01
+ variables in mean group regression = 7          R-squared         =       0.75
+ variables partialled out           = 21         R-squared (P)     =       0.64
+                                                 Root MSE          =       1.59
+                                                 CD Statistic      =      -2.39
+                                                    p-value        =     0.0170
+-------------------------------------------------------------------------------
+         gdpgpc|     Coef.   Std. Err.      z    P>|z|     [95% Conf. Interval]
+---------------+---------------------------------------------------------------
+ Pooled:       |
+    creditgdp_0|   .033388   .0080091    4.17    0.000      .0176905   .0490855
+    creditgdp_1| -.0214406   .0050883   -4.21    0.000     -.0314134  -.0114678
+            inv|  .0173645   .0106758    1.63    0.104     -.0035598   .0382887
+            gov|  .0297256   .0171969    1.73    0.084     -.0039797   .0634309
+            tot| -.0175357   .0089538   -1.96    0.050     -.0350848   .0000134
+           open| -.0098467    .004514   -2.18    0.029     -.0186939  -.0009995
+      inflation| -.1604923   .0529851   -3.03    0.002     -.2643412  -.0566433
+-------------------------------------------------------------------------------
+Pooled Variables: creditgdp_0 creditgdp_1 inv gov tot open inflation
+Cross Sectional Averaged Variables: gdpgpc creditgdp 
+Heterogenous constant partialled out. 
+Westerlund, Petrova, Norkute fixed-T standard errors for pooled coefficients.
+
+. global XTTH_RC_CCEP = _rc
+
+. 
+. * Use the default pooled VCE if WPN is unavailable or numerically infeasible.
+. if ${XTTH_RC_CCEP} != 0 {
+.     display as error "The WPN specification failed."
+.     display as error "Retrying with xtdcce2's default pooled VCE."
+. 
+.     capture noisily xtdcce2 ${XTTH_Y} ${XTTH_MODELVARS}, ///
+>         cr(${XTTH_Y} ${XTTH_CSA}, cr_lags(0)) ///
+>         pooled(${XTTH_MODELVARS}) ///
+>         mgmissing
+.     global XTTH_RC_CCEP = _rc
+. }
+
+. 
+. if ${XTTH_RC_CCEP} == 0 {
+.     estimates store CCEP_THRESHOLD
+.     estimates save ///
+>         "results/xtthreshold_ccep_estimates.ster", replace
+file results/xtthreshold_ccep_estimates.ster saved
+. 
+.     ereturn list
+
+scalars:
+          e(K_omitted) =  0
+           e(K_pooled) =  7
+                e(IC2) =  1.463295283970843
+                e(IC1) =  1.380355554946481
+                e(mss) =  405.4211803472688
+                e(rss) =  137.0802920558417
+               e(df_r) =  161
+               e(rmse) =  1.586866086761018
+               e(r2_a) =  .7030987907698617
+                 e(r2) =  .7473181198041376
+                  e(F) =  1.944179824660213
+          e(K_partial) =  21
+               e(K_mg) =  7
+               e(df_m) =  28
+             e(r2_pmg) =  .6362692675765165
+                  e(T) =  27
+                e(N_g) =  7
+                  e(N) =  189
+                e(cdp) =  .0170199139345539
+                 e(cd) =  -2.386277261643151
+
+macros:
+             e(pooled) : "creditgdp_0 creditgdp_1 inv gov tot open inflation "
+          e(estat_cmd) : "xtdcce2_estat"
+            e(predict) : "xtdcce2_p"
+                e(cmd) : "xtdcce2"
+            e(cmdline) : "xtdcce2 gdpgpc creditgdp_0 creditgdp_1 inv gov tot.."
+               e(tvar) : "year"
+              e(idvar) : "country_id"
+           e(indepvar) : "creditgdp_0 creditgdp_1 inv gov tot open inflation "
+                e(csa) : "gdpgpc creditgdp "
+            e(cr_lags) : "0"
+         e(properties) : "b V"
+             e(depvar) : "gdpgpc"
+
+matrices:
+                  e(b) :  1 x 7
+                  e(V) :  7 x 7
+                 e(Vi) :  7 x 7
+                 e(bi) :  1 x 7
+
+functions:
+             e(sample)   
+. 
+.     * Test whether the credit slopes are identical across regimes.
+.     capture noisily test creditgdp_0 = creditgdp_1
+
+ ( 1)  creditgdp_0 - creditgdp_1 = 0
+
+       F(  1,   161) =   18.55
+            Prob > F =    0.0000
+.     capture noisily lincom creditgdp_0 - creditgdp_1
+
+ ( 1)  creditgdp_0 - creditgdp_1 = 0
+
+------------------------------------------------------------------------------
+      gdpgpc | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+         (1) |   .0548286   .0127304     4.31   0.000     .0296885    .0799686
+------------------------------------------------------------------------------
+. 
+. *------------------------------------------------------------------------
+. **# 7. Plot the two regime-specific credit slopes
+. *------------------------------------------------------------------------
+. 
+.     capture scalar b_low = _b[creditgdp_0]
+.     global XTTH_RC_B = _rc
+. 
+.     if ${XTTH_RC_B} == 0 {
+.         scalar se_low = _se[creditgdp_0]
+.         scalar b_high = _b[creditgdp_1]
+.         scalar se_high = _se[creditgdp_1]
+.         scalar zcrit = invnormal(1 - (1 - c(level) / 100) / 2)
+. 
+.         preserve
+.             clear
+.             set obs 2
+Number of observations (_N) was 0, now 2.
+. 
+.             generate byte regime = _n
+.             generate double estimate = .
+(2 missing values generated)
+.             generate double se = .
+(2 missing values generated)
+. 
+.             replace estimate = b_low in 1
+(1 real change made)
+.             replace estimate = b_high in 2
+(1 real change made)
+.             replace se = se_low in 1
+(1 real change made)
+.             replace se = se_high in 2
+(1 real change made)
+. 
+.             generate double ci_low = estimate - zcrit * se
+.             generate double ci_high = estimate + zcrit * se
+.             generate str12 estimate_label = ///
+>                 string(estimate, "%9.3f")
+. 
+.             label define regime_lbl ///
+>                 1 "Below estimated threshold" ///
+>                 2 "Above estimated threshold"
+.             label values regime regime_lbl
+. 
+.             twoway ///
+>                 (rcap ci_low ci_high regime, horizontal) ///
+>                 (scatter regime estimate, ///
+>                     mlabel(estimate_label) ///
+>                     mlabposition(12)), ///
+>                 ytitle("") ///
+>                 ylabel(1 2, valuelabel angle(horizontal)) ///
+>                 xtitle("Coefficient on the credit-to-GDP ratio") ///
+>                 xline(0, lpattern(dash)) ///
+>                 title("Bank credit and GDP-per-capita growth") ///
+>                 subtitle( ///
+>                     "Pooled CCE estimates with `c(level)'% CIs") ///
+>                 note( ///
+>                     "Threshold: xtthreshold; slopes: xtdcce2.") ///
+>                 legend(off) ///
+>                 name(xtthreshold_credit_slopes, replace)
+. 
+.             capture noisily graph export ///
+>                 "figures/xtthreshold_credit_slopes.png", ///
+>                 width(2400) replace
+file figures/xtthreshold_credit_slopes.png saved as PNG format
+.             capture noisily graph export ///
+>                 "figures/xtthreshold_credit_slopes.pdf", replace
+file figures/xtthreshold_credit_slopes.pdf saved as PDF format
+.             capture noisily graph export ///
+>                 "figures/xtthreshold_credit_slopes.svg", replace
+file figures/xtthreshold_credit_slopes.svg saved as SVG format
+.         restore
+.     }
+.     else {
+.         display as error "The regime coefficients could not be read."
+.         display as error "No coefficient graph was produced."
+.     }
+. }
+
+. else {
+.     display as error "The final pooled CCE regression failed."
+.     display as error "Inspect the log for details."
+. }
+
+. 
+. * Save the data containing the split credit variables for inspection.
+. save "results/xtthreshold_asean_split.dta", replace
+file results/xtthreshold_asean_split.dta saved
+
+. 
+. noi display as result "Completed. Main outputs:"
+Completed. Main outputs:
+
+. noi display as text "  logs/xtthreshold_asean_blog.log"
+  logs/xtthreshold_asean_blog.log
+
+. noi display as text "  figures/xtthreshold_lr.png"
+  figures/xtthreshold_lr.png
+
+. noi display as text "  figures/xtthreshold_credit_slopes.png"
+  figures/xtthreshold_credit_slopes.png
+
+. noi display as text "  results/xtthreshold_asean_split.dta"
+  results/xtthreshold_asean_split.dta
+
+. 
+. capture log close xtthlog

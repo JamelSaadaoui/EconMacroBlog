@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- This is a Stata 18.0 generated SVG file (http://www.stata.com) -->
+
+<svg version="1.1" width="4000px" height="2909px" viewBox="0 0 2574 1872" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<desc>Stata Graph - endo_thres_lv_pop_fin</desc>
+	<rect x="0" y="0" width="2574" height="1872" style="fill:#F0F0F0;stroke:none"/>
+	<rect x="0.00" y="0.00" width="2573.92" height="1872.00" style="fill:#F0F0F0"/>
+	<rect x="1.87" y="1.87" width="2570.18" height="1868.26" style="fill:none;stroke:#F0F0F0;stroke-width:3.74"/>
+	<rect x="254.02" y="65.56" width="2254.34" height="1552.41" style="fill:#FFFFFF"/>
+	<rect x="255.89" y="67.43" width="2250.60" height="1548.67" style="fill:none;stroke:#FFFFFF;stroke-width:3.74"/>
+	<line x1="254.02" y1="1576.79" x2="2508.36" y2="1576.79" style="stroke:#E8E8E8;stroke-width:5.62"/>
+	<line x1="254.02" y1="1209.25" x2="2508.36" y2="1209.25" style="stroke:#E8E8E8;stroke-width:5.62"/>
+	<line x1="254.02" y1="841.72" x2="2508.36" y2="841.72" style="stroke:#E8E8E8;stroke-width:5.62"/>
+	<line x1="254.02" y1="474.19" x2="2508.36" y2="474.19" style="stroke:#E8E8E8;stroke-width:5.62"/>
+	<line x1="254.02" y1="106.74" x2="2508.36" y2="106.74" style="stroke:#E8E8E8;stroke-width:5.62"/>
+	<line x1="254.02" y1="1036.39" x2="328.91" y2="1036.39" style="stroke:#000000;stroke-width:5.62"/>
+	<line x1="347.65" y1="1036.39" x2="422.54" y2="1036.39" style="stroke:#000000;stroke-width:5.62"/>
+	<line x1="441.28" y1="1036.39" x2="516.17" y2="1036.39" style="stroke:#000000;stroke-width:5.62"/>
+	<line x1="534.91" y1="1036.39" x2="609.80" y2="1036.39" style="stroke:#000000;stroke-width:5.62"/>
+	<line x1="628.46" y1="1036.39" x2="703.35" y2="1036.39" style="stroke:#000000;stroke-width:5.62"/>
+	<line x1="722.09" y1="1036.39" x2="796.97" y2="1036.39" style="stroke:#000000;stroke-width:5.62"/>
+	<line x1="815.72" y1="1036.39" x2="890.60" y2="1036.39" style="stroke:#000000;stroke-width:5.62"/>
+	<line x1="909.35" y1="1036.39" x2="984.23" y2="1036.39" style="stroke:#000000;stroke-width:5.62"/>
+	<line x1="1002.98" y1="1036.39" x2="1077.86" y2="1036.39" style="stroke:#000000;stroke-width:5.62"/>
+	<line x1="1096.52" y1="1036.39" x2="1171.41" y2="1036.39" style="stroke:#000000;stroke-width:5.62"/>
+	<line x1="1190.15" y1="1036.39" x2="1265.04" y2="1036.39" style="stroke:#000000;stroke-width:5.62"/>
+	<line x1="1283.78" y1="1036.39" x2="1358.67" y2="1036.39" style="stroke:#000000;stroke-width:5.62"/>
+	<line x1="1377.41" y1="1036.39" x2="1452.30" y2="1036.39" style="stroke:#000000;stroke-width:5.62"/>
+	<line x1="1471.04" y1="1036.39" x2="1545.93" y2="1036.39" style="stroke:#000000;stroke-width:5.62"/>
+	<line x1="1564.67" y1="1036.39" x2="1639.56" y2="1036.39" style="stroke:#000000;stroke-width:5.62"/>
+	<line x1="1658.22" y1="1036.39" x2="1733.11" y2="1036.39" style="stroke:#000000;stroke-width:5.62"/>
+	<line x1="1751.85" y1="1036.39" x2="1826.74" y2="1036.39" style="stroke:#000000;stroke-width:5.62"/>
+	<line x1="1845.48" y1="1036.39" x2="1920.36" y2="1036.39" style="stroke:#000000;stroke-width:5.62"/>
+	<line x1="1939.11" y1="1036.39" x2="2013.99" y2="1036.39" style="stroke:#000000;stroke-width:5.62"/>
+	<line x1="2032.74" y1="1036.39" x2="2107.62" y2="1036.39" style="stroke:#000000;stroke-width:5.62"/>
+	<line x1="2126.28" y1="1036.39" x2="2201.17" y2="1036.39" style="stroke:#000000;stroke-width:5.62"/>
+	<line x1="2219.91" y1="1036.39" x2="2294.80" y2="1036.39" style="stroke:#000000;stroke-width:5.62"/>
+	<line x1="2313.54" y1="1036.39" x2="2388.43" y2="1036.39" style="stroke:#000000;stroke-width:5.62"/>
+	<line x1="2407.17" y1="1036.39" x2="2482.06" y2="1036.39" style="stroke:#000000;stroke-width:5.62"/>
+	<line x1="2500.80" y1="1036.39" x2="2508.36" y2="1036.39" style="stroke:#000000;stroke-width:5.62"/>
+	<path d=" M702.38 333.02 L703.27 340.82 L705.44 325.54 L716.46 325.54 L717.34 333.02 L717.90 329.16 L719.92 326.10 L730.77 320.96 L744.21 316.61 L746.78 350.88 L757.16 341.87 L757.80 356.91 L775.98 365.84 L779.28 357.23 L782.58 381.61 L792.31 362.78 L801.24 317.09 L804.13 363.67 L805.74 373.56 L810.73 409.20 L812.18 340.50 L817.25 336.88 L820.30 358.84 L822.55 355.71 L829.55 322.97 L838.48 350.88 L839.28 351.44 L841.78 351.84 L852.88 373.32 L856.02 373.80 L857.06 378.71 L861.57 384.99 L864.06 414.02 L865.67 414.02 L872.99 408.55 L881.84 391.34 L895.19 424.88 L915.86 407.83 L919.72 424.88 L922.46 345.81 L936.61 388.85 L939.67 449.50 L955.52 403.00 L983.83 390.86 L988.26 343.48 L995.57 347.02 L996.46 333.18 L1004.42 338.09 L1027.43 311.79 L1035.39 363.35 L1070.30 363.35 L1076.33 383.22 L1090.41 312.19 L1112.69 312.67 L1125.88 312.67 L1145.43 312.19 L1146.72 324.17 L1151.38 314.76 L1170.69 324.58 L1171.33 373.48 L1241.55 464.22 L1268.50 506.37 L1306.79 445.32 L1470.80 445.32 L1495.17 459.80 L1515.60 550.77 L1522.76 522.22 L1531.05 546.59 L1535.23 502.99 L1587.11 588.42 L1652.59 486.50 L1668.35 444.43 L1668.76 915.01 L1681.30 1335.95 L1685.97 1487.01 L1692.08 1576.87 L1696.11 1417.59 L1697.31 1273.28 L1712.27 496.40 L1747.50 454.33 L1766.09 447.33 L1769.22 500.18 L1772.44 537.90 L1782.33 641.59 L1791.26 580.78 L1796.25 567.91 L1812.42 796.60 L1826.57 670.15 L1835.26 715.76 L1837.68 686.15 L1846.28 752.19 L1858.03 433.89 L1865.18 405.34 L1873.23 333.02 L1876.61 333.02 L1915.86 323.69 L1916.02 317.17 L1931.06 317.34 L1947.71 318.70 L1951.25 312.59 L1956.40 314.04 L1960.74 382.09 L1971.20 339.54 L2004.99 328.60 L2017.94 326.75 L2031.29 330.21 L2038.45 328.28 L2041.18 317.98 L2044.08 343.08 L2045.36 340.34 L2054.13 325.86 L2059.20 329.00 L2067.81 343.32 L2077.70 338.97 L2088.00 349.19 L2088.88 363.19 L2091.62 370.83 L2096.68 331.98 L2113.98 337.28 L2150.50 340.58 L2164.57 485.13 L2188.06 610.86 L2222.97 601.05 L2250.00 591.64 L2267.77 459.96 L2270.91 405.90 L2292.15 399.55 L2346.04 324.17 L2356.58 335.35" stroke-linejoin="round" style="fill:none;stroke:#000000;stroke-width:5.62"/>
+	<line x1="254.02" y1="1617.97" x2="254.02" y2="65.56" style="stroke:#000000;stroke-width:3.74"/>
+	<line x1="254.02" y1="1576.79" x2="228.04" y2="1576.79" style="stroke:#000000;stroke-width:3.74"/>
+	<text x="195.47" y="1576.79" style="font-family:'Helvetica';font-size:64.99px;fill:#000000" transform="rotate(-90 195.47,1576.79)" text-anchor="middle">0</text>
+	<line x1="254.02" y1="1209.25" x2="228.04" y2="1209.25" style="stroke:#000000;stroke-width:3.74"/>
+	<text x="195.47" y="1209.25" style="font-family:'Helvetica';font-size:64.99px;fill:#000000" transform="rotate(-90 195.47,1209.25)" text-anchor="middle">5</text>
+	<line x1="254.02" y1="841.72" x2="228.04" y2="841.72" style="stroke:#000000;stroke-width:3.74"/>
+	<text x="195.47" y="841.72" style="font-family:'Helvetica';font-size:64.99px;fill:#000000" transform="rotate(-90 195.47,841.72)" text-anchor="middle">10</text>
+	<line x1="254.02" y1="474.19" x2="228.04" y2="474.19" style="stroke:#000000;stroke-width:3.74"/>
+	<text x="195.47" y="474.19" style="font-family:'Helvetica';font-size:64.99px;fill:#000000" transform="rotate(-90 195.47,474.19)" text-anchor="middle">15</text>
+	<line x1="254.02" y1="106.74" x2="228.04" y2="106.74" style="stroke:#000000;stroke-width:3.74"/>
+	<text x="195.47" y="106.74" style="font-family:'Helvetica';font-size:64.99px;fill:#000000" transform="rotate(-90 195.47,106.74)" text-anchor="middle">20</text>
+	<text x="123.96" y="841.72" style="font-family:'Helvetica';font-size:64.99px;fill:#000000" transform="rotate(-90 123.96,841.72)" text-anchor="middle">Likelihood Ratio</text>
+	<line x1="254.02" y1="1617.97" x2="2508.36" y2="1617.97" style="stroke:#000000;stroke-width:3.74"/>
+	<line x1="295.21" y1="1617.97" x2="295.21" y2="1643.95" style="stroke:#000000;stroke-width:3.74"/>
+	<text x="295.21" y="1702.44" style="font-family:'Helvetica';font-size:64.99px;fill:#000000" text-anchor="middle">0</text>
+	<line x1="1019.22" y1="1617.97" x2="1019.22" y2="1643.95" style="stroke:#000000;stroke-width:3.74"/>
+	<text x="1019.22" y="1702.44" style="font-family:'Helvetica';font-size:64.99px;fill:#000000" text-anchor="middle">50</text>
+	<line x1="1743.24" y1="1617.97" x2="1743.24" y2="1643.95" style="stroke:#000000;stroke-width:3.74"/>
+	<text x="1743.24" y="1702.44" style="font-family:'Helvetica';font-size:64.99px;fill:#000000" text-anchor="middle">100</text>
+	<line x1="2467.18" y1="1617.97" x2="2467.18" y2="1643.95" style="stroke:#000000;stroke-width:3.74"/>
+	<text x="2467.18" y="1702.44" style="font-family:'Helvetica';font-size:64.99px;fill:#000000" text-anchor="middle">150</text>
+	<text x="1381.19" y="1773.95" style="font-family:'Helvetica';font-size:64.99px;fill:#000000" text-anchor="middle">Threshold Parameter</text>
+</svg>

@@ -1,0 +1,605 @@
+---------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\jamel\Downloads\Ho and Saadaoui 2022\logs\database_import.log
+  log type:  text
+ opened on:  14 Aug 2026, 08:50:55
+
+. 
+. // Import data from Excel
+. 
+. import excel data\data_asean.xlsx, ///
+> sheet("Feuil1") firstrow case(lower) clear
+(17 vars, 270 obs)
+
+. 
+. list cn
+
+     +-------------------+
+     |                cn |
+     |-------------------|
+  1. |          Malaysia |
+  2. |          Malaysia |
+  3. |          Malaysia |
+  4. |          Malaysia |
+  5. |          Malaysia |
+     |-------------------|
+  6. |          Malaysia |
+  7. |          Malaysia |
+  8. |          Malaysia |
+  9. |          Malaysia |
+ 10. |          Malaysia |
+     |-------------------|
+ 11. |          Malaysia |
+ 12. |          Malaysia |
+ 13. |          Malaysia |
+ 14. |          Malaysia |
+ 15. |          Malaysia |
+     |-------------------|
+ 16. |          Malaysia |
+ 17. |          Malaysia |
+ 18. |          Malaysia |
+ 19. |          Malaysia |
+ 20. |          Malaysia |
+     |-------------------|
+ 21. |          Malaysia |
+ 22. |          Malaysia |
+ 23. |          Malaysia |
+ 24. |          Malaysia |
+ 25. |          Malaysia |
+     |-------------------|
+ 26. |          Malaysia |
+ 27. |          Malaysia |
+ 28. | Brunei Darussalam |
+ 29. | Brunei Darussalam |
+ 30. | Brunei Darussalam |
+     |-------------------|
+ 31. | Brunei Darussalam |
+ 32. | Brunei Darussalam |
+ 33. | Brunei Darussalam |
+ 34. | Brunei Darussalam |
+ 35. | Brunei Darussalam |
+     |-------------------|
+ 36. | Brunei Darussalam |
+ 37. | Brunei Darussalam |
+ 38. | Brunei Darussalam |
+ 39. | Brunei Darussalam |
+ 40. | Brunei Darussalam |
+     |-------------------|
+ 41. | Brunei Darussalam |
+ 42. | Brunei Darussalam |
+ 43. | Brunei Darussalam |
+ 44. | Brunei Darussalam |
+ 45. | Brunei Darussalam |
+     |-------------------|
+ 46. | Brunei Darussalam |
+ 47. | Brunei Darussalam |
+ 48. | Brunei Darussalam |
+ 49. | Brunei Darussalam |
+ 50. | Brunei Darussalam |
+     |-------------------|
+ 51. | Brunei Darussalam |
+ 52. | Brunei Darussalam |
+ 53. | Brunei Darussalam |
+ 54. | Brunei Darussalam |
+ 55. |          Cambodia |
+     |-------------------|
+ 56. |          Cambodia |
+ 57. |          Cambodia |
+ 58. |          Cambodia |
+ 59. |          Cambodia |
+ 60. |          Cambodia |
+     |-------------------|
+ 61. |          Cambodia |
+ 62. |          Cambodia |
+ 63. |          Cambodia |
+ 64. |          Cambodia |
+ 65. |          Cambodia |
+     |-------------------|
+ 66. |          Cambodia |
+ 67. |          Cambodia |
+ 68. |          Cambodia |
+ 69. |          Cambodia |
+ 70. |          Cambodia |
+     |-------------------|
+ 71. |          Cambodia |
+ 72. |          Cambodia |
+ 73. |          Cambodia |
+ 74. |          Cambodia |
+ 75. |          Cambodia |
+     |-------------------|
+ 76. |          Cambodia |
+ 77. |          Cambodia |
+ 78. |          Cambodia |
+ 79. |          Cambodia |
+ 80. |          Cambodia |
+     |-------------------|
+ 81. |          Cambodia |
+ 82. |         Indonesia |
+ 83. |         Indonesia |
+ 84. |         Indonesia |
+ 85. |         Indonesia |
+     |-------------------|
+ 86. |         Indonesia |
+ 87. |         Indonesia |
+ 88. |         Indonesia |
+ 89. |         Indonesia |
+ 90. |         Indonesia |
+     |-------------------|
+ 91. |         Indonesia |
+ 92. |         Indonesia |
+ 93. |         Indonesia |
+ 94. |         Indonesia |
+ 95. |         Indonesia |
+     |-------------------|
+ 96. |         Indonesia |
+ 97. |         Indonesia |
+ 98. |         Indonesia |
+ 99. |         Indonesia |
+100. |         Indonesia |
+     |-------------------|
+101. |         Indonesia |
+102. |         Indonesia |
+103. |         Indonesia |
+104. |         Indonesia |
+105. |         Indonesia |
+     |-------------------|
+106. |         Indonesia |
+107. |         Indonesia |
+108. |         Indonesia |
+109. |           Lao PDR |
+110. |           Lao PDR |
+     |-------------------|
+111. |           Lao PDR |
+112. |           Lao PDR |
+113. |           Lao PDR |
+114. |           Lao PDR |
+115. |           Lao PDR |
+     |-------------------|
+116. |           Lao PDR |
+117. |           Lao PDR |
+118. |           Lao PDR |
+119. |           Lao PDR |
+120. |           Lao PDR |
+     |-------------------|
+121. |           Lao PDR |
+122. |           Lao PDR |
+123. |           Lao PDR |
+124. |           Lao PDR |
+125. |           Lao PDR |
+     |-------------------|
+126. |           Lao PDR |
+127. |           Lao PDR |
+128. |           Lao PDR |
+129. |           Lao PDR |
+130. |           Lao PDR |
+     |-------------------|
+131. |           Lao PDR |
+132. |           Lao PDR |
+133. |           Lao PDR |
+134. |           Lao PDR |
+135. |           Lao PDR |
+     |-------------------|
+136. |           Myanmar |
+137. |           Myanmar |
+138. |           Myanmar |
+139. |           Myanmar |
+140. |           Myanmar |
+     |-------------------|
+141. |           Myanmar |
+142. |           Myanmar |
+143. |           Myanmar |
+144. |           Myanmar |
+145. |           Myanmar |
+     |-------------------|
+146. |           Myanmar |
+147. |           Myanmar |
+148. |           Myanmar |
+149. |           Myanmar |
+150. |           Myanmar |
+     |-------------------|
+151. |           Myanmar |
+152. |           Myanmar |
+153. |           Myanmar |
+154. |           Myanmar |
+155. |           Myanmar |
+     |-------------------|
+156. |           Myanmar |
+157. |           Myanmar |
+158. |           Myanmar |
+159. |           Myanmar |
+160. |           Myanmar |
+     |-------------------|
+161. |           Myanmar |
+162. |           Myanmar |
+163. |       Philippines |
+164. |       Philippines |
+165. |       Philippines |
+     |-------------------|
+166. |       Philippines |
+167. |       Philippines |
+168. |       Philippines |
+169. |       Philippines |
+170. |       Philippines |
+     |-------------------|
+171. |       Philippines |
+172. |       Philippines |
+173. |       Philippines |
+174. |       Philippines |
+175. |       Philippines |
+     |-------------------|
+176. |       Philippines |
+177. |       Philippines |
+178. |       Philippines |
+179. |       Philippines |
+180. |       Philippines |
+     |-------------------|
+181. |       Philippines |
+182. |       Philippines |
+183. |       Philippines |
+184. |       Philippines |
+185. |       Philippines |
+     |-------------------|
+186. |       Philippines |
+187. |       Philippines |
+188. |       Philippines |
+189. |       Philippines |
+190. |          Thailand |
+     |-------------------|
+191. |          Thailand |
+192. |          Thailand |
+193. |          Thailand |
+194. |          Thailand |
+195. |          Thailand |
+     |-------------------|
+196. |          Thailand |
+197. |          Thailand |
+198. |          Thailand |
+199. |          Thailand |
+200. |          Thailand |
+     |-------------------|
+201. |          Thailand |
+202. |          Thailand |
+203. |          Thailand |
+204. |          Thailand |
+205. |          Thailand |
+     |-------------------|
+206. |          Thailand |
+207. |          Thailand |
+208. |          Thailand |
+209. |          Thailand |
+210. |          Thailand |
+     |-------------------|
+211. |          Thailand |
+212. |          Thailand |
+213. |          Thailand |
+214. |          Thailand |
+215. |          Thailand |
+     |-------------------|
+216. |          Thailand |
+217. |           Vietnam |
+218. |           Vietnam |
+219. |           Vietnam |
+220. |           Vietnam |
+     |-------------------|
+221. |           Vietnam |
+222. |           Vietnam |
+223. |           Vietnam |
+224. |           Vietnam |
+225. |           Vietnam |
+     |-------------------|
+226. |           Vietnam |
+227. |           Vietnam |
+228. |           Vietnam |
+229. |           Vietnam |
+230. |           Vietnam |
+     |-------------------|
+231. |           Vietnam |
+232. |           Vietnam |
+233. |           Vietnam |
+234. |           Vietnam |
+235. |           Vietnam |
+     |-------------------|
+236. |           Vietnam |
+237. |           Vietnam |
+238. |           Vietnam |
+239. |           Vietnam |
+240. |           Vietnam |
+     |-------------------|
+241. |           Vietnam |
+242. |           Vietnam |
+243. |           Vietnam |
+244. |         Singapore |
+245. |         Singapore |
+     |-------------------|
+246. |         Singapore |
+247. |         Singapore |
+248. |         Singapore |
+249. |         Singapore |
+250. |         Singapore |
+     |-------------------|
+251. |         Singapore |
+252. |         Singapore |
+253. |         Singapore |
+254. |         Singapore |
+255. |         Singapore |
+     |-------------------|
+256. |         Singapore |
+257. |         Singapore |
+258. |         Singapore |
+259. |         Singapore |
+260. |         Singapore |
+     |-------------------|
+261. |         Singapore |
+262. |         Singapore |
+263. |         Singapore |
+264. |         Singapore |
+265. |         Singapore |
+     |-------------------|
+266. |         Singapore |
+267. |         Singapore |
+268. |         Singapore |
+269. |         Singapore |
+270. |         Singapore |
+     +-------------------+
+
+. 
+. drop if cn=="Lao PDR" | cn=="Cambodia" | cn=="Myanmar" //-> Note 1
+(81 observations deleted)
+
+. 
+. list cn
+
+     +-------------------+
+     |                cn |
+     |-------------------|
+  1. |          Malaysia |
+  2. |          Malaysia |
+  3. |          Malaysia |
+  4. |          Malaysia |
+  5. |          Malaysia |
+     |-------------------|
+  6. |          Malaysia |
+  7. |          Malaysia |
+  8. |          Malaysia |
+  9. |          Malaysia |
+ 10. |          Malaysia |
+     |-------------------|
+ 11. |          Malaysia |
+ 12. |          Malaysia |
+ 13. |          Malaysia |
+ 14. |          Malaysia |
+ 15. |          Malaysia |
+     |-------------------|
+ 16. |          Malaysia |
+ 17. |          Malaysia |
+ 18. |          Malaysia |
+ 19. |          Malaysia |
+ 20. |          Malaysia |
+     |-------------------|
+ 21. |          Malaysia |
+ 22. |          Malaysia |
+ 23. |          Malaysia |
+ 24. |          Malaysia |
+ 25. |          Malaysia |
+     |-------------------|
+ 26. |          Malaysia |
+ 27. |          Malaysia |
+ 28. | Brunei Darussalam |
+ 29. | Brunei Darussalam |
+ 30. | Brunei Darussalam |
+     |-------------------|
+ 31. | Brunei Darussalam |
+ 32. | Brunei Darussalam |
+ 33. | Brunei Darussalam |
+ 34. | Brunei Darussalam |
+ 35. | Brunei Darussalam |
+     |-------------------|
+ 36. | Brunei Darussalam |
+ 37. | Brunei Darussalam |
+ 38. | Brunei Darussalam |
+ 39. | Brunei Darussalam |
+ 40. | Brunei Darussalam |
+     |-------------------|
+ 41. | Brunei Darussalam |
+ 42. | Brunei Darussalam |
+ 43. | Brunei Darussalam |
+ 44. | Brunei Darussalam |
+ 45. | Brunei Darussalam |
+     |-------------------|
+ 46. | Brunei Darussalam |
+ 47. | Brunei Darussalam |
+ 48. | Brunei Darussalam |
+ 49. | Brunei Darussalam |
+ 50. | Brunei Darussalam |
+     |-------------------|
+ 51. | Brunei Darussalam |
+ 52. | Brunei Darussalam |
+ 53. | Brunei Darussalam |
+ 54. | Brunei Darussalam |
+ 55. |         Indonesia |
+     |-------------------|
+ 56. |         Indonesia |
+ 57. |         Indonesia |
+ 58. |         Indonesia |
+ 59. |         Indonesia |
+ 60. |         Indonesia |
+     |-------------------|
+ 61. |         Indonesia |
+ 62. |         Indonesia |
+ 63. |         Indonesia |
+ 64. |         Indonesia |
+ 65. |         Indonesia |
+     |-------------------|
+ 66. |         Indonesia |
+ 67. |         Indonesia |
+ 68. |         Indonesia |
+ 69. |         Indonesia |
+ 70. |         Indonesia |
+     |-------------------|
+ 71. |         Indonesia |
+ 72. |         Indonesia |
+ 73. |         Indonesia |
+ 74. |         Indonesia |
+ 75. |         Indonesia |
+     |-------------------|
+ 76. |         Indonesia |
+ 77. |         Indonesia |
+ 78. |         Indonesia |
+ 79. |         Indonesia |
+ 80. |         Indonesia |
+     |-------------------|
+ 81. |         Indonesia |
+ 82. |       Philippines |
+ 83. |       Philippines |
+ 84. |       Philippines |
+ 85. |       Philippines |
+     |-------------------|
+ 86. |       Philippines |
+ 87. |       Philippines |
+ 88. |       Philippines |
+ 89. |       Philippines |
+ 90. |       Philippines |
+     |-------------------|
+ 91. |       Philippines |
+ 92. |       Philippines |
+ 93. |       Philippines |
+ 94. |       Philippines |
+ 95. |       Philippines |
+     |-------------------|
+ 96. |       Philippines |
+ 97. |       Philippines |
+ 98. |       Philippines |
+ 99. |       Philippines |
+100. |       Philippines |
+     |-------------------|
+101. |       Philippines |
+102. |       Philippines |
+103. |       Philippines |
+104. |       Philippines |
+105. |       Philippines |
+     |-------------------|
+106. |       Philippines |
+107. |       Philippines |
+108. |       Philippines |
+109. |          Thailand |
+110. |          Thailand |
+     |-------------------|
+111. |          Thailand |
+112. |          Thailand |
+113. |          Thailand |
+114. |          Thailand |
+115. |          Thailand |
+     |-------------------|
+116. |          Thailand |
+117. |          Thailand |
+118. |          Thailand |
+119. |          Thailand |
+120. |          Thailand |
+     |-------------------|
+121. |          Thailand |
+122. |          Thailand |
+123. |          Thailand |
+124. |          Thailand |
+125. |          Thailand |
+     |-------------------|
+126. |          Thailand |
+127. |          Thailand |
+128. |          Thailand |
+129. |          Thailand |
+130. |          Thailand |
+     |-------------------|
+131. |          Thailand |
+132. |          Thailand |
+133. |          Thailand |
+134. |          Thailand |
+135. |          Thailand |
+     |-------------------|
+136. |           Vietnam |
+137. |           Vietnam |
+138. |           Vietnam |
+139. |           Vietnam |
+140. |           Vietnam |
+     |-------------------|
+141. |           Vietnam |
+142. |           Vietnam |
+143. |           Vietnam |
+144. |           Vietnam |
+145. |           Vietnam |
+     |-------------------|
+146. |           Vietnam |
+147. |           Vietnam |
+148. |           Vietnam |
+149. |           Vietnam |
+150. |           Vietnam |
+     |-------------------|
+151. |           Vietnam |
+152. |           Vietnam |
+153. |           Vietnam |
+154. |           Vietnam |
+155. |           Vietnam |
+     |-------------------|
+156. |           Vietnam |
+157. |           Vietnam |
+158. |           Vietnam |
+159. |           Vietnam |
+160. |           Vietnam |
+     |-------------------|
+161. |           Vietnam |
+162. |           Vietnam |
+163. |         Singapore |
+164. |         Singapore |
+165. |         Singapore |
+     |-------------------|
+166. |         Singapore |
+167. |         Singapore |
+168. |         Singapore |
+169. |         Singapore |
+170. |         Singapore |
+     |-------------------|
+171. |         Singapore |
+172. |         Singapore |
+173. |         Singapore |
+174. |         Singapore |
+175. |         Singapore |
+     |-------------------|
+176. |         Singapore |
+177. |         Singapore |
+178. |         Singapore |
+179. |         Singapore |
+180. |         Singapore |
+     |-------------------|
+181. |         Singapore |
+182. |         Singapore |
+183. |         Singapore |
+184. |         Singapore |
+185. |         Singapore |
+     |-------------------|
+186. |         Singapore |
+187. |         Singapore |
+188. |         Singapore |
+189. |         Singapore |
+     +-------------------+
+
+. 
+. *drop if year<=1997 //-> Note 2
+. 
+. // Export to Excel
+. 
+. export excel using data\data_asean_final, ///
+>  sheetreplace firstrow(variables)
+file data\data_asean_final.xls saved
+
+. 
+. // Save the data
+. save ///
+> data\data_asean_final.dta, ///
+> replace
+file data\data_asean_final.dta saved
+
+. 
+. log close
+      name:  <unnamed>
+       log:  C:\Users\jamel\Downloads\Ho and Saadaoui 2022\logs\database_import.log
+  log type:  text
+ closed on:  14 Aug 2026, 08:50:57
+---------------------------------------------------------------------------------------------------------------------------------------------

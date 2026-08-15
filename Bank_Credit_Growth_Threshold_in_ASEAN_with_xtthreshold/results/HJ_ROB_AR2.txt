@@ -1,0 +1,43 @@
+	(1)
+	ROB_AR2
+VARIABLES	gdpgpc
+	
+L.gdpgpc	-0.0753
+	(0.0517)
+below_thres_enr	0.0772**
+	(0.0390)
+above_thres_enr	0.0182
+	(0.0374)
+inv	-0.0051
+	(0.0271)
+gov	0.0553
+	(0.0717)
+tot	0.0123
+	(0.0329)
+open	-0.0014
+	(0.0116)
+inflation	-0.0813
+	(0.0742)
+currencycrisislv	-6.9656
+	(5.0698)
+debtcrisislv	-17.9379
+	(21.3787)
+debtrestruclv	0.1685
+	(0.7203)
+time_1997	-4.4157**
+	(1.8543)
+time_1998	-6.3715
+	(3.9606)
+time_2001	-2.8917**
+	(1.1879)
+time_2009	-4.4065***
+	(1.1917)
+time_2010	2.2589***
+	(0.6714)
+Constant	-0.0654
+	(7.9126)
+	
+Observations	182
+Number of cn	7
+Robust standard errors in parentheses	
+*** p<0.01, ** p<0.05, * p<0.1	
